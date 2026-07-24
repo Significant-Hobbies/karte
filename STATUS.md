@@ -60,7 +60,9 @@ cleaner handoff.
 
 - **2026-07-25** — Restored public profile chat by replacing the gateway's
   empty streaming response path with the already-proven bounded completion
-  path; the existing client consumes the answer as a single response chunk.
+  path; rich profile-memory answers retry with a compact public-bio prompt and
+  finally a deterministic public-bio answer instead of returning an empty
+  response or 502. The existing client consumes the answer as a single chunk.
 - **2026-07-13** — Creator Opportunity Desk shipped (approval-first partnership briefs).
 - **2026-07-09** — Repositioned as a public inbound assistant; inbound email feeds Lead Radar.
 - **2026-07-03** — Durable `RateLimiterDO` replaced in-memory limiter.

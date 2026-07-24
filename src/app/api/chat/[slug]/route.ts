@@ -230,25 +230,77 @@ export async function POST(
     // 200 response. Use the proven completion path and return its text as one
     // readable chunk; the client already handles both single- and multi-chunk
     // responses through the same stream parser.
-    const answer = await generate(aiConfig, {
-      system: systemPrompt,
-      prompt: query,
-      reasoningLevel: 'fast',
-      maxOutputTokens: 160,
-      timeoutMs: 8000,
-    });
-    const text = answer.trim();
-    if (!text) throw new Error('AI returned an empty response');
+    let text = '';
+    try {
+      text = (
+        await generate(aiConfig, {
+          system: systemPrompt,
+          prompt: query,
+          reasoningLevel: 'fast',
+          maxOutputTokens: 160,
+          timeoutMs: 8000,
+        })
+      ).trim();
+    } catch (error) {
+      console.warn(
+        'Rich public chat completion failed; retrying compact prompt',
+        error,
+      );
+    }
+
+    if (!text) {
+      const compactSystemPrompt = [
+        `Answer visitor questions about ${page.displayName}.`,
+        page.bio ? `Public bio: ${clampContext(page.bio, 900)}` : '',
+        'Use only that public information. If it does not answer the question, say so and suggest contacting the profile owner through a listed public link.',
+        'Keep the answer under 80 words.',
+      ]
+        .filter(Boolean)
+        .join('\n\n');
+
+      try {
+        text = (
+          await generate(aiConfig, {
+            system: compactSystemPrompt,
+            prompt: query,
+            reasoningLevel: 'fast',
+            maxOutputTokens: 120,
+            timeoutMs: 8000,
+          })
+        ).trim();
+      } catch (error) {
+        console.error('Compact public chat completion failed', error);
+      }
+    }
+
+    if (!text) {
+      text = deterministicPublicProfileFallback(page);
+    }
 
     return new Response(text, {
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
-  } catch {
-    return new Response(JSON.stringify({ error: 'Chat service unavailable' }), {
-      status: 502,
-      headers: { 'Content-Type': 'application/json' },
+  } catch (error) {
+    console.error('Public chat context build failed', error);
+    return new Response(deterministicPublicProfileFallback(page), {
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
   }
+}
+
+function deterministicPublicProfileFallback(
+  page: typeof pages.$inferSelect,
+): string {
+  const bio = page.bio?.replace(/\s+/g, ' ').trim();
+  if (!bio) {
+    return `I couldn't generate a tailored answer right now. Please use one of ${page.displayName}'s public contact links.`;
+  }
+
+  const summary = bio
+    .split(/(?<=[.!?])\s+/)
+    .slice(0, 2)
+    .join(' ');
+  return `I couldn't generate a tailored answer right now. ${page.displayName}: ${clampContext(summary || bio, 420)}`;
 }
 
 function answerFromLocalProfile(
