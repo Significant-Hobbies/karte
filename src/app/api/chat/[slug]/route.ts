@@ -250,27 +250,46 @@ export async function POST(
 
     if (!text) {
       const fallbackAiConfig = getDefaultAiConfig() ?? aiConfig;
+      try {
+        text = (
+          await generate(fallbackAiConfig, {
+            system: systemPrompt,
+            prompt: query,
+            reasoningLevel: 'fast',
+            maxOutputTokens: 160,
+            timeoutMs: 8000,
+          })
+        ).trim();
+      } catch (error) {
+        console.warn(
+          'Product public chat completion failed; retrying compact prompt',
+          error,
+        );
+      }
+
       const compactSystemPrompt = [
         `Answer visitor questions about ${page.displayName}.`,
-        page.bio ? `Public bio: ${clampContext(page.bio, 900)}` : '',
+        `Public profile memory: ${clampContext(memory.promptContext, 2400)}`,
         'Use only that public information. If it does not answer the question, say so and suggest contacting the profile owner through a listed public link.',
         'Keep the answer under 80 words.',
       ]
         .filter(Boolean)
         .join('\n\n');
 
-      try {
-        text = (
-          await generate(fallbackAiConfig, {
-            system: compactSystemPrompt,
-            prompt: query,
-            reasoningLevel: 'fast',
-            maxOutputTokens: 120,
-            timeoutMs: 8000,
-          })
-        ).trim();
-      } catch (error) {
-        console.error('Compact public chat completion failed', error);
+      if (!text) {
+        try {
+          text = (
+            await generate(fallbackAiConfig, {
+              system: compactSystemPrompt,
+              prompt: query,
+              reasoningLevel: 'fast',
+              maxOutputTokens: 120,
+              timeoutMs: 8000,
+            })
+          ).trim();
+        } catch (error) {
+          console.error('Compact public chat completion failed', error);
+        }
       }
     }
 

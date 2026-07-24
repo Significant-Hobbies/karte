@@ -61,9 +61,10 @@ cleaner handoff.
 - **2026-07-25** — Restored public profile chat by replacing the gateway's
   empty streaming response path with the already-proven bounded completion
   path; a stale user-configured provider now fails over to Karte's product
-  free-ai gateway with a compact public-bio prompt, then finally a
-  deterministic public-bio answer instead of returning an empty response or
-  502. The existing client consumes the answer as a single chunk.
+  free-ai gateway with the full public profile-memory prompt, then a compact
+  public-memory prompt and finally a deterministic public-bio answer instead
+  of returning an empty response or 502. The existing client consumes the
+  answer as a single chunk.
 - **2026-07-13** — Creator Opportunity Desk shipped (approval-first partnership briefs).
 - **2026-07-09** — Repositioned as a public inbound assistant; inbound email feeds Lead Radar.
 - **2026-07-03** — Durable `RateLimiterDO` replaced in-memory limiter.
