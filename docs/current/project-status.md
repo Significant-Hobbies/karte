@@ -85,8 +85,9 @@ Browser → Cloudflare Worker (OpenNext) → Turso (pages, links, chat, projects
   showed that the free-ai streaming compatibility path returned an empty 200
   response while bounded non-streaming completion worked. Chat now returns the
   completion as a single text chunk through the existing client parser, with
-  a compact public-bio retry and deterministic public-bio fallback when the
-  rich profile-memory prompt cannot complete.
+  a compact public-bio retry through Karte's product free-ai gateway when a
+  user-configured provider fails, plus a deterministic public-bio fallback if
+  neither provider can complete.
 - **2026-07-13** — Added the approval-first Creator Opportunity Desk: owners can turn manual, timeline, contact, email, or chat signals into bounded AI-assisted partnership briefs, edit and approve drafts, then copy or open verified recipients in their own mail client. Karte does not send messages.
 - **2026-07-09** — Repositioned the landing and product thesis around Karte as a public inbound assistant, contrasting against static page builders with chat, email, leads, and cleaner handoffs.
 - **2026-07-09** — Built out the inbound-agent product loop beyond landing copy: inbound email now feeds Lead Radar, dashboard setup includes chat/DM/email activation, and email inbox copy matches the notify-not-forward architecture.

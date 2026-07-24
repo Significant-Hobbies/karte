@@ -2,7 +2,7 @@ import { and, desc, eq } from 'drizzle-orm';
 
 import { db, ensureProjectsTable } from '@/db';
 import { conversations, messages, pages, users } from '@/db/schema';
-import { generate, resolveAiConfig } from '@/lib/ai-client';
+import { generate, getDefaultAiConfig, resolveAiConfig } from '@/lib/ai-client';
 import { CHAT_RESPONSE_ENVELOPE_PROMPT } from '@/lib/ai-prompts';
 import { resolvePublicProfileSlug } from '@/lib/demo-profiles';
 import { search } from '@/lib/knowledgebase';
@@ -249,6 +249,7 @@ export async function POST(
     }
 
     if (!text) {
+      const fallbackAiConfig = getDefaultAiConfig() ?? aiConfig;
       const compactSystemPrompt = [
         `Answer visitor questions about ${page.displayName}.`,
         page.bio ? `Public bio: ${clampContext(page.bio, 900)}` : '',
@@ -260,7 +261,7 @@ export async function POST(
 
       try {
         text = (
-          await generate(aiConfig, {
+          await generate(fallbackAiConfig, {
             system: compactSystemPrompt,
             prompt: query,
             reasoningLevel: 'fast',

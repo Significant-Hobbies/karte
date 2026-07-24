@@ -73,6 +73,7 @@ describe('knowledgebase RAG integration contract', () => {
       chatRoute,
       /Rich public chat completion failed; retrying compact prompt/,
     );
+    assert.match(chatRoute, /getDefaultAiConfig\(\)\s*\?\?\s*aiConfig/);
     assert.match(chatRoute, /deterministicPublicProfileFallback\(page\)/);
   });
 });
