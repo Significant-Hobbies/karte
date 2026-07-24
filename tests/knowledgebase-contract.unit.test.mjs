@@ -68,6 +68,7 @@ describe('knowledgebase RAG integration contract', () => {
       /You said you're wearing a \$\{display\} t-shirt\./,
     );
     assert.match(chatRoute, /You told me:/);
-    assert.match(chatRoute, /streamResponse\(aiConfig/);
+    assert.match(chatRoute, /generate\(aiConfig/);
+    assert.match(chatRoute, /AI returned an empty response/);
   });
 });

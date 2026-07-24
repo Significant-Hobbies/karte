@@ -2,7 +2,7 @@ import { and, desc, eq } from 'drizzle-orm';
 
 import { db, ensureProjectsTable } from '@/db';
 import { conversations, messages, pages, users } from '@/db/schema';
-import { resolveAiConfig, streamResponse } from '@/lib/ai-client';
+import { generate, resolveAiConfig } from '@/lib/ai-client';
 import { CHAT_RESPONSE_ENVELOPE_PROMPT } from '@/lib/ai-prompts';
 import { resolvePublicProfileSlug } from '@/lib/demo-profiles';
 import { search } from '@/lib/knowledgebase';
@@ -226,16 +226,22 @@ export async function POST(
       .filter(Boolean)
       .join('\n\n');
 
-    // Stream the response — text appears word-by-word client-side.
-    // Components live in a JSON tail after the <<<COMPONENTS>>> marker;
-    // the client splits on the marker and renders components when the
-    // stream completes.
-    return streamResponse(aiConfig, {
+    // The gateway's streaming compatibility path can complete with an empty
+    // 200 response. Use the proven completion path and return its text as one
+    // readable chunk; the client already handles both single- and multi-chunk
+    // responses through the same stream parser.
+    const answer = await generate(aiConfig, {
       system: systemPrompt,
       prompt: query,
       reasoningLevel: 'fast',
       maxOutputTokens: 160,
       timeoutMs: 8000,
+    });
+    const text = answer.trim();
+    if (!text) throw new Error('AI returned an empty response');
+
+    return new Response(text, {
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
   } catch {
     return new Response(JSON.stringify({ error: 'Chat service unavailable' }), {
