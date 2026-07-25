@@ -62,6 +62,7 @@ describe('knowledgebase RAG integration contract', () => {
 
   it('keeps chat recall cheap and bounded before calling AI', () => {
     const chatRoute = read('src/app/api/chat/[slug]/route.ts');
+    const profileMemory = read('src/lib/profile-memory.ts');
 
     assert.match(chatRoute, /RECENT_CONTEXT_MESSAGE_LIMIT\s*=\s*6/);
     assert.match(chatRoute, /RECENT_CONTEXT_CHAR_LIMIT\s*=\s*1200/);
@@ -74,6 +75,10 @@ describe('knowledgebase RAG integration contract', () => {
       /answerFromProfileProjects\(\s*query,\s*memory,?\s*\)/,
     );
     assert.match(chatRoute, /source\.type === 'project'/);
+    assert.match(
+      profileMemory,
+      /mode === 'chat' \? Promise\.resolve\(''\) : getScrapedContext/,
+    );
     assert.match(
       chatRoute,
       /You said you're wearing a \$\{display\} t-shirt\./,

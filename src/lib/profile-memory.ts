@@ -241,7 +241,10 @@ export async function buildProfileMemory({
         .from(timelineEvents)
         .where(eq(timelineEvents.pageId, page.id))
         .orderBy(desc(timelineEvents.sortDate)),
-      getScrapedContext(page.id, page),
+      // Live chat must never trigger a network scrape. Structured profile
+      // memory is already sufficient, while stale scrape refreshes can add
+      // several seconds to an otherwise simple answer.
+      mode === 'chat' ? Promise.resolve('') : getScrapedContext(page.id, page),
     ]);
 
   const sources: ProfileMemorySource[] = [];
