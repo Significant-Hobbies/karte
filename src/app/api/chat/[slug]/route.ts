@@ -1,7 +1,7 @@
-import { and, desc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq } from 'drizzle-orm';
 
 import { db, ensureProjectsTable } from '@/db';
-import { conversations, messages, pages, users } from '@/db/schema';
+import { conversations, messages, pages, projects, users } from '@/db/schema';
 import { generate, getDefaultAiConfig, resolveAiConfig } from '@/lib/ai-client';
 import { CHAT_RESPONSE_ENVELOPE_PROMPT } from '@/lib/ai-prompts';
 import { resolvePublicProfileSlug } from '@/lib/demo-profiles';
@@ -161,6 +161,16 @@ export async function POST(
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
   }
+  const directProjectAnswer = await answerFromStoredProjects(
+    query,
+    page.id,
+    page.displayName,
+  );
+  if (directProjectAnswer) {
+    return new Response(directProjectAnswer, {
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    });
+  }
 
   const [user] = await db.select().from(users).where(eq(users.id, page.userId));
 
@@ -194,13 +204,6 @@ export async function POST(
             .catch(() => '')
         : Promise.resolve(''),
     ]);
-
-    const directProjectAnswer = answerFromProfileProjects(query, memory);
-    if (directProjectAnswer) {
-      return new Response(directProjectAnswer, {
-        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-      });
-    }
 
     const baseSystemPrompt =
       page.chatSystemPrompt ||
@@ -369,21 +372,31 @@ function answerFromLocalProfile(
   return `${page.displayName}: ${clipped}`;
 }
 
-function answerFromProfileProjects(
+async function answerFromStoredProjects(
   query: string,
-  memory: Awaited<ReturnType<typeof buildProfileMemory>>,
-): string | null {
+  pageId: string,
+  pageName: string,
+): Promise<string | null> {
   const normalizedQuery = query.toLowerCase().replace(/\s+/g, ' ').trim();
-  const projectSources = memory.sources.filter(
-    (source) => source.type === 'project',
+  const storedProjects = await db
+    .select({
+      title: projects.title,
+      description: projects.description,
+      enabled: projects.enabled,
+    })
+    .from(projects)
+    .where(eq(projects.pageId, pageId))
+    .orderBy(asc(projects.sortOrder));
+  const visibleProjects = storedProjects.filter(
+    (project) => project.enabled !== false,
   );
-  if (projectSources.length === 0) return null;
+  if (visibleProjects.length === 0) return null;
 
-  const specificProject = projectSources.find((source) =>
-    normalizedQuery.includes(source.title.toLowerCase()),
+  const specificProject = visibleProjects.find((project) =>
+    normalizedQuery.includes(project.title.toLowerCase()),
   );
-  if (specificProject?.content) {
-    return `${specificProject.title}: ${specificProject.content}`;
+  if (specificProject?.description) {
+    return `${specificProject.title}: ${specificProject.description}`;
   }
 
   const asksAboutProjects =
@@ -392,8 +405,8 @@ function answerFromProfileProjects(
     );
   if (!asksAboutProjects) return null;
 
-  const names = projectSources
-    .map((source) => source.title.trim())
+  const names = visibleProjects
+    .map((project) => project.title.trim())
     .filter(Boolean)
     .slice(0, 8);
   if (names.length === 0) return null;
@@ -401,7 +414,7 @@ function answerFromProfileProjects(
   const last = names.pop();
   const formatted =
     names.length === 0 ? last : `${names.join(', ')}, and ${last}`;
-  return `${memory.pageName} is building ${formatted}.`;
+  return `${pageName} is building ${formatted}.`;
 }
 
 function answerFromRecentConversation(

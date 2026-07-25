@@ -72,9 +72,12 @@ describe('knowledgebase RAG integration contract', () => {
     );
     assert.match(
       chatRoute,
-      /answerFromProfileProjects\(\s*query,\s*memory,?\s*\)/,
+      /answerFromStoredProjects\(\s*query,\s*page\.id,\s*page\.displayName,?\s*\)/,
     );
-    assert.match(chatRoute, /source\.type === 'project'/);
+    assert.match(
+      chatRoute,
+      /\.from\(projects\)[\s\S]*\.where\(eq\(projects\.pageId,\s*pageId\)\)/,
+    );
     assert.match(
       profileMemory,
       /mode === 'chat' \? Promise\.resolve\(''\) : getScrapedContext/,
