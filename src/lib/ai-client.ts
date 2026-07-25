@@ -9,7 +9,9 @@ export type AiConfig = {
 
 const DEFAULT_AI_ENDPOINT_URL = 'https://ai-gateway.sassmaker.com/v1';
 const DEFAULT_AI_MODEL = 'workers-ai-llama-3.3-70b';
-const DEFAULT_FAST_AI_MODEL = 'workers-ai-llama-3b';
+// Let free-ai route fast requests across healthy free providers. Pinning chat
+// to Workers AI bypasses its failover and can expose transient upstream 401s.
+const DEFAULT_FAST_AI_MODEL = 'auto';
 const FREE_AI_PROJECT_ID = 'linkchat';
 
 export function getDefaultAiConfig(): AiConfig | null {
