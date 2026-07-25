@@ -12,7 +12,7 @@ yourself after learning; never invent rationale.
 ## RAG-backed memory with timeout
 - What: RAG search with `Promise.race` to prevent slow searches from blocking chat responses
 - Why here: TBD
-- Gotcha (from code): `src/app/api/chat/[slug]/route.ts:397-411` — `searchWithTimeout` races RAG search against a 500ms timeout, falls back to empty string on failure
+- Gotcha (from code): `src/app/api/chat/[slug]/route.ts` — `searchWithTimeout` uses lexical-only retrieval with a 150ms budget and falls back to local memory on failure
 - Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race
 
 ## Direct recall from conversation context

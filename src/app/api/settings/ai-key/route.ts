@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { requireUser } from '@/lib/api-auth';
-import { ensureProfileMemoryIndex } from '@/lib/profile-memory-index';
 
 export async function GET() {
   const auth = await requireUser();
@@ -12,7 +11,6 @@ export async function GET() {
 
   const [user] = await db
     .select({
-      smApiKey: users.smApiKey,
       aiEndpointUrl: users.aiEndpointUrl,
       aiApiKey: users.aiApiKey,
       aiModel: users.aiModel,
@@ -21,7 +19,6 @@ export async function GET() {
     .where(eq(users.id, auth.userId));
 
   return NextResponse.json({
-    hasKey: !!user?.smApiKey,
     hasAiConfig: !!(user?.aiEndpointUrl && user?.aiApiKey && user?.aiModel),
     aiEndpointUrl: user?.aiEndpointUrl || '',
     aiModel: user?.aiModel || '',
@@ -34,7 +31,7 @@ export async function PUT(req: Request) {
   if ('error' in auth) return auth.error;
 
   const body = await req.json();
-  const { aiKey, aiEndpointUrl, aiApiKey, aiModel } = body;
+  const { aiEndpointUrl, aiApiKey, aiModel } = body;
 
   const [user] = await db.select().from(users).where(eq(users.id, auth.userId));
   if (!user) {
@@ -42,32 +39,6 @@ export async function PUT(req: Request) {
   }
 
   const updates: Record<string, string | null> = {};
-
-  // Handle profile-memory key setup. The stored sm* column names are legacy;
-  // RAG indexing now goes only through the shared knowledgebase Worker.
-  if (aiKey !== undefined) {
-    if (!aiKey?.trim()) {
-      return NextResponse.json(
-        { error: 'AI key is required' },
-        { status: 400 },
-      );
-    }
-
-    let indexId = user.smIndexId;
-    if (!indexId) {
-      try {
-        indexId = await ensureProfileMemoryIndex(auth.userId);
-      } catch {
-        return NextResponse.json(
-          { error: 'Failed to initialize chat index' },
-          { status: 502 },
-        );
-      }
-    }
-
-    updates.smApiKey = aiKey.trim();
-    updates.smIndexId = indexId;
-  }
 
   // Handle custom AI endpoint config
   if (

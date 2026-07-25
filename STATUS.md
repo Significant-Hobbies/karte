@@ -1,6 +1,6 @@
 # STATUS — Karte (linkchat)
 
-Last updated: 2026-07-18. This is the **living** short view. Durable record
+Last updated: 2026-07-25. This is the **living** short view. Durable record
 (timeline, products, feature inventory, dependencies) lives at
 [`docs/current/project-status.md`](docs/current/project-status.md).
 
@@ -58,6 +58,11 @@ cleaner handoff.
 
 ## Recent timeline (short)
 
+- **2026-07-25** — Made managed Knowledgebase recall the default for indexed
+  profile memory: chat no longer depends on the retired user-entered document
+  key. The chat critical path uses lexical-only retrieval, skips trivial
+  conversational turns, and falls back to local memory after 150 ms; semantic
+  embedding misses never delay the response.
 - **2026-07-25** — Restored public profile chat by replacing the gateway's
   empty streaming response path with the already-proven bounded completion
   path; a stale user-configured provider now fails over to Karte's product

@@ -52,7 +52,6 @@ export default async function MemoryPage() {
 
   const [user] = await db
     .select({
-      smApiKey: users.smApiKey,
       aiEndpointUrl: users.aiEndpointUrl,
       aiApiKey: users.aiApiKey,
       aiModel: users.aiModel,
@@ -166,7 +165,6 @@ export default async function MemoryPage() {
           description="By default we use the free Karte AI gateway. Plug in your own key + model if you want full control."
         />
         <AiKeySettings
-          hasKey={!!user?.smApiKey}
           hasAiConfig={
             !!(user?.aiEndpointUrl && user?.aiApiKey && user?.aiModel) ||
             !!defaultAiConfig

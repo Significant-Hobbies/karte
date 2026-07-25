@@ -14,7 +14,7 @@ const RECENT_CONTEXT_MESSAGE_LIMIT = 6;
 const RECENT_CONTEXT_CHAR_LIMIT = 1200;
 const PROFILE_CONTEXT_CHAR_LIMIT = 3600;
 const RAG_CONTEXT_CHAR_LIMIT = 1400;
-const RAG_TIMEOUT_MS = 500;
+const RAG_TIMEOUT_MS = 150;
 
 export async function POST(
   req: Request,
@@ -164,7 +164,11 @@ export async function POST(
 
   const [user] = await db.select().from(users).where(eq(users.id, page.userId));
 
-  const aiConfig = resolveAiConfig(user);
+  // Public chat is a managed Karte surface. Prefer the fleet provider so a
+  // stale profile-specific credential cannot add a failed network hop before
+  // every visitor response. Keep the custom config only as a compatibility
+  // fallback for self-hosted installs without a managed provider.
+  const aiConfig = getDefaultAiConfig() ?? resolveAiConfig(user);
   if (!aiConfig) {
     return new Response(
       JSON.stringify({ error: 'Chat not configured — AI endpoint missing' }),
@@ -178,7 +182,7 @@ export async function POST(
   try {
     const [memory, retrievedContext] = await Promise.all([
       buildProfileMemory({ page, mode: 'chat', query }),
-      user.smApiKey && user.smIndexId
+      user.smIndexId && shouldSearchIndexedMemory(query)
         ? searchWithTimeout(user.smIndexId, query, {
             userId: page.userId,
             pageId: page.id,
@@ -249,7 +253,7 @@ export async function POST(
     }
 
     if (!text) {
-      const fallbackAiConfig = getDefaultAiConfig() ?? aiConfig;
+      const fallbackAiConfig = aiConfig;
       try {
         text = (
           await generate(fallbackAiConfig, {
@@ -472,20 +476,23 @@ function clampContext(value: string, limit: number): string {
   return `${normalized.slice(0, limit).trimEnd()}\n[truncated for live chat speed]`;
 }
 
+function shouldSearchIndexedMemory(query: string): boolean {
+  const normalized = query.toLowerCase().replace(/\s+/g, ' ').trim();
+  return !/^(hi|hello|hey|thanks|thank you|ok|okay|cool|nice|bye|goodbye)[!. ]*$/.test(
+    normalized,
+  );
+}
+
 function searchWithTimeout(
   indexId: string,
   query: string,
   scope: { userId: string; pageId: string },
 ): ReturnType<typeof search> {
-  return Promise.race([
-    search(indexId, query, 3, scope),
-    new Promise<never>((_, reject) => {
-      setTimeout(
-        () => reject(new Error('RAG search timed out')),
-        RAG_TIMEOUT_MS,
-      );
-    }),
-  ]) as ReturnType<typeof search>;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), RAG_TIMEOUT_MS);
+  return search(indexId, query, 3, scope, 'lexical', controller.signal).finally(
+    () => clearTimeout(timeoutId),
+  );
 }
 
 // Caller has already verified the conversation exists and belongs to the page

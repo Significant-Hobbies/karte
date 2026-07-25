@@ -12,6 +12,8 @@ type RagSearchResult = {
   metadata: Record<string, unknown>;
 };
 
+type RagSearchMode = 'auto' | 'lexical' | 'semantic' | 'hybrid';
+
 type ServiceBinding = {
   fetch(request: Request): Promise<Response>;
 };
@@ -104,12 +106,20 @@ export async function search(
   query: string,
   topK = 5,
   filter?: Record<string, unknown>,
+  mode: RagSearchMode = 'auto',
+  signal?: AbortSignal,
 ): Promise<{
   results: { document_id: string; chunk_content: string; score: number }[];
 }> {
   const res = await ragFetch(`/v1/indexes/${indexId}/query`, {
     method: 'POST',
-    body: JSON.stringify({ query, top_k: topK, ...(filter ? { filter } : {}) }),
+    signal,
+    body: JSON.stringify({
+      query,
+      top_k: topK,
+      mode,
+      ...(filter ? { filter } : {}),
+    }),
   });
   if (!res.ok)
     throw new Error(`Failed to search RAG index: ${await res.text()}`);

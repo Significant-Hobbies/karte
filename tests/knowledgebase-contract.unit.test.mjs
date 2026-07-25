@@ -50,8 +50,14 @@ describe('knowledgebase RAG integration contract', () => {
       chatRoute,
       /searchWithTimeout\(user\.smIndexId,\s*query,\s*\{\s*userId:\s*page\.userId,\s*pageId:\s*page\.id,?\s*\}/,
     );
-    assert.match(chatRoute, /search\(indexId,\s*query,\s*3,\s*scope\)/);
-    assert.match(chatRoute, /RAG_TIMEOUT_MS\s*=\s*500/);
+    assert.doesNotMatch(chatRoute, /user\.smApiKey\s*&&\s*user\.smIndexId/);
+    assert.match(
+      chatRoute,
+      /search\(\s*indexId,\s*query,\s*3,\s*scope,\s*'lexical',\s*controller\.signal,?\s*\)/,
+    );
+    assert.match(chatRoute, /shouldSearchIndexedMemory\(query\)/);
+    assert.match(chatRoute, /setTimeout\(\(\)\s*=>\s*controller\.abort\(\)/);
+    assert.match(chatRoute, /RAG_TIMEOUT_MS\s*=\s*150/);
   });
 
   it('keeps chat recall cheap and bounded before calling AI', () => {
@@ -68,12 +74,17 @@ describe('knowledgebase RAG integration contract', () => {
       /You said you're wearing a \$\{display\} t-shirt\./,
     );
     assert.match(chatRoute, /You told me:/);
+    assert.match(
+      chatRoute,
+      /const aiConfig = getDefaultAiConfig\(\) \?\? resolveAiConfig\(user\)/,
+    );
     assert.match(chatRoute, /generate\(aiConfig/);
     assert.match(
       chatRoute,
       /Rich public chat completion failed; retrying compact prompt/,
     );
-    assert.match(chatRoute, /getDefaultAiConfig\(\)\s*\?\?\s*aiConfig/);
+    assert.doesNotMatch(chatRoute, /const aiConfig = resolveAiConfig\(user\)/);
+    assert.match(chatRoute, /const fallbackAiConfig = aiConfig/);
     assert.match(
       chatRoute,
       /Product public chat completion failed; retrying compact prompt/,

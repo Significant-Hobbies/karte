@@ -1,6 +1,6 @@
 # linkchat — project status record
 
-Last updated: 2026-07-13.
+Last updated: 2026-07-25.
 
 > **Living status** (objective, active work, blockers, unresolved questions,
 > next steps) lives in [`../../STATUS.md`](../../STATUS.md). This file is the
@@ -81,6 +81,11 @@ Browser → Cloudflare Worker (OpenNext) → Turso (pages, links, chat, projects
 
 ## Timeline
 
+- **2026-07-25** — Removed the retired document-index key from Karte's Memory
+  settings and from the chat retrieval gate. Managed Knowledgebase indexes now
+  use lexical-only retrieval for non-trivial chat turns whenever `smIndexId`
+  exists. The 150 ms budget keeps semantic embedding misses off the critical
+  path and falls back to Karte's local profile memory.
 - **2026-07-25** — Restored public profile chat after production verification
   showed that the free-ai streaming compatibility path returned an empty 200
   response while bounded non-streaming completion worked. Chat now returns the

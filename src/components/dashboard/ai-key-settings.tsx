@@ -3,7 +3,6 @@
 import { useCallback, useState } from 'react';
 
 type Props = {
-  hasKey: boolean;
   hasAiConfig: boolean;
   aiEndpointUrl: string;
   aiModel: string;
@@ -11,16 +10,11 @@ type Props = {
 };
 
 export function AiKeySettings({
-  hasKey,
   hasAiConfig,
   aiEndpointUrl: initialUrl,
   aiModel: initialModel,
   isUsingDefaultAi = false,
 }: Props) {
-  // SaaS Maker key (for RAG/chat document indexing)
-  const [aiKey, setAiKey] = useState('');
-  const [configured, setConfigured] = useState(hasKey);
-
   // Custom AI endpoint
   const [endpointUrl, setEndpointUrl] = useState(initialUrl);
   const [apiKey, setApiKey] = useState('');
@@ -36,34 +30,6 @@ export function AiKeySettings({
   // Shared state
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
-
-  async function handleSaveSmKey() {
-    if (!aiKey.trim()) return;
-    setSaving(true);
-    setMessage('');
-
-    try {
-      const res = await fetch('/api/settings/ai-key', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ aiKey: aiKey.trim() }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        setMessage(data.error || 'Failed to save');
-        return;
-      }
-
-      setMessage('Document index key saved successfully');
-      setConfigured(true);
-      setAiKey('');
-    } catch {
-      setMessage('Failed to save');
-    } finally {
-      setSaving(false);
-    }
-  }
 
   async function handleSaveAiConfig() {
     if (!endpointUrl.trim() || !model.trim()) return;
@@ -139,43 +105,6 @@ export function AiKeySettings({
 
   return (
     <div className="space-y-6">
-      {/* Document Index Key (SaaS Maker — for RAG/chat) */}
-      <div className="rounded-2xl bg-white/[0.02] p-6">
-        <h2 className="mb-1 text-lg font-semibold text-karte-text">
-          Document Index Key
-        </h2>
-        <p className="mb-4 text-sm text-karte-text-3">
-          {configured
-            ? 'Your document index key is configured. Enter a new key to update it.'
-            : 'Required for the chat feature — powers document search and retrieval.'}
-        </p>
-
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <input
-            type="password"
-            value={aiKey}
-            onChange={(e) => setAiKey(e.target.value)}
-            placeholder={
-              configured ? '••••••••••••••••' : 'Enter your document index key'
-            }
-            className="flex-1 rounded-lg border border-karte-border-strong bg-white/5 px-3 py-2 text-sm text-karte-text placeholder-gray-500 outline-none focus:border-white/30"
-          />
-          <button
-            onClick={handleSaveSmKey}
-            disabled={saving || !aiKey.trim()}
-            className="w-full rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-900 transition hover:bg-gray-100 disabled:opacity-50 sm:w-auto"
-          >
-            {saving ? 'Saving...' : 'Save'}
-          </button>
-        </div>
-
-        {!configured && (
-          <p className="mt-3 text-xs text-yellow-400/80">
-            Chat will not work until a document index key is configured.
-          </p>
-        )}
-      </div>
-
       {/* Custom AI Endpoint */}
       <div className="rounded-2xl bg-white/[0.02] p-6">
         <h2 className="mb-1 text-lg font-semibold text-karte-text">
