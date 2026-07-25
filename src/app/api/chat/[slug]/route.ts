@@ -393,7 +393,10 @@ async function answerFromStoredProjects(
   if (visibleProjects.length === 0) return null;
 
   const specificProject = visibleProjects.find((project) =>
-    normalizedQuery.includes(project.title.toLowerCase()),
+    project.title
+      .toLowerCase()
+      .split(/\s*(?:\/|\||—|\s-\s)\s*/)
+      .some((alias) => alias.length >= 3 && normalizedQuery.includes(alias)),
   );
   if (specificProject?.description) {
     return `${specificProject.title}: ${specificProject.description}`;

@@ -79,6 +79,10 @@ describe('knowledgebase RAG integration contract', () => {
       /\.from\(projects\)[\s\S]*\.where\(eq\(projects\.pageId,\s*pageId\)\)/,
     );
     assert.match(
+      chatRoute,
+      /\.split\([^)]+\)[\s\S]*normalizedQuery\.includes\(alias\)/,
+    );
+    assert.match(
       profileMemory,
       /mode === 'chat' \? Promise\.resolve\(''\) : getScrapedContext/,
     );
