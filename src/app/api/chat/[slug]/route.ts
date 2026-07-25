@@ -195,6 +195,13 @@ export async function POST(
         : Promise.resolve(''),
     ]);
 
+    const directProjectAnswer = answerFromProfileProjects(query, memory);
+    if (directProjectAnswer) {
+      return new Response(directProjectAnswer, {
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+      });
+    }
+
     const baseSystemPrompt =
       page.chatSystemPrompt ||
       `You are a helpful assistant that answers questions about ${page.displayName}.`;
@@ -360,6 +367,41 @@ function answerFromLocalProfile(
           .trim()}...`
       : summary;
   return `${page.displayName}: ${clipped}`;
+}
+
+function answerFromProfileProjects(
+  query: string,
+  memory: Awaited<ReturnType<typeof buildProfileMemory>>,
+): string | null {
+  const normalizedQuery = query.toLowerCase().replace(/\s+/g, ' ').trim();
+  const projectSources = memory.sources.filter(
+    (source) => source.type === 'project',
+  );
+  if (projectSources.length === 0) return null;
+
+  const specificProject = projectSources.find((source) =>
+    normalizedQuery.includes(source.title.toLowerCase()),
+  );
+  if (specificProject?.content) {
+    return `${specificProject.title}: ${specificProject.content}`;
+  }
+
+  const asksAboutProjects =
+    /\b(projects?|products?|building|working on|work on)\b/.test(
+      normalizedQuery,
+    );
+  if (!asksAboutProjects) return null;
+
+  const names = projectSources
+    .map((source) => source.title.trim())
+    .filter(Boolean)
+    .slice(0, 8);
+  if (names.length === 0) return null;
+
+  const last = names.pop();
+  const formatted =
+    names.length === 0 ? last : `${names.join(', ')}, and ${last}`;
+  return `${memory.pageName} is building ${formatted}.`;
 }
 
 function answerFromRecentConversation(

@@ -71,6 +71,11 @@ describe('knowledgebase RAG integration contract', () => {
     );
     assert.match(
       chatRoute,
+      /answerFromProfileProjects\(\s*query,\s*memory,?\s*\)/,
+    );
+    assert.match(chatRoute, /source\.type === 'project'/);
+    assert.match(
+      chatRoute,
       /You said you're wearing a \$\{display\} t-shirt\./,
     );
     assert.match(chatRoute, /You told me:/);
