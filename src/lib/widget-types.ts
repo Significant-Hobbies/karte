@@ -58,27 +58,3 @@ export interface WidgetVariant<TData> {
   /** Render function. */
   render: (data: TData, ctx: WidgetRenderContext) => ReactNode;
 }
-
-/**
- * Stored layout. Lives on `pages.layoutPlan` (JSON, nullable).
- * `null` → use `buildDefaultPlan()` which mirrors the legacy rendering.
- */
-interface LayoutPlan {
-  version: 1;
-  rows: LayoutRow[];
-}
-
-interface LayoutRow {
-  /** Cells in this row. Total `cols` should sum to <=12. */
-  cells: LayoutCell[];
-}
-
-interface LayoutCell {
-  /** Matches WidgetVariant.id. */
-  widgetVariantId: string;
-  /** Foreign key into the resource type's table. */
-  resourceId: string;
-  resourceType: WidgetResourceType;
-  /** 12-grid columns this cell occupies. Typically 3, 4, 6, or 12. */
-  cols: number;
-}

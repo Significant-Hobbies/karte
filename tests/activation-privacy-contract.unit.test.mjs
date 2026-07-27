@@ -81,22 +81,23 @@ describe('analytics event map only declares sanitized fields', () => {
 });
 
 describe('activation call sites pass only sanitized arguments', () => {
-  it.each(
-    ACTIVATION_FILES,
-  )('%s calls trackActivated/trackCoreAction without private payloads', async (file) => {
-    const source = await read(file);
-    const coreActionCalls = source.match(/trackCoreAction\([^)]*\)/g) ?? [];
-    expect(coreActionCalls.length).toBeGreaterThan(0);
-    for (const call of coreActionCalls) {
-      // Only the action enum is allowed — no second argument.
-      expect(call).toMatch(/^trackCoreAction\(['"][a-z_]+['"]\)$/);
-    }
-    const activatedCalls = source.match(/trackActivated\([^)]*\)/g) ?? [];
-    for (const call of activatedCalls) {
-      // trackActivated takes no arguments.
-      expect(call).toMatch(/^trackActivated\(\)$/);
-    }
-  });
+  it.each(ACTIVATION_FILES)(
+    '%s calls trackActivated/trackCoreAction without private payloads',
+    async (file) => {
+      const source = await read(file);
+      const coreActionCalls = source.match(/trackCoreAction\([^)]*\)/g) ?? [];
+      expect(coreActionCalls.length).toBeGreaterThan(0);
+      for (const call of coreActionCalls) {
+        // Only the action enum is allowed — no second argument.
+        expect(call).toMatch(/^trackCoreAction\(['"][a-z_]+['"]\)$/);
+      }
+      const activatedCalls = source.match(/trackActivated\([^)]*\)/g) ?? [];
+      for (const call of activatedCalls) {
+        // trackActivated takes no arguments.
+        expect(call).toMatch(/^trackActivated\(\)$/);
+      }
+    },
+  );
 });
 
 describe('trackEvent signature does not accept raw private payloads', () => {

@@ -1,5 +1,5 @@
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
-import { generateText, streamText } from 'ai';
+import { generateText } from 'ai';
 
 export type AiConfig = {
   endpointUrl: string;
@@ -146,33 +146,6 @@ export async function generateChat(
     ...(opts.timeoutMs ? { timeout: { totalMs: opts.timeoutMs } } : {}),
   });
   return text;
-}
-
-/**
- * Stream a chat completion. Returns a Response with SSE text stream.
- */
-export function streamResponse(
-  config: AiConfig,
-  opts: {
-    system: string;
-    prompt: string;
-    reasoningLevel?: ReasoningLevel;
-    maxOutputTokens?: number;
-    timeoutMs?: number;
-  },
-): Response {
-  const provider = getProvider(config, opts.reasoningLevel);
-  const result = streamText({
-    model: provider.chatModel(modelForReasoning(config, opts.reasoningLevel)),
-    system: opts.system,
-    prompt: opts.prompt,
-    maxRetries: 0,
-    ...(opts.maxOutputTokens ? { maxOutputTokens: opts.maxOutputTokens } : {}),
-    ...(opts.timeoutMs
-      ? { timeout: { totalMs: opts.timeoutMs, chunkMs: opts.timeoutMs } }
-      : {}),
-  });
-  return result.toTextStreamResponse();
 }
 
 /**

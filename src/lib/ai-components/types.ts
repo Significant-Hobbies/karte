@@ -8,20 +8,6 @@
 // profile memory by default; users may override per-component via
 // pageSettings.aiComponentDefaults (see schema.ts PageSettings).
 
-type AIComponentType =
-  | 'AskAgain'
-  | 'AvailabilityChip'
-  | 'BookCallSlot'
-  | 'EssayLink'
-  | 'HiringStatus'
-  | 'LocationCard'
-  | 'MetricCard'
-  | 'ProjectMini'
-  | 'QuoteBlock'
-  | 'RateCard'
-  | 'StackList'
-  | 'TimelineSlice';
-
 // Per-component prop shapes. Keep these JSON-serializable since the AI
 // emits them as part of its response payload.
 
@@ -132,13 +118,3 @@ export type RenderableComponent =
   | { type: 'RateCard'; props: RateCardProps }
   | { type: 'StackList'; props: StackListProps }
   | { type: 'TimelineSlice'; props: TimelineSliceProps };
-
-// Server response shape for the chat endpoint. Either text-only
-// (legacy / no components needed) or text + components array.
-interface ChatResponse {
-  text: string;
-  components?: RenderableComponent[];
-  // Echoed back so the client can correlate suggestion chips with
-  // the originating question (AskAgain follow-ups).
-  conversationId?: string;
-}

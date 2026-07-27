@@ -1,7 +1,5 @@
 import type { AgentCapability, pages } from '@/db/schema';
 
-const DEMO_AGENT_SLUG = 'atlas-demo';
-
 export type AgentPageFields = Pick<
   typeof pages.$inferSelect,
   | 'pageType'

@@ -7,8 +7,6 @@ import { getAppHost, isAppHost, normalizeHostname } from './hostname';
 
 export { getAppHost, isAppHost, normalizeHostname };
 
-const HOST_CACHE_TTL_MS = 60_000;
-
 type CachedHost = { slug: string | null; expiresAt: number };
 const hostCache = new Map<string, CachedHost>();
 
