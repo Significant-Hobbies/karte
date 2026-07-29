@@ -7,6 +7,6 @@ packages:
 # reject the lockfile. Bump these as they age past the cutoff.
 overrides:
   rollup: 4.60.2
-  wrangler: 4.85.0
+  wrangler: 4.114.0
   miniflare: 4.20260601.0
   "@types/node": "24.12.4"
