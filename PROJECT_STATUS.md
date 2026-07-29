@@ -20,6 +20,8 @@ cleaner handoff.
 
 ## Timeline
 
+- **2026-07-29** — Added an owned `/changelog` with verified, user-visible
+  release outcomes and direct GitHub Roadmap and Source links.
 - **2026-07-25** — Made managed Knowledgebase recall the default for indexed
   profile memory: chat no longer depends on the retired user-entered document
   key. The chat critical path uses lexical-only retrieval, skips trivial

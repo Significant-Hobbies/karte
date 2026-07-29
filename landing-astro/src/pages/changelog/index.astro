@@ -1,0 +1,82 @@
+---
+import Layout from '@/layouts/Layout.astro';
+
+const repository = 'https://github.com/Significant-Hobbies/karte';
+const releases = [
+  {
+    date: '2026-07-25',
+    title: 'Faster, more dependable profile answers',
+    outcomes: [
+      'Public profile chat now uses the managed Knowledgebase by default instead of requiring a visitor-facing document key.',
+      'Short conversational questions skip unnecessary retrieval, while a bounded local-memory fallback keeps replies moving.',
+    ],
+  },
+  {
+    date: '2026-07-25',
+    title: 'Public chat recovered gracefully',
+    outcomes: [
+      'Empty provider streams no longer leave visitors with a blank or failed answer.',
+      'Karte falls through progressively smaller, profile-grounded prompts before offering a deterministic public-bio response.',
+    ],
+  },
+  {
+    date: '2026-07-13',
+    title: 'Creator Opportunity Desk',
+    outcomes: [
+      'Creators can turn an inbound partnership signal into a structured opportunity brief.',
+      'The workflow remains approval-first, keeping outreach and commitment under the creator’s control.',
+    ],
+  },
+  {
+    date: '2026-07-09',
+    title: 'Karte became a public inbound assistant',
+    outcomes: [
+      'Public pages can answer visitor questions from profile context and collect cleaner contact intent.',
+      'Inbound messages flow into Lead Radar so the creator can follow up with context.',
+    ],
+  },
+];
+---
+
+<Layout
+  title="Changelog — Karte"
+  description="Meaningful improvements to Karte’s public profiles, inbound assistant, and creator workflows."
+  canonicalPath="/changelog"
+>
+  <main class="changelog-shell">
+    <header class="changelog-header">
+      <a class="changelog-brand" href="/">Karte</a>
+      <p class="changelog-kicker">Product history</p>
+      <h1>Changelog</h1>
+      <p>
+        Meaningful improvements to public profiles, visitor conversations, and creator follow-up.
+      </p>
+      <nav aria-label="Project links">
+        <a href={`${repository}/issues`}>Roadmap</a>
+        <a href={repository}>Source</a>
+      </nav>
+    </header>
+
+    <ol class="changelog-list">
+      {
+        releases.map((release) => (
+          <li>
+            <article class="changelog-entry">
+              <time datetime={release.date}>
+                {new Date(`${release.date}T00:00:00`).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </time>
+              <h2>{release.title}</h2>
+              <ul>
+                {release.outcomes.map((outcome) => <li>{outcome}</li>)}
+              </ul>
+            </article>
+          </li>
+        ))
+      }
+    </ol>
+  </main>
+</Layout>
