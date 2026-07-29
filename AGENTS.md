@@ -1,6 +1,6 @@
 # AGENTS.md — Karte (linkchat)
 
-Agent bootloader. Read this first, then `STATUS.md` and `docs/` for depth.
+Agent bootloader. Read this first, then `PROJECT_STATUS.md` and `docs/` for depth.
 
 Also follow the shared fleet-level standard at `../AGENTS.md`. Treat this
 repository as owned product code: protect production stability, keep changes
@@ -12,11 +12,12 @@ incomplete or blocked.
 Link-in-bio platform with AI-enhanced profile modes — chat, encyclopedia,
 roast, newspaper — deployed on Cloudflare Workers via OpenNext. Product:
 <https://karte.cc>. Currently in **maintenance / personal-use mode** (see
-`STATUS.md`).
+`PROJECT_STATUS.md`).
 
 ## Status + docs
 
-- **Living status:** `STATUS.md` — objective, active work, blockers, unresolved questions, next steps.
+- **Current/shipped product truth:** `PROJECT_STATUS.md`.
+- **Open work and blockers:** GitHub Issues.
 - **Docs hub:** `docs/index.md` — full navigation. Start there for any non-trivial question.
 - **Detailed status record:** `docs/current/project-status.md` — timeline, products, feature inventory.
 - Markdown in `docs/` is the **source of truth**. Blume (`blume.config.ts`) is only the presentation/search layer.
@@ -80,8 +81,7 @@ pnpm docs:check           # validate docs (links / frontmatter / placeholders)
 - **Don't duplicate facts easily discoverable from code.** Document *why*
   systems work, non-obvious constraints, operational procedures, decisions,
   and reusable failed approaches.
-- **Don't invent information.** Mark unresolved questions explicitly (see
-  `STATUS.md` → "Unresolved questions").
+- **Don't invent information.** Track unresolved questions in GitHub Issues.
 - **No empty folders or placeholder docs.** Every doc must have useful content.
 - **Preserve history.** Prefer `git mv` and `docs/archive/<name>.md` over
   deletion when consolidating.
@@ -94,7 +94,8 @@ pnpm docs:check           # validate docs (links / frontmatter / placeholders)
 
 | Need | Go |
 | --- | --- |
-| Current objective / blockers / next steps | `STATUS.md` |
+| Current/shipped product truth | `PROJECT_STATUS.md` |
+| Open work and blockers | GitHub Issues |
 | Full route + surface inventory | `docs/product/surfaces.md` |
 | How a request flows / bindings | `docs/architecture/overview.md` |
 | Edge worker / routing / agent edges | `docs/architecture/edge-worker.md` |
