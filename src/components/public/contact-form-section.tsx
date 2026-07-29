@@ -1,6 +1,6 @@
 'use client';
 
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useId, useState } from 'react';
 
 import type { DmMode } from '@/db/schema';
 import { authClient } from '@/lib/auth-client';
@@ -30,6 +30,9 @@ export function ContactFormSection({
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [feedback, setFeedback] = useState('');
+  const nameId = useId();
+  const emailId = useId();
+  const messageId = useId();
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -106,6 +109,7 @@ export function ContactFormSection({
     <form
       onSubmit={handleSubmit}
       className={compact ? 'space-y-3' : 'space-y-4'}
+      aria-label="Contact profile owner"
     >
       {needsVerifiedSession ? (
         <div className="rounded-xl border border-karte-border-strong bg-white/[0.04] p-4">
@@ -135,10 +139,14 @@ export function ContactFormSection({
       ) : dmMode === 'email' && !requireVerifiedEmail ? (
         <>
           <div>
-            <label className="mb-1 block text-xs font-medium text-white/70">
+            <label
+              htmlFor={nameId}
+              className="mb-1 block text-xs font-medium text-white/70"
+            >
               Name
             </label>
             <input
+              id={nameId}
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -149,10 +157,14 @@ export function ContactFormSection({
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-white/70">
+            <label
+              htmlFor={emailId}
+              className="mb-1 block text-xs font-medium text-white/70"
+            >
               Email
             </label>
             <input
+              id={emailId}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -179,10 +191,14 @@ export function ContactFormSection({
           )}
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-white/70">
+            <label
+              htmlFor={messageId}
+              className="mb-1 block text-xs font-medium text-white/70"
+            >
               Message
             </label>
             <textarea
+              id={messageId}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="What would you like to talk about?"
