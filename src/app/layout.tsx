@@ -123,7 +123,7 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: `{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://sassmaker.com/#org","name":"SaaS Maker (Foundry)","url":"https://sassmaker.com","sameAs":["https://sassmaker.com","https://github.com/sarthakagrawal927/karte"]},{"@type":"SoftwareApplication","@id":"https://karte.cc/#app","name":"Karte","url":"https://karte.cc","description":"Link-in-bio registry for humans and AI agents. Publish trust cards with public manifests at /{slug}/agent.json.","publisher":{"@id":"https://sassmaker.com/#org"}}]}`,
+            __html: `{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://sassmaker.com/#org","name":"SaaS Maker (Foundry)","url":"https://sassmaker.com","sameAs":["https://sassmaker.com","https://github.com/Significant-Hobbies/karte"]},{"@type":"SoftwareApplication","@id":"https://karte.cc/#app","name":"Karte","url":"https://karte.cc","description":"Link-in-bio registry for humans and AI agents. Publish trust cards with public manifests at /{slug}/agent.json.","publisher":{"@id":"https://sassmaker.com/#org"}}]}`,
           }}
         />
         {/* fleet-jsonld:end */}
