@@ -15,7 +15,7 @@ cleaner handoff.
 
 ## Dependencies
 
-- Cloudflare Workers/OpenNext, Turso/libSQL, `free-ai`, Knowledgebase, and the
+- Cloudflare Workers/OpenNext, D1, `free-ai`, Knowledgebase, and the
   email/inbound delivery path.
 
 ## Timeline

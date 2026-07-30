@@ -10,7 +10,7 @@ Link-in-bio platform with AI-enhanced profile modes — chat, encyclopedia, roas
 | Concern | Service |
 |---------|---------|
 | Hosting | Cloudflare Workers (`linkchat`) via `@opennextjs/cloudflare` |
-| Database | Turso (libSQL) for app data; Cloudflare D1 (`linkchat-auth`) for better-auth tables |
+| Database | Cloudflare D1 (`linkchat-auth`) for app and better-auth tables |
 | Auth | better-auth + Google OAuth |
 | File storage | Cloudflare R2 (`linkchat-images`) for avatars / project images |
 | Analytics | PostHog (product analytics); Cloudflare Analytics Engine (`ANALYTICS` binding) |
@@ -20,7 +20,7 @@ Link-in-bio platform with AI-enhanced profile modes — chat, encyclopedia, roas
 ## Stack
 
 - **Framework**: Next.js 16 (App Router, React 19, React Compiler ON)
-- **DB**: Turso (libSQL) via Drizzle ORM; D1 for auth tables
+- **DB**: Cloudflare D1 via Drizzle ORM
 - **Auth**: better-auth + Google provider via Drizzle adapter
 - **AI**: `@ai-sdk/openai-compatible`, OpenAI-style gateway
 - **Storage**: Cloudflare R2 for avatars / project images
@@ -34,7 +34,7 @@ See `AGENTS.md` for the agent bootloader, `STATUS.md` for current status, and
 ```bash
 pnpm install
 cp .env.example .env.local           # then fill in the values below
-pnpm drizzle-kit push                 # apply schema to your Turso DB
+pnpm db:setup:local                   # local D1 schema + demo profiles
 pnpm dev                              # http://localhost:3000
 ```
 
@@ -46,8 +46,6 @@ pnpm dev                              # http://localhost:3000
 | `BETTER_AUTH_URL`         | Yes      | e.g. `http://localhost:3000`                   |
 | `AUTH_GOOGLE_ID`          | Yes      | Google OAuth client id                         |
 | `AUTH_GOOGLE_SECRET`      | Yes      | Google OAuth client secret                     |
-| `TURSO_DATABASE_URL`      | Yes      | `libsql://...` (or `file:local.db` for dev)    |
-| `TURSO_AUTH_TOKEN`        | Turso    | `turso db tokens create <db>`                  |
 | `NEXT_PUBLIC_APP_URL`     | Yes      | Public origin used in links + emails           |
 | `LINKCHAT_DEFAULT_AI_API_KEY`         | Yes (chat) | Fallback AI API key for chat            |
 | `LINKCHAT_DEFAULT_AI_ENDPOINT_URL`    | No       | Defaults to the free-ai-gateway worker         |
@@ -72,7 +70,7 @@ pnpm preview              # opennextjs-cloudflare build + local preview
 pnpm deploy:cf            # cf:build + deploy to CF Workers
 
 pnpm drizzle-kit generate   # generate migration from schema
-pnpm drizzle-kit push       # push schema (dev shortcut)
+pnpm db:setup:local         # local D1 schema + demo profiles
 pnpm drizzle-kit studio     # Drizzle Studio UI
 ```
 
@@ -94,7 +92,7 @@ pnpm drizzle-kit studio     # Drizzle Studio UI
 ## Architecture highlights
 
 - **React Compiler ON** — don't hand-write `useMemo`/`useCallback`.
-- **Dual deploy** — local uses `file:local.db`; production uses Turso + D1 on CF Workers.
+- **One schema** — local and production use D1; `db:setup:local` cannot access remote D1.
 - **Generated content** lifecycle: `pending → generating → ready | error`.
 - **Rate limiter is durable** — `RateLimiterDO` Durable Object backs `src/lib/rate-limit.ts`; counts survive deploys and are shared across isolates. Fails open to in-memory when the DO is missing (local dev) or errors.
 - **Edge worker** — `worker.mjs` + `worker-routing.mjs` + `agent-edge.mjs` handle routing, cache headers, and agent indexing before OpenNext (no `middleware.ts`/`proxy.ts`).

@@ -55,5 +55,5 @@ CREATE INDEX IF NOT EXISTS idx_timelineEvents_pageId ON timelineEvents(pageId);
 -- apiKeys.userId — used by API key lookup
 CREATE INDEX IF NOT EXISTS idx_apiKeys_userId ON apiKeys(userId);
 
--- agentAuthCodes.userId — used by auth
-CREATE INDEX IF NOT EXISTS idx_agentAuthCodes_userId ON agentAuthCodes(userId);
+-- agentAuthCodes is keyed by email and has no userId column. Its email and
+-- expiry indexes are created with the table in 006_agent_trust_cards.sql.

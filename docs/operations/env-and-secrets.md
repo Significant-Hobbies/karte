@@ -11,8 +11,6 @@ gitignored except `.env.example`. Production secrets are set with
 | `BETTER_AUTH_SECRET` | Yes | `openssl rand -base64 32`. Startup validates non-empty. |
 | `BETTER_AUTH_URL` | Yes | Deployed origin, e.g. `https://karte.cc` (set in `wrangler.jsonc` `vars`). Must match or auth redirects/callbacks fail. |
 | `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` | Yes | Google OAuth client. Redirect URI: `https://karte.cc/api/auth/callback/google`. (`GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` are accepted aliases.) |
-| `TURSO_DATABASE_URL` | Yes | `libsql://...` or `file:local.db` for dev. |
-| `TURSO_AUTH_TOKEN` | Turso remote | `turso db tokens create <db>`. Not needed for `file:local.db`. |
 | `NEXT_PUBLIC_APP_URL` | Yes | Public origin used in links + emails. |
 | `LINKCHAT_DEFAULT_AI_API_KEY` | Yes (chat) | Fallback AI API key for chat. |
 | `RAG_SERVICE_KEY` | Yes (RAG) | Cloudflare `knowledgebase` RAG service key for profile memory. |
