@@ -20,6 +20,10 @@ cleaner handoff.
 
 ## Timeline
 
+- **2026-07-31** — Protected public contact submissions with Cloudflare
+  Turnstile: visitors receive single-use challenges and the existing contact
+  handler now fails closed unless canonical server-side verification succeeds
+  for the expected action and hostname.
 - **2026-07-29** — Added an owned `/changelog` with verified, user-visible
   release outcomes and direct GitHub Roadmap and Source links.
 - **2026-07-25** — Made managed Knowledgebase recall the default for indexed

@@ -5,6 +5,10 @@ import { type FormEvent, useId, useState } from 'react';
 import type { DmMode } from '@/db/schema';
 import { authClient } from '@/lib/auth-client';
 import { getOrCreateVisitorId } from '@/lib/visitor-id';
+import { TurnstileWidget } from './turnstile-widget';
+
+const TURNSTILE_SITE_KEY =
+  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '0x4AAAAAAECH9kgw7Nme6V3a';
 
 type ContactFormSectionProps = {
   slug: string;
@@ -30,6 +34,8 @@ export function ContactFormSection({
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [feedback, setFeedback] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileResetSignal, setTurnstileResetSignal] = useState(0);
   const nameId = useId();
   const emailId = useId();
   const messageId = useId();
@@ -47,6 +53,7 @@ export function ContactFormSection({
       (!isAnonymous && !usesVerifiedEmail && (!trimmedName || !trimmedEmail)) ||
       (usesVerifiedEmail && !session?.user?.email) ||
       !trimmedMessage ||
+      !turnstileToken ||
       loading
     ) {
       return;
@@ -75,6 +82,7 @@ export function ContactFormSection({
           visitorId: getOrCreateVisitorId(),
           sectionId,
           senderType: isAnonymous ? 'anonymous' : 'email',
+          turnstileToken,
         }),
       });
 
@@ -94,6 +102,8 @@ export function ContactFormSection({
         error instanceof Error ? error.message : 'Failed to send message',
       );
     } finally {
+      setTurnstileToken(null);
+      setTurnstileResetSignal((current) => current + 1);
       setLoading(false);
     }
   }
@@ -207,12 +217,19 @@ export function ContactFormSection({
               required
             />
           </div>
+
+          <TurnstileWidget
+            siteKey={TURNSTILE_SITE_KEY}
+            action="contact"
+            resetSignal={turnstileResetSignal}
+            onTokenChange={setTurnstileToken}
+          />
         </>
       )}
 
       <button
         type="submit"
-        disabled={loading || needsVerifiedSession}
+        disabled={loading || needsVerifiedSession || !turnstileToken}
         className="w-full rounded-lg border border-black/10 px-4 py-2.5 text-sm font-semibold text-[#17120a] shadow-[0_12px_34px_-28px_rgba(242,200,121,0.9)] transition hover:brightness-110 disabled:opacity-50"
         style={{ backgroundColor: accentColor }}
       >

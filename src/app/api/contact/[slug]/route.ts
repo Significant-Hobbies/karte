@@ -7,6 +7,7 @@ import { recordAggregate } from '@/lib/analytics-aggregates';
 import { recordEvent } from '@/lib/analytics-server';
 import { getSession } from '@/lib/auth-server';
 import { rateLimit } from '@/lib/rate-limit';
+import { verifyTurnstile } from '@/lib/turnstile';
 import {
   isValidEmail,
   MAX_CONTACT_MESSAGE_LENGTH,
@@ -26,6 +27,15 @@ export async function POST(
   }
 
   const body = await req.json();
+  const verified = await verifyTurnstile({
+    token: body.turnstileToken,
+    action: 'contact',
+    remoteIp: ip,
+  });
+  if (!verified) {
+    return NextResponse.json({ error: 'Verification failed' }, { status: 403 });
+  }
+
   const name = typeof body.name === 'string' ? body.name.trim() : '';
   const email = typeof body.email === 'string' ? body.email.trim() : '';
   const message = typeof body.message === 'string' ? body.message.trim() : '';
