@@ -25,6 +25,7 @@
     "format:check": "biome format .",
     "check": "biome check .",
     "docs:check": "node scripts/docs-check.mjs",
+    "db:setup:local": "node scripts/setup-local-d1.mjs",
     "knip": "knip --no-exit-code --reporter symbols",
     "knip:strict": "knip --reporter symbols"
   },

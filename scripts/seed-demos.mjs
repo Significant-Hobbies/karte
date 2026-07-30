@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// Emits idempotent SQL to seed the four demo profiles.
-// Run: node scripts/seed-demos.mjs > /tmp/demos.sql
-//      pnpm exec wrangler d1 execute linkchat-auth --remote --file=/tmp/demos.sql
+// Emits idempotent SQL for the four demo profiles.
+// Use `pnpm db:setup:local` to apply it safely to local D1. This script only
+// writes SQL to stdout; it never connects to a database.
 //
 // Avatars: public profile avatars where available, via Unavatar. This keeps
 // the top-left identity and roaming image visually aligned with how the

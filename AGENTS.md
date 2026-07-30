@@ -26,7 +26,7 @@ roast, newspaper — deployed on Cloudflare Workers via OpenNext. Product:
 
 - Next.js 16 (App Router, React 19, **React Compiler ON**), TypeScript (strict)
 - Tailwind CSS v4 (dark theme, glassmorphism, `karte-*` tokens)
-- Turso (libSQL) + Drizzle for app data; Cloudflare D1 `linkchat-auth` for better-auth
+- Cloudflare D1 `linkchat-auth` + Drizzle for app data and better-auth
 - better-auth (Google provider + Drizzle adapter)
 - Cloudflare Workers via `@opennextjs/cloudflare`; custom edge entry `worker.mjs`
 - R2 (`linkchat-images`, `linkchat-cache`), Analytics Engine, `knowledgebase` RAG service binding
@@ -47,7 +47,7 @@ pnpm cf:build            # full CF build (Next + critical CSS + OpenNext + Astro
 pnpm deploy:cf           # cf:build + deploy to CF Workers
 pnpm preview             # opennextjs-cloudflare build + local preview
 
-pnpm drizzle-kit push     # dev schema shortcut
+pnpm db:setup:local       # local D1 schema + idempotent demo profiles
 pnpm drizzle-kit generate # generate migration from schema
 pnpm docs:check           # validate docs (links / frontmatter / placeholders)
 ```
@@ -64,9 +64,8 @@ pnpm docs:check           # validate docs (links / frontmatter / placeholders)
 - **No legacy `unsafe` native ratelimit binding** — use `RateLimiterDO`.
   `rateLimit(...)` is async; callers must `await`. (ADR 0002)
 - **`<Link />`, not raw `<a>`**, for internal navigation.
-- **Verify migration strategy before any prod schema change.** There is no
-  single coherent migration pipeline; some tables use runtime
-  `CREATE TABLE IF NOT EXISTS`. (`docs/architecture/data.md`)
+- **Verify migration strategy before any prod schema change.** Local setup is
+  intentionally isolated from remote D1. (`docs/architecture/data.md`)
 - **Don't commit secrets.** `.env*` is gitignored except `.env.example`;
   production secrets via `wrangler secret put`. (`docs/operations/env-and-secrets.md`)
 - **Don't bypass the Husky pre-push hook.**

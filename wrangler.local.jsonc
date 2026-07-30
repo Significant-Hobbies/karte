@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "linkchat-local-d1",
+  "compatibility_date": "2024-12-30",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "linkchat-auth",
+      "database_id": "local-linkchat-auth",
+      "migrations_dir": "migrations/d1"
+    }
+  ]
+}

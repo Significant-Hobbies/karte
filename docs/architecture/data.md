@@ -1,51 +1,45 @@
 # Data layer
 
-Two SQL databases plus R2 object storage. App data in Turso (libSQL/Drizzle),
-auth data in Cloudflare D1, blobs in R2.
+One Cloudflare D1 database plus R2 object storage. D1 holds app and auth data;
+R2 holds blobs and the OpenNext cache.
 
 ## Databases
 
 | Store | Binding | Holds | Driver |
 | --- | --- | --- | --- |
-| Turso (libSQL) | `TURSO_DATABASE_URL` / `TURSO_AUTH_TOKEN` | App data: pages, links, projects, sections, infoBlocks, conversations, messages, pageEvents, generatedPages, creatorOpportunities, daily aggregates, pageDomains, receivedEmails | `@libsql/client` via `src/db/index.ts` + Drizzle |
-| Cloudflare D1 | `DB` (`linkchat-auth`) | better-auth tables (users, sessions, accounts, verification) | Drizzle D1 adapter |
+| Cloudflare D1 | `DB` (`linkchat-auth`) | App data plus better-auth users, sessions, accounts, and verification | Drizzle D1 adapter via `src/db/index.ts` |
 | R2 `linkchat-images` | `IMAGES_BUCKET` | Avatars, project images, inbound email bodies | `@aws-sdk/client-s3` via `src/lib/r2.ts` |
 | R2 `linkchat-cache` | `NEXT_INC_CACHE_R2_BUCKET` | OpenNext incremental cache (static-assets) | OpenNext |
 
 ## Schema
 
-- Canonical schema: `src/db/schema.ts` (Drizzle, Turso dialect).
+- Canonical schema: `src/db/schema.ts` (Drizzle SQLite schema for D1).
 - Drizzle Kit config: `drizzle.config.ts`.
-- The D1 auth schema is managed by better-auth's Drizzle adapter.
+- Checked-in SQL migrations: `migrations/d1/*.sql`.
 
 ## Migrations
 
-There is **no single coherent migration pipeline**. Two parallel histories
-exist:
+The D1 migration history is the supported path:
 
 | Path | Scope |
 | --- | --- |
-| `migrations/0001_initial.sql`, `migrations/0002_personal_dms.sql` | Early Turso migrations (additive `ALTER TABLE`). |
-| `migrations/d1/001_app_tables.sql` … `010_creator_opportunities.sql` | D1 app-table ports + new features (timeline, agent waitlist, agent trust cards, agent auth abuse, FK indexes, email inbox, creator opportunities). All idempotent `CREATE TABLE IF NOT EXISTS` / additive. |
+| `migrations/d1/000_better_auth_tables.sql` … `010_creator_opportunities.sql` | Better-auth base tables, D1 app tables, and additive feature migrations. |
+| `migrations/0001_initial.sql`, `migrations/0002_personal_dms.sql` | Archived pre-D1 Turso history; do not use for current local setup. |
 
 ### How to apply
 
-- **Dev shortcut:** `pnpm drizzle-kit push` (reconciles schema against Turso).
-- **D1:** `wrangler d1 execute linkchat-auth --remote --file=migrations/d1/<file>.sql`.
-- Some tables are also created at runtime via `CREATE TABLE IF NOT EXISTS`
-  (e.g. `ensureProjectsTable()`). This is intentional but means schema state
-  must be verified before prod changes.
+- **Local schema + fixtures:** `pnpm db:setup:local`.
+- **Production:** apply reviewed D1 migrations manually as part of the
+  documented release procedure.
 
-> **Constraint:** verify migration strategy before any prod schema change. Do
-> not assume `drizzle-kit push` is safe for destructive changes.
+The local command uses `wrangler.local.jsonc`, which pins
+`migrations_dir = migrations/d1`, always passes `--local`, and rejects
+`--remote`. It loads four demo profiles after the schema is current. Wrangler
+tracks applied migrations; the seed is idempotent and replaces only records
+owned by the demo user.
 
-## Known cold-start warning
-
-`ensureProjectsTable()` logs `[unenv] https.request is not implemented yet!`
-on cold start. **Non-fatal** — the error is caught and the app continues. Root
-cause: `@libsql/client/web` uses wss:// for Turso but the initial handshake may
-touch https internally. Doesn't affect DB reads/writes once connected.
-Investigate upgrading `@libsql/client` if it ever causes real issues.
+> **Constraint:** verify migration strategy before any production schema
+> change. The local setup command is not a production migration tool.
 
 ## R2
 

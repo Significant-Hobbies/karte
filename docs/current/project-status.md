@@ -20,14 +20,13 @@ Last updated: 2026-07-25.
 ### External
 
 - **Deploy:** Cloudflare Workers `linkchat` via `@opennextjs/cloudflare` — production `https://karte.cc/`.
-- **App DB:** Turso (libSQL) + Drizzle.
-- **Auth DB:** Cloudflare D1 `linkchat-auth` + better-auth.
+- **Database:** Cloudflare D1 `linkchat-auth` + Drizzle + better-auth.
 - **Auth provider:** Google OAuth via better-auth.
 - **Storage:** R2 `linkchat-images` (avatars, project images).
 - **AI:** free-ai gateway via `@ai-sdk/openai-compatible`.
 - **Analytics:** PostHog + Cloudflare Analytics Engine (`ANALYTICS` binding).
 - **CI/CD:** `.github/workflows/deploy.yml` — auto-deploy on push to `main`.
-- **Env (required):** `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `AUTH_GOOGLE_*`, `TURSO_*`, `NEXT_PUBLIC_APP_URL`, `LINKCHAT_DEFAULT_AI_API_KEY`.
+- **Env (required):** `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `AUTH_GOOGLE_*`, `NEXT_PUBLIC_APP_URL`, `LINKCHAT_DEFAULT_AI_API_KEY`.
 - **Env (optional):** R2 credentials, `RAG_SERVICE_URL`.
 - **Env (RAG):** `RAG_SERVICE_KEY` is required for profile-memory indexing/search.
 
@@ -43,8 +42,7 @@ Last updated: 2026-07-25.
 | --- | --- |
 | App | Next.js 16 (App Router, React 19, React Compiler ON) |
 | Deploy | Cloudflare Workers `linkchat` via `@opennextjs/cloudflare` |
-| App DB | Turso (libSQL) + Drizzle |
-| Auth DB | Cloudflare D1 `linkchat-auth` + better-auth |
+| Database | Cloudflare D1 `linkchat-auth` + Drizzle + better-auth |
 | Auth provider | Google OAuth via better-auth |
 | Storage | R2 `linkchat-images` |
 | AI | free-ai gateway via `@ai-sdk/openai-compatible` |
@@ -54,7 +52,7 @@ Last updated: 2026-07-25.
 ```bash
 pnpm install
 cp .env.example .env.local
-pnpm drizzle-kit push
+pnpm db:setup:local
 pnpm dev                    # :3000
 pnpm build | pnpm lint | pnpm typecheck
 pnpm test                   # Vitest unit (hostname, scraper, …)
@@ -67,14 +65,14 @@ pnpm smoke:agent
 ```
 
 ```
-Browser → Cloudflare Worker (OpenNext) → Turso (pages, links, chat, projects)
-                                      → D1 (better-auth sessions)
+Browser → Cloudflare Worker (OpenNext) → D1 (app data + better-auth)
                                       → R2 (images)
                                       → RAG_SERVICE (infoBlocks sync)
                                       → free-ai gateway (chat streaming SSE)
 ```
 
-- **Dual deploy:** local `file:local.db`; production Turso + D1 on Workers.
+- **One schema:** local and production both use D1; the local setup command
+  cannot access remote D1.
 - **Generated content:** state machine `pending → generating → ready | error`.
 - **Rate limiter:** durable sliding-window via `RateLimiterDO` Durable Object (`rate-limiter-do.mjs` + `src/lib/rate-limit.ts`); counts survive deploys and are shared across isolates. Fails open to per-isolate in-memory fallback when the DO is missing (local dev) or errors/times out. Same 20 req/min default semantics.
 - **SSRF-safe scraping:** `src/lib/scraper.ts` blocks loopback/RFC1918/link-local before fetch.

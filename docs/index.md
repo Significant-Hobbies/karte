@@ -32,7 +32,7 @@ OpenNext. Product: <https://karte.cc>.
 
 - [`architecture/overview.md`](architecture/overview.md) — request flow, two runtimes, bindings.
 - [`architecture/edge-worker.md`](architecture/edge-worker.md) — `worker.mjs` + routing + agent edge.
-- [`architecture/data.md`](architecture/data.md) — Turso + D1 + R2 + schema + migrations.
+- [`architecture/data.md`](architecture/data.md) — D1 + R2 + schema + migrations.
 - [`architecture/rate-limiter.md`](architecture/rate-limiter.md) — durable `RateLimiterDO`.
 - [`architecture/rag-memory.md`](architecture/rag-memory.md) — knowledgebase RAG + profile memory.
 - [`architecture/decisions/`](architecture/decisions/README.md) — ADRs.

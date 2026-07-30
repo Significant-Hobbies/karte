@@ -25,6 +25,7 @@ All scripts live in `package.json` `scripts`. Helper scripts live in
 | `format` / `format:check` | biome format |
 | `check` | `biome check .` |
 | `docs:check` | validate docs (links / frontmatter / placeholders) |
+| `db:setup:local` | apply all D1 migrations locally and load four idempotent demo profiles |
 
 ## `scripts/` directory
 
@@ -36,7 +37,8 @@ All scripts live in `package.json` `scripts`. Helper scripts live in
 | `extract-claude-design.mjs` | Extract design tokens from the Claude design deck. |
 | `inline-critical-css.mjs` / `run-inline-critical-css.mjs` | Beasties critical-CSS inlining step in `cf:build`. |
 | `overlay-astro-landing.mjs` / `run-overlay-astro-landing.mjs` | Overlay the Astro landing onto the Next.js output in `cf:build`. |
-| `seed-agent-demo.mjs` / `seed-demos.mjs` | Demo data seeding. |
+| `setup-local-d1.mjs` | Local-only migration and demo-fixture setup; rejects remote access. |
+| `seed-agent-demo.mjs` / `seed-demos.mjs` | Emit demo data SQL. |
 | `smoke-agent-api.mjs` / `smoke-profile-memory.mjs` | Smoke tests. |
 | `test-import.mjs` | Import-path test harness. |
 | `predeploy-agent-trust-cards.sh` | Pre-deploy hook for agent trust cards. |

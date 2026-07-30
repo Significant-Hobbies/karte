@@ -4,16 +4,21 @@
 
 - Node.js 22+ (Blume docs tooling wants 22.12+; the app CI uses 22).
 - pnpm 10+ (`packageManager` is pinned in `package.json`).
-- A Turso database (or use `file:local.db` for dev).
+- Wrangler (installed with the project dependencies).
 
 ## First run
 
 ```bash
 pnpm install
 cp .env.example .env.local        # then fill in the values
-pnpm drizzle-kit push             # apply schema to your Turso DB (or local file)
+pnpm db:setup:local               # local D1 schema + four demo profiles
 pnpm dev                          # http://localhost:3000
 ```
+
+`db:setup:local` uses `wrangler.local.jsonc`, applies only
+`migrations/d1/*.sql`, and refuses `--remote`. Re-running it is safe: Wrangler
+tracks applied migrations and the demo seed replaces only its dedicated demo
+records.
 
 ## Required env vars
 
@@ -23,8 +28,6 @@ for a working local app:
 - `BETTER_AUTH_SECRET` — `openssl rand -base64 32`
 - `BETTER_AUTH_URL` — e.g. `http://localhost:3000`
 - `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` — Google OAuth client
-- `TURSO_DATABASE_URL` — `libsql://...` or `file:local.db`
-- `TURSO_AUTH_TOKEN` — required for remote Turso, not for `file:local.db`
 - `NEXT_PUBLIC_APP_URL` — public origin used in links + emails
 - `LINKCHAT_DEFAULT_AI_API_KEY` — fallback AI key for chat
 - `RAG_SERVICE_KEY` — required for profile-memory indexing/search
@@ -40,6 +43,7 @@ pnpm test               # vitest run
 pnpm test:e2e           # playwright (assumes pnpm dev on :3000)
 pnpm preview            # opennextjs-cloudflare build + local preview
 pnpm docs:check         # validate docs (links, frontmatter, placeholders)
+pnpm db:setup:local     # rebuild/refresh local D1 fixtures
 ```
 
 Full command list: `docs/development/scripts.md`. Deploy: `docs/operations/deploy.md`.
