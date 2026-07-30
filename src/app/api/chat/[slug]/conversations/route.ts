@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { db, ensureProjectsTable } from '@/db';
 import { conversations, pages } from '@/db/schema';
 import { resolvePublicProfileSlug } from '@/lib/demo-profiles';
+import { rateLimit } from '@/lib/rate-limit';
 
 const EMAIL_RE = /^\S+@\S+\.\S+$/;
 
@@ -13,6 +14,22 @@ export async function POST(
 ) {
   const requestedSlug = (await params).slug;
   const slug = resolvePublicProfileSlug(requestedSlug);
+  const ip =
+    req.headers.get('cf-connecting-ip') ??
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    'unknown';
+  const { ok } = await rateLimit(`chat-conversation:${slug}:${ip}`, {
+    maxRequests: 8,
+    windowMs: 60_000,
+    endpoint: 'chat-conversation-create',
+  });
+  if (!ok) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: { 'Retry-After': '60' } },
+    );
+  }
+
   const body = await req.json().catch(() => ({}));
   const { visitorId, visitorEmail } = body as {
     visitorId?: unknown;

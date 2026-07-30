@@ -1,6 +1,6 @@
 # Karte — PROJECT STATUS
 
-Last updated: 2026-07-25. Deeper historical detail lives at
+Last updated: 2026-07-31. Deeper historical detail lives at
 [`docs/current/project-status.md`](docs/current/project-status.md).
 
 ## Why / What
@@ -20,6 +20,9 @@ cleaner handoff.
 
 ## Timeline
 
+- **2026-07-31** — Hardened public profile chat with server-verified Cloudflare
+  Turnstile challenges and bounded per-profile, per-IP limits for conversation
+  creation and message reads/writes.
 - **2026-07-31** — Protected public contact submissions with Cloudflare
   Turnstile: visitors receive single-use challenges and the existing contact
   handler now fails closed unless canonical server-side verification succeeds

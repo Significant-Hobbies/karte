@@ -7,6 +7,7 @@ import { renderComponent } from '@/components/public/ai-components/registry';
 import { ChatEmailGate } from '@/components/public/chat-email-gate';
 import { ChatMessageBody } from '@/components/public/chat-message-body';
 import { ContactFormSection } from '@/components/public/contact-form-section';
+import { TurnstileWidget } from '@/components/public/turnstile-widget';
 import type { DmMode } from '@/db/schema';
 import { applyLayoutDirectives } from '@/lib/ai-components/layout';
 import {
@@ -46,6 +47,8 @@ const EMPTY_CHAT_RESPONSE_MESSAGE =
   "I didn't get a response back. Please try again in a moment.";
 const CHAT_SERVICE_UNAVAILABLE_MESSAGE =
   "Couldn't reach the chat service. Check your connection and try sending again.";
+const TURNSTILE_SITE_KEY =
+  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '0x4AAAAAAECH9kgw7Nme6V3a';
 
 function ChatLoadingIndicator({ label }: { label: string }) {
   return (
@@ -123,6 +126,8 @@ export function ChatWidget({
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileResetSignal, setTurnstileResetSignal] = useState(0);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [historyStatus, setHistoryStatus] = useState<
     'idle' | 'loading' | 'error' | 'loaded'
@@ -379,6 +384,16 @@ export function ChatWidget({
         typeof window !== 'undefined'
           ? window.localStorage.getItem(cacheKey)
           : null;
+      if (!cached && !turnstileToken) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: 'Complete the verification before sending.',
+          },
+        ]);
+        return;
+      }
       setInput('');
       setMessages((prev) => [...prev, { role: 'user', content: query }]);
 
@@ -390,6 +405,7 @@ export function ChatWidget({
         return;
       }
 
+      const verificationToken = turnstileToken as string;
       setLoading(true);
 
       try {
@@ -403,6 +419,7 @@ export function ChatWidget({
             query,
             visitorEmail,
             conversationId: convId,
+            turnstileToken: verificationToken,
           }),
         });
 
@@ -522,9 +539,18 @@ export function ChatWidget({
         });
       } finally {
         setLoading(false);
+        setTurnstileToken(null);
+        setTurnstileResetSignal((value) => value + 1);
       }
     },
-    [ensureConversation, loading, saveMessage, slug, visitorEmail],
+    [
+      ensureConversation,
+      loading,
+      saveMessage,
+      slug,
+      turnstileToken,
+      visitorEmail,
+    ],
   );
 
   // AskAgain chips fire 'karte:ask-again' on click; this hooks them
@@ -938,6 +964,14 @@ export function ChatWidget({
                       Type your first message ↓
                     </p>
                   )}
+                  <div className="mb-2 overflow-hidden">
+                    <TurnstileWidget
+                      siteKey={TURNSTILE_SITE_KEY}
+                      action="turnstile-spin-v2"
+                      resetSignal={turnstileResetSignal}
+                      onTokenChange={setTurnstileToken}
+                    />
+                  </div>
                   <div className="flex items-end gap-2">
                     <textarea
                       ref={inputRef}
@@ -970,7 +1004,10 @@ export function ChatWidget({
                     <button
                       type="submit"
                       disabled={
-                        loading || historyStatus === 'loading' || !input.trim()
+                        loading ||
+                        historyStatus === 'loading' ||
+                        !input.trim() ||
+                        !turnstileToken
                       }
                       className={`flex shrink-0 items-center justify-center gap-1.5 self-end rounded-lg border border-black/10 px-4 py-3 text-base font-medium transition-opacity duration-200 ease-[var(--karte-ease)] disabled:opacity-40 sm:px-3 sm:py-2 sm:text-sm ${
                         isFirstMessage && input.trim() ? 'animate-pulse' : ''

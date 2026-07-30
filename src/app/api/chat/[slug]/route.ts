@@ -8,6 +8,7 @@ import { resolvePublicProfileSlug } from '@/lib/demo-profiles';
 import { search } from '@/lib/knowledgebase';
 import { buildProfileMemory } from '@/lib/profile-memory';
 import { rateLimit } from '@/lib/rate-limit';
+import { verifyTurnstile } from '@/lib/turnstile';
 
 const EMAIL_RE = /^\S+@\S+\.\S+$/;
 const RECENT_CONTEXT_MESSAGE_LIMIT = 6;
@@ -37,6 +38,7 @@ export async function POST(
     query?: unknown;
     visitorEmail?: unknown;
     conversationId?: unknown;
+    turnstileToken?: unknown;
   };
   try {
     body = await req.json();
@@ -46,7 +48,7 @@ export async function POST(
       headers: { 'Content-Type': 'application/json' },
     });
   }
-  const { query, visitorEmail, conversationId } = body;
+  const { query, visitorEmail, conversationId, turnstileToken } = body;
 
   if (typeof query !== 'string' || !query.trim()) {
     return new Response(JSON.stringify({ error: 'query required' }), {
@@ -63,6 +65,18 @@ export async function POST(
         headers: { 'Content-Type': 'application/json' },
       },
     );
+  }
+
+  const verified = await verifyTurnstile({
+    token: turnstileToken,
+    action: 'turnstile-spin-v2',
+    remoteIp: ip,
+  });
+  if (!verified) {
+    return new Response(JSON.stringify({ error: 'Verification failed' }), {
+      status: 403,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   // Get page + user config
