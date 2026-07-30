@@ -1,16 +1,20 @@
 import type { MetadataRoute } from 'next';
 
-const siteUrl = 'https://karte.cc';
+import {
+  ROBOTS_ALLOW,
+  ROBOTS_DISALLOW,
+  SITE_ORIGIN,
+} from '../../public-route-contract.mjs';
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
         userAgent: '*',
-        allow: '/',
-        disallow: ['/dashboard', '/api/'],
+        allow: [...ROBOTS_ALLOW],
+        disallow: [...ROBOTS_DISALLOW],
       },
     ],
-    sitemap: `${siteUrl}/sitemap.xml`,
+    sitemap: `${SITE_ORIGIN}/sitemap.xml`,
   };
 }

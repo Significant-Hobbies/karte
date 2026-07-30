@@ -3,8 +3,10 @@ import { redirect } from 'next/navigation';
 import { GoogleSignInButton } from '@/components/auth/google-sign-in-button';
 import { PublicTopBar } from '@/components/public/public-top-bar';
 import { getSession } from '@/lib/auth-server';
+import { privateRouteMetadata } from '@/lib/public-route-metadata';
 
 const modeLabels = ['Profile', 'Ask', 'Inbox', 'Newspaper'];
+export const metadata = privateRouteMetadata('Sign in — Karte');
 
 export default async function LoginPage() {
   const session = await getSession().catch(() => null);

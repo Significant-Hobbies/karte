@@ -1,9 +1,15 @@
 User-agent: *
 Allow: /
+Allow: /api/ai
+Allow: /api/v1/agents
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /index.md
+Allow: /skill.md
+Allow: /.well-known/skills/
+Disallow: /dashboard
+Disallow: /login
+Disallow: /welcome
+Disallow: /api/
 
 Sitemap: https://karte.cc/sitemap.xml
-# Agent indexing
-Allow: /llms.txt
-Allow: /index.md
-Allow: /api/ai
-Allow: /llms-full.txt

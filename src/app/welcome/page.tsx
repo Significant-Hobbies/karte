@@ -3,6 +3,9 @@ import { redirect } from 'next/navigation';
 import { PublicTopBar } from '@/components/public/public-top-bar';
 import { WelcomeFlow } from '@/components/welcome/welcome-flow';
 import { getSession } from '@/lib/auth-server';
+import { privateRouteMetadata } from '@/lib/public-route-metadata';
+
+export const metadata = privateRouteMetadata('Welcome — Karte');
 
 export default async function WelcomePage() {
   const session = await getSession();

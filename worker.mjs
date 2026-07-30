@@ -17,6 +17,7 @@ import openNext, {
   DOShardedTagCache as OpenNextDOShardedTagCache,
 } from './.open-next/worker.js';
 import { handleAgentEdge } from './agent-edge.mjs';
+import { handlePublicRouteMarkdown } from './public-route-markdown.mjs';
 import { RateLimiterDO as RateLimiterDurableObject } from './rate-limiter-do.mjs';
 import { withTiming } from './timing.mjs';
 import {
@@ -39,12 +40,15 @@ export class RateLimiterDO extends RateLimiterDurableObject {}
 const CACHEABLE_EXACT = new Set([
   '/',
   '/about',
+  '/changelog',
   '/create',
+  '/faq',
   '/welcome',
   '/login',
   '/privacy',
   '/terms',
 ]);
+const ASTRO_ASSET_PATHS = new Set(['/', '/changelog', '/faq']);
 function isCacheableDocumentPath(pathname) {
   return CACHEABLE_EXACT.has(pathname);
 }
@@ -60,6 +64,29 @@ export default {
       if (routed.response) return routed.response;
       request = routed.request ?? request;
 
+      const markdown = await handlePublicRouteMarkdown(
+        request,
+        async (sourcePath) => {
+          const sourceUrl = new URL('/api/ai/markdown', request.url);
+          sourceUrl.searchParams.set('path', sourcePath);
+          const sourceResponse = await openNext.fetch(
+            new Request(sourceUrl, {
+              headers: {
+                Accept: 'text/markdown',
+                'x-karte-markdown-source': '1',
+              },
+            }),
+            env,
+            ctx,
+          );
+          if (!sourceResponse.ok) return null;
+          const contentType = sourceResponse.headers.get('content-type') ?? '';
+          if (!contentType.toLowerCase().includes('text/markdown')) return null;
+          return sourceResponse.text();
+        },
+      );
+      if (markdown) return markdown;
+
       if (request.method !== 'GET') {
         return openNext.fetch(request, env, ctx);
       }
@@ -70,24 +97,22 @@ export default {
           ? addProfileCacheHeaders(response)
           : response;
       }
-      // Auth-bearing requests pass straight through; the user is likely
-      // going to be redirected by Worker routing to /library or /dashboard.
-      if (hasAuthCookie(request)) {
+      // Preserve the signed-in homepage redirect. FAQ and changelog remain
+      // public static documents even when a session cookie is present.
+      if (hasAuthCookie(request) && url.pathname === '/') {
         return openNext.fetch(request, env, ctx);
       }
 
-      // Short-circuit: the Astro landing is overlaid into
-      // `.open-next/assets/index.html` by `scripts/overlay-astro-landing.mjs`.
-      // For anon GET /, serve straight from the assets binding instead of
-      // booting the full OpenNext stack (next-server, route handler,
-      // Beasties pipeline, etc.). Cuts TTFB from ~250ms to ~30ms.
+      // Short-circuit: the Astro landing, FAQ, and changelog are overlaid into
+      // `.open-next/assets` by `scripts/overlay-astro-landing.mjs`. Serve them
+      // straight from the assets binding instead of letting the Next catch-all
+      // interpret `/faq` or `/changelog` as profile slugs.
       //
       // The Workers Static Assets binding does NOT auto-compress its
       // responses (Lighthouse flagged ~80 KB wasted on uncompressed HTML
       // even with CF Edge cache HIT). Compress with gzip here so the
       // response — and the downstream CF Edge cache entry — is small.
-      // Only Astro overlay at `/` is static; marketing pages use edge HTML cache.
-      if (env.ASSETS && url.pathname === '/') {
+      if (env.ASSETS && ASTRO_ASSET_PATHS.has(url.pathname)) {
         const assetResp = await env.ASSETS.fetch(request);
         // The assets binding answers If-None-Match revalidations with 304.
         // Pass those through — falling through would hand the request to

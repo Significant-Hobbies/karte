@@ -8,14 +8,20 @@
  *   if (agent) return agent
  */
 
+import {
+  markdownPathFor,
+  robotsTextFor,
+  STATIC_PUBLIC_ROUTES,
+} from './public-route-contract.mjs';
+
 /** @type {{ name: string, url: string, llmsTxt: string, llmsFullTxt?: string, indexMd: string, catalog: object }} */
 // biome-ignore format: generated payload from apply-agent-surfaces (JSON keys/quotes)
 export const AGENT_SURFACE = {
   "name": "Karte",
   "url": "https://karte.cc",
-  "llmsFullTxt": "# Karte — full agent brief\n\nLink-in-bio registry for humans and AI agents. Publish trust cards with public manifests at /{slug}/agent.json.\n\n## Index\n\n# Karte\n\nLink-in-bio registry for humans and AI agents.\n\n## What it is\n\n- Public trust cards for AI agents\n- Machine-readable manifests at `/{slug}/agent.json`\n- Chat, encyclopedia, and roast modes for human profiles\n\n## Agent workflow\n\n1. Read https://karte.cc/skill.md\n2. Install skill: `curl -fsSL https://karte.cc/skills/karte/install.sh | bash`\n3. Auth via email code → `kk_` API key\n4. Create and publish via `/api/v1/agents`\n\n## Agent entrypoints\n\n- https://karte.cc/llms.txt\n- https://karte.cc/skill.md\n- https://karte.cc/api/ai\n- https://karte.cc/index.md\n- https://karte.cc/.well-known/skills/index.json\n\n## Product links\n\n- Home: https://karte.cc/ — Product landing\n- Skill: https://karte.cc/skill.md — Full agent workflow\n- LLM index: https://karte.cc/llms.txt — Agent index\n\n## Machine surfaces\n\n- https://karte.cc/llms.txt\n- https://karte.cc/llms-full.txt\n- https://karte.cc/api/ai\n- https://karte.cc/index.md\n- https://karte.cc/sitemap.xml\n- https://karte.cc/robots.txt\n\n## Contact / fleet\n\n- Fleet: https://sassmaker.com\n- Agent email for directory verification: sarthakagrawal@agentmail.to\n",
-  "llmsTxt": "# Karte\n\n> Link-in-bio registry for humans and AI agents. Publish trust cards with public manifests at /{slug}/agent.json.\n\n## Product\n\n- [Home](https://karte.cc/): Product landing\n- [Skill](https://karte.cc/skill.md): Full agent workflow\n- [LLM index](https://karte.cc/llms.txt): Agent index\n\n## Machine surfaces\n\n- [Agent catalog](https://karte.cc/api/ai): JSON inventory of public surfaces\n- [Homepage markdown](https://karte.cc/index.md): Product brief without JS\n- [This index](https://karte.cc/llms.txt)\n\n## Optional\n\n- [Foundry](https://sassmaker.com): Parent fleet showcase\n",
-  "indexMd": "# Karte\n\nLink-in-bio registry for humans and AI agents.\n\n## What it is\n\n- Public trust cards for AI agents\n- Machine-readable manifests at `/{slug}/agent.json`\n- Chat, encyclopedia, and roast modes for human profiles\n\n## Agent workflow\n\n1. Read https://karte.cc/skill.md\n2. Install skill: `curl -fsSL https://karte.cc/skills/karte/install.sh | bash`\n3. Auth via email code → `kk_` API key\n4. Create and publish via `/api/v1/agents`\n\n## Agent entrypoints\n\n- https://karte.cc/llms.txt\n- https://karte.cc/skill.md\n- https://karte.cc/api/ai\n- https://karte.cc/index.md\n- https://karte.cc/.well-known/skills/index.json\n",
+  "llmsFullTxt": "# Karte — full agent brief\n\nKarte is a public profile and inbound-assistant registry for people and AI agents.\n\n## Public HTML corpus\n\nEvery URL in https://karte.cc/sitemap.xml supports `Accept: text/markdown` and a `.md` alternate. Published profile pages and ready encyclopedia, newspaper, and roast modes are rendered from the same public source data as the human pages.\n\n## Agent workflow\n\n1. Read https://karte.cc/skill.md\n2. Install the Karte skill from its published instructions\n3. Authenticate by email code to receive a scoped `kk_` API key\n4. Create and publish through `/api/v1/agents`\n\n## Agent entrypoints\n\n- https://karte.cc/llms.txt\n- https://karte.cc/skill.md\n- https://karte.cc/api/ai\n- https://karte.cc/index.md\n- https://karte.cc/.well-known/skills/index.json\n\n## Public product pages\n\n- https://karte.cc/\n- https://karte.cc/about\n- https://karte.cc/create\n- https://karte.cc/faq\n- https://karte.cc/changelog\n- https://karte.cc/privacy\n- https://karte.cc/terms\n\n## Machine surfaces\n\n- https://karte.cc/llms-full.txt\n- https://karte.cc/sitemap.xml\n- https://karte.cc/robots.txt\n- `/{slug}/agent.json` for published agent-type profiles\n- `/api/v1/agents` for the authenticated registry API\n\n## Privacy boundary\n\nDashboard, login, welcome, owner APIs, JSON payloads, and downloads are not public HTML documents and are excluded from the sitemap and Markdown route boundary.\n",
+  "llmsTxt": "# Karte\n\n> Public profiles and contextual inbound assistants for people and AI agents.\n\n## Product\n\n- [Home](https://karte.cc/): Product landing\n- [About](https://karte.cc/about): What Karte publishes\n- [Create](https://karte.cc/create): Draft and claim a profile\n- [FAQ](https://karte.cc/faq): Agent profiles and trust cards\n- [Changelog](https://karte.cc/changelog): Verified product outcomes\n\n## Agent surfaces\n\n- [Skill](https://karte.cc/skill.md): Full agent workflow\n- [Agent catalog](https://karte.cc/api/ai): JSON inventory of public surfaces\n- [Expanded index](https://karte.cc/llms-full.txt): Corpus and privacy boundary\n- [Sitemap](https://karte.cc/sitemap.xml): Canonical public HTML routes\n\nEvery sitemap URL has a `.md` alternate and supports `Accept: text/markdown`.\n",
+  "indexMd": "# Karte\n\nKarte gives a person or AI agent one public page for links, projects, proof, and contextual inbound conversations.\n\n## Public product\n\n- Public profiles can publish links, projects, timelines, and optional generated modes.\n- Visitors can ask questions or send contextual messages without accessing the owner dashboard.\n- Published agent profiles can expose trust metadata at `/{slug}/agent.json`.\n\n## Agent workflow\n\n1. Read https://karte.cc/skill.md\n2. Authenticate by email code for a scoped API key\n3. Create and publish through `/api/v1/agents`\n\n## Reading the site\n\nEvery URL in https://karte.cc/sitemap.xml supports Markdown negotiation and a `.md` alternate. Private dashboard, authentication, JSON, and download routes are excluded.\n",
   "catalog": {
     "name": "Karte",
     "version": "1",
@@ -28,29 +34,13 @@ export const AGENT_SURFACE = {
       "suffix": ".md",
       "negotiation": true
     },
-    "surfaces": [
-      {
-        "id": "home",
-        "url": "https://karte.cc/",
-        "md": "https://karte.cc/index.md",
-        "kind": "static",
-        "description": "Product home"
-      },
-      {
-        "id": "skill",
-        "url": "https://karte.cc/skill.md",
-        "md": null,
-        "kind": "static",
-        "description": "Full agent workflow"
-      },
-      {
-        "id": "llm-index",
-        "url": "https://karte.cc/llms.txt",
-        "md": null,
-        "kind": "static",
-        "description": "Agent index"
-      }
-    ],
+    "surfaces": STATIC_PUBLIC_ROUTES.map((route) => ({
+      "id": route.path === "/" ? "home" : route.path.slice(1),
+      "url": `https://karte.cc${route.path === "/" ? "/" : route.path}`,
+      "md": `https://karte.cc${markdownPathFor(route.path)}`,
+      "kind": "static",
+      "description": route.description
+    })),
     "auth": {
       "public": true,
       "notes": "Auth-walled app routes are not agent-indexed unless listed here."
@@ -89,6 +79,7 @@ export function handleAgentEdge(request) {
             url.origin,
           )
         : `${url.origin}/sitemap.xml`,
+      robots: `${url.origin}/robots.txt`,
       surfaces: (AGENT_SURFACE.catalog.surfaces || []).map((s) => ({
         ...s,
         url: s.url
@@ -98,6 +89,9 @@ export function handleAgentEdge(request) {
       })),
     };
     return json(catalog);
+  }
+  if (path === '/robots.txt') {
+    return text(robotsTextFor(url.origin), 'text/plain; charset=utf-8');
   }
 
   // Homepage markdown negotiation

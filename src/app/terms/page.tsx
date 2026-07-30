@@ -1,9 +1,8 @@
 import Link from 'next/link';
 
-export const metadata = {
-  title: 'Terms — Karte',
-  description: 'Use of Karte is provided as-is. You own your profile content.',
-};
+import { metadataForStaticPath } from '@/lib/public-route-metadata';
+
+export const metadata = metadataForStaticPath('/terms');
 
 export default function TermsPage() {
   return (

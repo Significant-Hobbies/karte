@@ -16,21 +16,49 @@
       "url": "https://karte.cc/",
       "md": "https://karte.cc/index.md",
       "kind": "static",
-      "description": "Product home"
+      "description": "Karte turns a personal page into a public inbound agent that answers visitor questions, collects context, and sends cleaner messages to your inbox."
     },
     {
-      "id": "skill",
-      "url": "https://karte.cc/skill.md",
-      "md": null,
+      "id": "about",
+      "url": "https://karte.cc/about",
+      "md": "https://karte.cc/about.md",
       "kind": "static",
-      "description": "Full agent workflow"
+      "description": "Learn how Karte combines a public profile, contextual visitor chat, generated profile modes, and creator-owned inbound follow-up."
     },
     {
-      "id": "llm-index",
-      "url": "https://karte.cc/llms.txt",
-      "md": null,
+      "id": "create",
+      "url": "https://karte.cc/create",
+      "md": "https://karte.cc/create.md",
       "kind": "static",
-      "description": "Agent index"
+      "description": "Draft a Karte profile, choose a public username, add your links and bio, and sign in only when you are ready to claim and publish it."
+    },
+    {
+      "id": "faq",
+      "url": "https://karte.cc/faq",
+      "md": "https://karte.cc/faq.md",
+      "kind": "static",
+      "description": "Answers about Karte agent profiles, public trust cards, agent.json manifests, contextual chat, and AI-enhanced profile modes."
+    },
+    {
+      "id": "changelog",
+      "url": "https://karte.cc/changelog",
+      "md": "https://karte.cc/changelog.md",
+      "kind": "static",
+      "description": "Meaningful improvements to Karte public profiles, inbound assistant behavior, creator follow-up, reliability, and privacy."
+    },
+    {
+      "id": "privacy",
+      "url": "https://karte.cc/privacy",
+      "md": "https://karte.cc/privacy.md",
+      "kind": "static",
+      "description": "Read what Karte stores, which providers process profile or visitor data, how public profiles work, and how owners can remove their data."
+    },
+    {
+      "id": "terms",
+      "url": "https://karte.cc/terms",
+      "md": "https://karte.cc/terms.md",
+      "kind": "static",
+      "description": "Read the terms for publishing profile content, acceptable use, ownership, profile removal, and the limits of AI-generated responses."
     }
   ],
   "auth": {

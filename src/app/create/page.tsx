@@ -5,6 +5,9 @@ import { OnboardingChat } from '@/components/create/onboarding-chat';
 import { PageSettings } from '@/components/dashboard/page-settings';
 import { PublicTopBar } from '@/components/public/public-top-bar';
 import { getSession } from '@/lib/auth-server';
+import { metadataForStaticPath } from '@/lib/public-route-metadata';
+
+export const metadata = metadataForStaticPath('/create');
 
 // Sanitize a query-param slug to the same rules the input enforces:
 // lowercase, alphanumeric + hyphens. Server-render safe so the

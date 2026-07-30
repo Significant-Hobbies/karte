@@ -8,16 +8,28 @@ deeper behavior lives in the per-feature docs linked from here and in code.
 | Route | Surface | Notes |
 | --- | --- | --- |
 | `/` | Landing | Astro overlay on production build (see `docs/operations/deploy.md`). |
-| `/login` | Google sign-in | better-auth Google provider. |
+| `/about`, `/privacy`, `/terms` | Public product/legal pages | Next-rendered and included in the public sitemap. |
+| `/faq`, `/changelog` | Public content pages | Astro overlays included in the public sitemap. |
 | `/create` | Page creation wizard | First thing a new user sees. |
-| `/welcome` | Onboarding entry | |
 | `/[slug]` | Public profile page (SSR) | Heavy server render; see `docs/knowledge/audits/perf-audit.md`. |
 | `/[slug]/encyclopedia` | AI profile mode | `docs/product/ai-modes.md` |
 | `/[slug]/roast` | AI profile mode | `docs/product/ai-modes.md` |
 | `/[slug]/newspaper` | AI profile mode | `docs/product/ai-modes.md` |
 | `/[slug]/data.json` | Public profile JSON | Agent-readable profile payload. |
 | `/[slug]/vcard` | vCard download | |
-| `/about`, `/privacy`, `/terms` | Static legal/brand | Low traffic but represent brand. |
+
+The indexable HTML contract is the seven static product pages above plus
+published profile roots and profile modes that are both enabled and ready.
+Login, welcome, dashboard, API, JSON, and download routes are intentionally
+excluded from the HTML sitemap. Every sitemap route has a `.md` alternate and
+supports `Accept: text/markdown`.
+
+## Authentication surfaces
+
+| Route | Surface | Notes |
+| --- | --- | --- |
+| `/login` | Google sign-in | better-auth Google provider; `noindex`. |
+| `/welcome` | Onboarding entry | Private setup flow; `noindex`. |
 
 ## Public API (visitor-side)
 
@@ -64,5 +76,6 @@ deeper behavior lives in the per-feature docs linked from here and in code.
 | `/api/v1/agents/[slug]` | Agent API v1 — read/publish for external agents. |
 | `/api/auth/agent/{request-code,verify-code}` | Agent device auth. |
 | `/.well-known/`, `llms.txt`, `llms-full.txt`, `/api/ai`, `robots.txt` | Agent / LLM indexing surfaces (fleet GEO standard), served at the edge by `agent-edge.mjs`. |
+| `/index.md`, `/{public-route}.md` | Source-backed Markdown for canonical public HTML. |
 
 See `docs/architecture/edge-worker.md` for how agent edges are served before OpenNext.

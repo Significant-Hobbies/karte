@@ -20,6 +20,7 @@ import { VideoEmbed } from '@/components/public/video-embed';
 import type { ProjectCardData } from '@/components/public/widgets';
 import { agentOperatorLabel, isAgentPage } from '@/lib/agent-profiles';
 import { isDemoSlug, resolvePublicProfileSlug } from '@/lib/demo-profiles';
+import { metadataForProfile } from '@/lib/public-route-metadata';
 import { resolveThemeConfig } from '@/lib/themes';
 
 import { getFullPageData } from './_lib/get-page-data';
@@ -81,26 +82,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
   const ogUrl = `/api/og?${ogParams.toString()}`;
 
-  return {
-    title: page.displayName,
+  return metadataForProfile({
+    path: `/${slug}`,
+    displayName: page.displayName,
     description:
       (isAgent ? page.agentPurpose : null) ??
       page.bio ??
       `${page.displayName} on Karte — links, chat, and more.`,
-    openGraph: {
-      title: page.displayName,
-      description:
-        (isAgent ? page.agentPurpose : null) ?? page.bio ?? undefined,
-      images: [{ url: ogUrl, width: 1200, height: 630, alt: page.displayName }],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: page.displayName,
-      description:
-        (isAgent ? page.agentPurpose : null) ?? page.bio ?? undefined,
-      images: [ogUrl],
-    },
-  };
+    image: ogUrl,
+  });
 }
 
 export default async function ProfilePage({ params }: Props) {
