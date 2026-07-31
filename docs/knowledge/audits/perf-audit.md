@@ -10,20 +10,20 @@ Last audit: 2026-05-27.
 - **Chat widget lazy-loaded** on `/[slug]` via `next/dynamic`. 722-line client component is now code-split into its own chunk.
 - **`getSession()` wrapped in React `cache()`** so multiple calls within a single request dedupe instead of re-hitting D1.
 
-## ⚠ Known remaining bottleneck: public profile is ~1.3s TTFB
+## Historical public-profile baseline
 
-Measured `/karte.cc/sarthak`:
+The 2026-05-27 audit measured `/karte.cc/sarthak` at:
 - DNS: 1ms
 - TCP: 280ms (one-time)
 - TLS: 280ms (one-time, ~560ms cumulative)
 - **TTFB: 1.36s** ← server processing
 - Total: 1.6s
 
-The server takes ~800ms after TLS handshake to produce the first byte.
-That's mostly DB query time (`getFullPageData` runs 2 RTTs to Turso) +
-SSR rendering of the heavy profile page.
+That number predates the Turso-to-D1 migration, 60-second profile-data edge
+cache, chat-widget code split, and public-profile stream boundary. Treat it as
+a historical baseline, not a current production measurement.
 
-This needs a focused effort to fix properly:
+If a fresh production measurement remains slow, investigate:
 
 1. **Cache the page response at the CF edge.** Hardest because the page
    uses `searchParams` (`?room=`, `?variant=`) and is therefore dynamic
@@ -33,33 +33,26 @@ This needs a focused effort to fix properly:
    - Edge-cache via OpenNext's KV-backed cache API
    - Move searchParams handling into a client component so the page
      itself can be statically generated
-2. **Move Turso DB region closer to Cloudflare's edge.** If Turso is in
-   a single region and CF Workers are global, every request pays the
-   distance. Turso has edge replicas — check if `karte` DB is configured
-   for them.
-3. **Streaming SSR with Suspense.** Server starts sending HTML
-   immediately, queries finish and stream in. The visitor sees content
-   before the full TTFB.
+2. **Verify D1 and Worker placement.** Confirm the current D1 path and Worker
+   placement from production evidence rather than the old Turso assumption.
+3. **Expand streaming coverage.** The public profile now streams immediately;
+   other data-heavy pages can adopt the same boundary where evidence supports
+   it.
 
-None of these are 30-minute fixes. Each is a focused session.
+Fresh p50/p75 evidence after deployment is the next decision input.
 
 ## Open issues, ordered by impact
 
-### 🔴 1. No Suspense / streaming anywhere
+### 🔴 1. Expand Suspense / streaming coverage
 
-```
-$ grep -r '<Suspense' src --include='*.tsx' | wc -l
-0
-```
-
-Every page waits for ALL server data before sending HTML. This is the
-biggest single source of perceived lag.
+The public profile now streams a stable loading shell while D1 data resolves.
+Most remaining pages still wait for all server data before sending their
+content.
 
 **Fix:** wrap data-dependent regions in `<Suspense>` with skeleton fallbacks.
 The shell + sidebar + nav render immediately; data streams in as it
 resolves. Especially impactful on:
 - `/dashboard/analytics` (9 sequential awaits — slowest dashboard page)
-- `/[slug]` public profile (whole page blocks on `getFullPageData`)
 - Any dashboard editor that loads heavy options
 
 **Effort:** 30 min per page. **Impact:** huge perceived-perf win.
@@ -96,15 +89,14 @@ its own data.
 
 **Effort:** 2 hr (cross-cutting). **Impact:** -1 RTT per dashboard nav (~80-150ms).
 
-### 🟡 4. Public profile (`/[slug]`) loads heavy client bundle
+### ✅ 4. Public profile (`/[slug]`) heavy client bundle
 
 The chat widget (`chat-widget.tsx`) is **722 lines of client TypeScript**
 that ships on every public profile, even if the visitor never opens chat.
-Imported synchronously at the top of the profile page.
+This was previously imported synchronously at the top of the profile page.
 
-**Fix:** `dynamic(() => import('@/components/public/chat-widget'), { ssr: false })`
-to defer the chat-widget bundle until after the page is interactive. Could
-also conditionally only load when `chatEnabled` or `dmMode !== 'off'`.
+**Status:** complete. `next/dynamic` defers the chat widget, and the page only
+renders it when chat or direct messaging is enabled.
 
 **Effort:** 30 min. **Impact:** -10-20 KB on first paint, faster TTI.
 
@@ -131,13 +123,13 @@ Not actionable directly (this is platform overhead). Mitigation:
 
 **Effort:** ongoing. **Impact:** marginal.
 
-## Quick wins (do first, low risk)
+## Quick wins
 
-1. **Lazy-load chat-widget** (#4) — 30 min, no functional change
+1. **Lazy-load chat-widget** (#4) — complete
 2. **Add Suspense to analytics page** (#1 + #2 together) — 1 hr
-3. **Add Suspense to public profile** (#1) — 30 min
+3. **Add Suspense to public profile** (#1) — complete
 
-That's 2 hours of work for 3 visible wins.
+Fresh production measurement remains separate from these source-level fixes.
 
 ## Bigger refactors (do when you have a focused session)
 
