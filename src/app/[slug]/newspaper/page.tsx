@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -6,9 +7,18 @@ import { GenerateNewspaper } from '@/components/public/newspaper/generate-newspa
 import { NewspaperFrontPage } from '@/components/public/newspaper/newspaper-front-page';
 import { getSession } from '@/lib/auth-server';
 import type { NewspaperContent } from '@/lib/generated-page-types';
+import { metadataForProfileMode } from '@/lib/profile-mode-metadata';
 import { resolveThemeConfig } from '@/lib/themes';
 
 import { getGeneratedPage, getPageBySlug } from '../_lib/get-page-data';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  return metadataForProfileMode((await params).slug, 'newspaper');
+}
 
 export default async function NewspaperPage({
   params,

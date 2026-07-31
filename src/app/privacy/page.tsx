@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
-export const metadata: Metadata = {
-  title: 'Privacy — Karte',
-  description:
-    'What Karte stores, what it sends to third parties, and how to delete your data.',
-};
+import { metadataForStaticPath } from '@/lib/public-route-metadata';
+
+export const metadata: Metadata = metadataForStaticPath('/privacy');
 
 export default function PrivacyPage() {
   return (

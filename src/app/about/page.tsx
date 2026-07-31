@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
-export const metadata: Metadata = {
-  title: 'About — Karte',
-  description:
-    'Karte is a link-in-bio that talks back. Chat, encyclopedia, roast, and newspaper modes powered by AI on top of your profile content.',
-};
+import { metadataForStaticPath } from '@/lib/public-route-metadata';
+
+export const metadata: Metadata = metadataForStaticPath('/about');
 
 export default function AboutPage() {
   return (

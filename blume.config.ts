@@ -8,9 +8,7 @@
 // Run:  npx blume dev   |   npx blume build
 //
 // Docs: https://useblume.dev/docs/configuration
-import { defineConfig } from 'blume';
-
-export default defineConfig({
+export default {
   title: 'Karte docs',
   description:
     'Local-first knowledge system for Karte (linkchat) — a link-in-bio platform with AI-enhanced profile modes on Cloudflare Workers.',
@@ -57,4 +55,4 @@ export default defineConfig({
     // Left unset on purpose so Blume doesn't emit wrong canonical URLs.
     // site: "https://docs.karte.cc",
   },
-});
+};

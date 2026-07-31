@@ -20,19 +20,27 @@ live in `worker.mjs` / `worker-routing.mjs` / `agent-edge.mjs` instead.
 
 | File | Role |
 | --- | --- |
-| `worker.mjs` | Entry. Re-exports Durable Object classes, wraps the OpenNext handler with `caches.default` for cacheable GETs, global try/catch, timing, and pre-OpenNext routing. |
+| `worker.mjs` | Entry. Re-exports Durable Object classes, wraps the OpenNext handler with `caches.default` for cacheable GETs, global try/catch, timing, Markdown negotiation, and pre-OpenNext routing. |
 | `worker-routing.mjs` | `routeBeforeOpenNext()`, `addProfileCacheHeaders()`, `hasAuthCookie()`, custom-hostname → `/<slug>` rewrite, reserved-segment guard, host cache. |
 | `agent-edge.mjs` | `handleAgentEdge()` — serves `llms.txt`, `llms-full.txt`, `/api/ai`, `robots.txt` and other fleet GEO agent-indexing surfaces before OpenNext. |
+| `public-route-contract.mjs` | Canonical static HTML inventory, profile-mode readiness, robots rules, and HTML-to-Markdown path mapping shared by sitemap, metadata, and the edge. |
+| `public-route-markdown.mjs` | Maps `.md` and `Accept: text/markdown` requests to source-backed renderers before the normal HTML response. |
 | `rate-limiter-do.mjs` | `RateLimiterDO` Durable Object backing `src/lib/rate-limit.ts`. |
 | `timing.mjs` | `withTiming()` wrapper for request timing. |
 
 ## Cacheable document paths
 
 `worker.mjs` keeps a `CACHEABLE_EXACT` set of landing/marketing document paths
-(`/`, `/about`, `/create`, `/welcome`, `/login`, `/privacy`, `/terms`) served
+(`/`, `/about`, `/create`, `/faq`, `/changelog`, `/welcome`, `/login`,
+`/privacy`, `/terms`) served
 from `caches.default` on warm hits, skipping the OpenNext cold-start path
 entirely. Dynamic `/{slug}` profiles are **not** cached at this layer; they get
 profile cache headers from `addProfileCacheHeaders()` instead.
+
+The Astro build overlays `/`, `/faq`, and `/changelog` into
+`.open-next/assets`. The Worker serves those three exact paths from the assets
+binding before the Next catch-all can interpret FAQ or changelog as profile
+slugs.
 
 ## Cache headers
 

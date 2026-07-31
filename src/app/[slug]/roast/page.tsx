@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -5,6 +6,7 @@ import { GeneratingPlaceholder } from '@/components/public/generating-placeholde
 import { RoastPageClient } from '@/components/public/roast/roast-page-client';
 import { getSession } from '@/lib/auth-server';
 import type { RoastContent } from '@/lib/generated-page-types';
+import { metadataForProfileMode } from '@/lib/profile-mode-metadata';
 import { resolveThemeConfig } from '@/lib/themes';
 
 import {
@@ -13,6 +15,14 @@ import {
   getPageLinks,
   getPageProjects,
 } from '../_lib/get-page-data';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  return metadataForProfileMode((await params).slug, 'roast');
+}
 
 export default async function RoastPage({
   params,

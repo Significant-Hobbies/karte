@@ -10,6 +10,7 @@ import '@fontsource-variable/playfair-display';
 import '@fontsource-variable/playfair-display/wght-italic.css';
 import '@fontsource-variable/inter';
 import '@/styles/landing.css';
+import { SITE_ORIGIN, staticPublicRoute } from '../../../public-route-contract.mjs';
 
 interface Props {
   title: string;
@@ -19,12 +20,15 @@ interface Props {
 
 const { title, description, canonicalPath = '/' } = Astro.props;
 
-const SITE_URL = 'https://karte.cc';
+const route = staticPublicRoute(canonicalPath);
+const resolvedTitle = route?.title ?? title;
+const resolvedDescription = route?.description ?? description;
+const canonicalUrl = new URL(canonicalPath, SITE_ORIGIN);
 // OG/Twitter image lives on the Next.js Worker at /opengraph-image
 // (Next file convention → dynamic JSX → PNG). Astro can't trivially
 // reproduce that. Post-cutover Pages takes `/` and Workers keeps every
 // other route, so this URL still resolves. See README → cutover notes.
-const OG_IMAGE = `${SITE_URL}/opengraph-image`;
+const OG_IMAGE = `${SITE_ORIGIN}/opengraph-image`;
 ---
 
 <!doctype html>
@@ -33,22 +37,22 @@ const OG_IMAGE = `${SITE_URL}/opengraph-image`;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <title>{resolvedTitle}</title>
+    <meta name="description" content={resolvedDescription} />
     <meta name="application-name" content="Karte" />
 
-    <link rel="canonical" href={new URL(canonicalPath, SITE_URL)} />
+    <link rel="canonical" href={canonicalUrl} />
 
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={SITE_URL} />
+    <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content="Karte" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:title" content={resolvedTitle} />
+    <meta property="og:description" content={resolvedDescription} />
     <meta property="og:image" content={OG_IMAGE} />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:title" content={resolvedTitle} />
+    <meta name="twitter:description" content={resolvedDescription} />
     <meta name="twitter:image" content={OG_IMAGE} />
 
     <meta name="keywords" content="inbound assistant, link in bio, personal website, digital card, Carrd alternative, Own.page alternative, Linktree alternative" />
