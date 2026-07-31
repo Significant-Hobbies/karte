@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { SafeImage } from '@/components/public/safe-image';
+import type { ChatPosition } from '@/lib/themes';
 import { useReducedMotion } from '@/lib/use-reduced-motion';
 
 interface RoamingCharacterProps {
@@ -10,10 +11,14 @@ interface RoamingCharacterProps {
   displayName: string;
   lines: ReadonlyArray<string>;
   accentColor: string;
+  chatPosition: ChatPosition;
 }
 
 const STEP_MS = 90;
 const STEP_PX = 0.55;
+const CHARACTER_SIZE_PX = 80;
+const EDGE_GUTTER_PX = 16;
+const CHAT_SAFE_ZONE_PX = 112;
 const TALK_INTERVAL_MIN_MS = 2400;
 const TALK_INTERVAL_MAX_MS = 5800;
 const TALK_DURATION_MS = 5800;
@@ -27,6 +32,38 @@ function initialsForName(displayName: string): string {
       .map((part) => part[0]?.toUpperCase() ?? '')
       .join('') || 'K'
   );
+}
+
+function roamingBounds(viewportWidth: number, chatPosition: ChatPosition) {
+  const safeWidth = Math.max(viewportWidth, CHARACTER_SIZE_PX * 2);
+  const leftInset =
+    chatPosition === 'bottom-left' ? CHAT_SAFE_ZONE_PX : EDGE_GUTTER_PX;
+  const rightInset =
+    chatPosition === 'bottom-right' ? CHAT_SAFE_ZONE_PX : EDGE_GUTTER_PX;
+
+  return {
+    min: (leftInset / safeWidth) * 100,
+    max: 100 - ((rightInset + CHARACTER_SIZE_PX) / safeWidth) * 100,
+  };
+}
+
+function bubbleLayout(position: number) {
+  if (position < 24) {
+    return {
+      bubbleClass: 'left-0',
+      tailClass: 'left-10 -translate-x-1/2',
+    };
+  }
+  if (position > 68) {
+    return {
+      bubbleClass: 'right-0',
+      tailClass: 'right-10 translate-x-1/2',
+    };
+  }
+  return {
+    bubbleClass: 'left-1/2 -translate-x-1/2',
+    tailClass: 'left-1/2 -translate-x-1/2',
+  };
 }
 
 function CharacterFallback({
@@ -56,16 +93,19 @@ function CharacterFallback({
  * greeting lines (rotated through). Clicking the character opens
  * the floating chat widget via the existing button if present.
  *
- * Stays out of the bottom-right corner where the ChatWidget lives.
- * Hidden entirely on prefers-reduced-motion.
+ * Stays out of the corner where the ChatWidget lives. It is hidden on compact
+ * screens, where a roaming overlay would compete with the profile controls,
+ * and whenever the user prefers reduced motion.
  */
 export function RoamingCharacter({
   avatarUrl,
   displayName,
   lines,
   accentColor,
+  chatPosition,
 }: RoamingCharacterProps) {
   const [pos, setPos] = useState(20);
+  const [bounds, setBounds] = useState({ min: 4, max: 88 });
   const [dir, setDir] = useState<1 | -1>(1);
   const [bobUp, setBobUp] = useState(false);
   const [speaking, setSpeaking] = useState(false);
@@ -76,6 +116,18 @@ export function RoamingCharacter({
   const enabled = !reducedMotion && lines.length > 0;
   const containerRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    function updateBounds() {
+      const next = roamingBounds(window.innerWidth, chatPosition);
+      setBounds(next);
+      setPos((current) => Math.max(next.min, Math.min(next.max, current)));
+    }
+
+    updateBounds();
+    window.addEventListener('resize', updateBounds, { passive: true });
+    return () => window.removeEventListener('resize', updateBounds);
+  }, [chatPosition]);
 
   // Look at cursor — apply a small translate that makes the pet lean
   // toward the mouse. Throttled via requestAnimationFrame.
@@ -119,14 +171,12 @@ export function RoamingCharacter({
     if (!enabled || speaking) return;
     const id = setInterval(() => {
       setPos((p) => {
-        const max = 88;
-        const min = 4;
         let next = p + dir * STEP_PX;
-        if (next > max) {
-          next = max;
+        if (next > bounds.max) {
+          next = bounds.max;
           setDir(-1);
-        } else if (next < min) {
-          next = min;
+        } else if (next < bounds.min) {
+          next = bounds.min;
           setDir(1);
         }
         return next;
@@ -134,7 +184,7 @@ export function RoamingCharacter({
       setBobUp((b) => !b);
     }, STEP_MS);
     return () => clearInterval(id);
-  }, [enabled, speaking, dir]);
+  }, [bounds, enabled, speaking, dir]);
 
   // Talk loop — wait, then speak (type out a line), then go quiet.
   useEffect(() => {
@@ -172,6 +222,7 @@ export function RoamingCharacter({
   const current = lines[lineIdx] ?? '';
   const typed = current.slice(0, charIdx);
   const facingFlip = dir === -1 ? 'scaleX(-1)' : 'scaleX(1)';
+  const speechBubble = bubbleLayout(pos);
   const fallback = (
     <CharacterFallback displayName={displayName} accentColor={accentColor} />
   );
@@ -179,14 +230,14 @@ export function RoamingCharacter({
   return (
     <div
       ref={containerRef}
-      className="pointer-events-none fixed bottom-6 z-30 transition-[left] duration-[60ms] ease-linear"
+      className="pointer-events-none fixed bottom-6 z-30 hidden transition-[left] duration-[60ms] ease-linear lg:block"
       style={{ left: `${pos}%` }}
-      aria-hidden="true"
     >
       {/* Speech bubble — emits above the character when speaking */}
       {speaking && (
         <div
-          className="pointer-events-none absolute bottom-[78px] left-1/2 w-[260px] max-w-[80vw] -translate-x-1/2 rounded-2xl rounded-bl-md px-3.5 py-2.5 text-[12.5px] leading-[1.5] text-karte-text shadow-[0_12px_36px_-16px_rgba(0,0,0,0.7)] backdrop-blur-xl"
+          aria-hidden="true"
+          className={`pointer-events-none absolute bottom-[78px] w-[260px] max-w-[80vw] rounded-2xl rounded-bl-md px-3.5 py-2.5 text-[12.5px] leading-[1.5] text-karte-text shadow-[0_12px_36px_-16px_rgba(0,0,0,0.7)] backdrop-blur-xl ${speechBubble.bubbleClass}`}
           style={{
             backgroundColor: `${accentColor}1f`,
             border: `1px solid ${accentColor}33`,
@@ -204,7 +255,7 @@ export function RoamingCharacter({
           )}
           {/* Tail pointing down at the character */}
           <span
-            className="absolute -bottom-[6px] left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 border-b border-r"
+            className={`absolute -bottom-[6px] h-3 w-3 rotate-45 border-b border-r ${speechBubble.tailClass}`}
             style={{
               backgroundColor: `${accentColor}1f`,
               borderColor: `${accentColor}33`,

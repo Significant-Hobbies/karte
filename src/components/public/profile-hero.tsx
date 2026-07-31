@@ -107,7 +107,7 @@ export function ProfileHero({
 
   return (
     <aside
-      className="relative lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-center lg:py-12 lg:pr-8"
+      className="karte-profile-hero relative lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-center lg:py-12 lg:pr-8"
       style={
         {
           // One-shot fade-in on load. Pure CSS, no JS.
@@ -124,6 +124,12 @@ export function ProfileHero({
           0%, 100% { opacity: 0.45; transform: scale(1); }
           50%      { opacity: 0.65; transform: scale(1.04); }
         }
+        @media (prefers-reduced-motion: reduce) {
+          .karte-profile-hero,
+          .karte-avatar-glow {
+            animation: none !important;
+          }
+        }
       `}</style>
 
       {/* Avatar with accent glow */}
@@ -131,7 +137,7 @@ export function ProfileHero({
         <div className="relative shrink-0">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -inset-3 rounded-full blur-2xl"
+            className="karte-avatar-glow pointer-events-none absolute -inset-3 rounded-full blur-2xl"
             style={{
               backgroundColor: `${accentColor}55`,
               animation: 'karte-avatar-glow 4s ease-in-out infinite',
@@ -158,7 +164,7 @@ export function ProfileHero({
         {inboxEmailAddress && (
           <a
             href={`mailto:${inboxEmailAddress}`}
-            className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.025] px-3 py-1 text-[11px] font-medium text-karte-text-3 transition-colors duration-200 hover:border-white/[0.18] hover:text-karte-text-2"
+            className="mt-4 inline-flex min-h-11 items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.025] px-3 py-1 text-[11px] font-medium text-karte-text-3 transition-colors duration-200 hover:border-white/[0.18] hover:text-karte-text-2"
           >
             <span aria-hidden="true" className="text-[11px]">
               ✉︎

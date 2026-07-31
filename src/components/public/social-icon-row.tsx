@@ -133,7 +133,7 @@ export function SocialIconRow({
             data-track-type="link"
             data-track-id={link.id ?? link.url}
             data-track-label={link.title}
-            className="group flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.04] text-karte-text-3 transition-all duration-200 ease-[var(--karte-ease)] hover:-translate-y-0.5 hover:bg-white/[0.10] hover:text-karte-text"
+            className="group flex h-11 w-11 items-center justify-center rounded-xl bg-white/[0.04] text-karte-text-3 transition-all duration-200 ease-[var(--karte-ease)] hover:-translate-y-0.5 hover:bg-white/[0.10] hover:text-karte-text"
             style={{ color: accentColor }}
           >
             {userIcon ? (

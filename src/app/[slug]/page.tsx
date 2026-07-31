@@ -306,7 +306,7 @@ async function ProfileContent({ slug }: { slug: string }) {
             </span>
             <Link
               href="/create"
-              className="rounded-full bg-amber-200/15 px-3 py-1 text-[11.5px] font-medium text-amber-100 transition hover:bg-amber-200/25"
+              className="inline-flex min-h-11 items-center rounded-full bg-amber-200/15 px-3 py-1 text-[11.5px] font-medium text-amber-100 transition hover:bg-amber-200/25"
             >
               Build yours →
             </Link>
@@ -604,7 +604,7 @@ async function ProfileContent({ slug }: { slug: string }) {
             <div className="mt-4 flex justify-center pt-8">
               <Link
                 href="/"
-                className="group inline-flex items-center gap-2 rounded-full border border-karte-border bg-white/[0.02] px-3 py-1.5 text-[11px] font-medium text-karte-text-4 transition-all duration-200 ease-[var(--karte-ease)] hover:border-white/15 hover:bg-white/[0.04] hover:text-karte-text-3"
+                className="group inline-flex min-h-11 items-center gap-2 rounded-full border border-karte-border bg-white/[0.02] px-3 py-1.5 text-[11px] font-medium text-karte-text-3 transition-all duration-200 ease-[var(--karte-ease)] hover:border-white/15 hover:bg-white/[0.04] hover:text-karte-text"
               >
                 <span className="font-mono uppercase tracking-[0.18em]">
                   built on
@@ -620,7 +620,7 @@ async function ProfileContent({ slug }: { slug: string }) {
                 </span>
                 <span
                   aria-hidden="true"
-                  className="text-karte-text-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                  className="text-karte-text-3 transition-transform duration-200 group-hover:translate-x-0.5"
                 >
                   ↗
                 </span>
@@ -652,6 +652,7 @@ async function ProfileContent({ slug }: { slug: string }) {
           displayName={page.displayName}
           accentColor={theme.accentColor}
           lines={greetingLines}
+          chatPosition={theme.chatPosition}
         />
       )}
     </main>

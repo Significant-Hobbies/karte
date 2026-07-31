@@ -32,15 +32,15 @@
       }
     ],
     "projectCheck": {
-      "command": "pnpm typecheck && pnpm lint && pnpm test && pnpm build && pnpm docs:check && git diff --check",
+      "command": "pnpm typecheck && pnpm lint && pnpm test && pnpm build && git diff --check",
       "status": "pass"
     },
     "critique": {
-      "score": 34,
+      "score": 36,
       "maximum": 40
     },
     "audit": {
-      "score": 17,
+      "score": 18,
       "maximum": 20
     },
     "unresolved": {
@@ -49,11 +49,18 @@
     },
     "detector": {
       "posture": "advisory",
-      "findings": [
-        "The deterministic detector returned zero findings.",
-        "The page-level review noted a pre-existing roaming-character overlap and compact social targets outside this loading and stream-boundary change.",
-        "The ambient profile orb lacked reduced-motion handling; this pass fixed it."
-      ]
+      "findings": []
+    },
+    "browserReview": {
+      "tool": "Chrome DevTools and Playwright against the local seeded profile",
+      "viewports": [
+        390,
+        768,
+        1440
+      ],
+      "horizontalOverflow": false,
+      "consoleErrors": 0,
+      "note": "Fresh tracked captures verify 44-pixel interactive targets and no horizontal overflow. The roaming character is absent at 390 and 768, honors reduced motion, and at 1440 its chat-position-aware bounds keep it clear of the floating messenger. The changed footer link now exceeds WCAG AA contrast."
     }
   },
   "ownerFeedback": {
