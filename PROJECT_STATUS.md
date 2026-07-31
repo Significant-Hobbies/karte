@@ -20,6 +20,10 @@ cleaner handoff.
 
 ## Timeline
 
+- **2026-07-31** — Completed the source-level public route contract for seven
+  static pages plus ready published-profile modes, with matching sitemap,
+  robots, metadata, Markdown, llms, and agent-catalog surfaces; private and
+  machine-only routes remain excluded, and production deployment is separate.
 - **2026-07-31** — Hardened public profile chat with server-verified Cloudflare
   Turnstile challenges and bounded per-profile, per-IP limits for conversation
   creation and message reads/writes.

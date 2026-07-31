@@ -37,7 +37,6 @@ jobs:
   blume-build:
     name: Blume build (non-blocking)
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -45,6 +44,9 @@ jobs:
           node-version: "22"
       - name: Build docs site with Blume
         # Blume is invoked via npx; not a package dependency. Pinned to a
-        # published release. Allowed to fail so docs CI isn't blocked by an
-        # external docs-tool release.
-        run: npx --yes blume@1.0.3 build
+        # published release. Report failures as warnings so the optional
+        # presentation layer cannot leave the required docs check red.
+        run: |
+          if ! npx --yes blume@1.0.3 build; then
+            echo "::warning::Optional Blume presentation build failed; Markdown validation remains authoritative."
+          fi
