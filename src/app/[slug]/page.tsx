@@ -3,6 +3,7 @@ import nextDynamic from 'next/dynamic';
 import { Instrument_Serif } from 'next/font/google';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 
 import {
   AgentCapabilitiesSection,
@@ -93,9 +94,65 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
+function ProfileLoading() {
+  return (
+    <main
+      aria-busy="true"
+      aria-label="Loading profile"
+      className="relative min-h-screen overflow-x-clip bg-karte-bg text-karte-text antialiased"
+    >
+      <p className="sr-only" role="status">
+        Loading profile
+      </p>
+      <div
+        aria-hidden="true"
+        className="relative z-10 mx-auto w-full max-w-6xl animate-pulse px-5 pb-16 pt-8 motion-reduce:animate-none sm:px-8"
+      >
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] lg:gap-14 xl:gap-20">
+          <div className="flex flex-col items-center gap-5 lg:items-start lg:py-12">
+            <div className="h-28 w-28 rounded-[28px] border border-white/[0.1] bg-white/[0.08] sm:h-32 sm:w-32 sm:rounded-[32px]" />
+            <div className="space-y-2">
+              <div className="h-8 w-52 rounded-xl bg-white/[0.1]" />
+              <div className="h-7 w-36 rounded-xl bg-white/[0.07]" />
+            </div>
+            <div className="h-4 w-full max-w-72 rounded-lg bg-white/[0.08]" />
+            <div className="h-4 w-4/5 max-w-60 rounded-lg bg-white/[0.07]" />
+            <div className="mt-2 h-11 w-36 rounded-full border border-karte-accent/20 bg-karte-accent/10" />
+          </div>
+
+          <div className="space-y-10 lg:py-12">
+            <div className="space-y-3">
+              <div className="h-3 w-24 rounded-md bg-karte-accent/15" />
+              <div className="h-8 w-64 max-w-full rounded-xl bg-white/[0.1]" />
+              <div className="h-4 w-full rounded-lg bg-white/[0.07]" />
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {['one', 'two', 'three'].map((key) => (
+                <div
+                  key={key}
+                  className="h-40 rounded-2xl border border-white/[0.1] bg-white/[0.045]"
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
 export default async function ProfilePage({ params }: Props) {
   const requestedSlug = (await params).slug;
   const slug = resolvePublicProfileSlug(requestedSlug);
+
+  return (
+    <Suspense fallback={<ProfileLoading />}>
+      <ProfileContent slug={slug} />
+    </Suspense>
+  );
+}
+
+async function ProfileContent({ slug }: { slug: string }) {
   const data = await getFullPageData(slug);
   if (!data) notFound();
 
@@ -214,7 +271,7 @@ export default async function ProfilePage({ params }: Props) {
 
         {/* Drifting accent orb — slow ambient motion behind everything */}
         <div
-          className="absolute top-1/4 left-0 h-[600px] w-[600px] rounded-full blur-[120px]"
+          className="karte-profile-orb absolute top-1/4 left-0 h-[600px] w-[600px] rounded-full blur-[120px]"
           style={{
             backgroundColor: `${theme.accentColor}1a`,
             animation: 'karte-orb-drift 32s ease-in-out infinite alternate',
@@ -226,6 +283,12 @@ export default async function ProfilePage({ params }: Props) {
             0%   { transform: translate(-15%, 0%) scale(1); }
             50%  { transform: translate(60%, 20%) scale(1.15); }
             100% { transform: translate(15%, -10%) scale(0.95); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .karte-profile-orb {
+              animation: none !important;
+              will-change: auto !important;
+            }
           }
         `}</style>
       </div>

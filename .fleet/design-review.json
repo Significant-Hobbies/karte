@@ -2,45 +2,45 @@
   "$schema": "fleet.design-review.v1",
   "version": 1,
   "project": "karte",
-  "target": "Owned product changelog",
+  "target": "Public profile loading and stream boundary",
   "mode": "preserve",
   "register": "product",
   "context": {
-    "product": "PROJECT_STATUS.md",
-    "design": "README.md"
+    "product": "PRODUCT.md",
+    "design": "src/app/globals.css"
   },
   "direction": {
     "references": [],
     "probes": [],
     "selected": "existing-design",
     "approval": "not-required",
-    "before": "artifacts/design/before.png"
+    "before": "artifacts/design/before-profile-stream.png"
   },
   "evidence": {
     "screenshots": [
       {
         "width": 390,
-        "path": "artifacts/design/after-390.png"
+        "path": "artifacts/design/profile-after-390.png"
       },
       {
         "width": 768,
-        "path": "artifacts/design/after-768.png"
+        "path": "artifacts/design/profile-after-768.png"
       },
       {
         "width": 1440,
-        "path": "artifacts/design/after-1440.png"
+        "path": "artifacts/design/profile-after-1440.png"
       }
     ],
     "projectCheck": {
-      "command": "pnpm typecheck && pnpm --dir landing-astro build && git diff --check",
+      "command": "pnpm typecheck && pnpm lint && pnpm test && pnpm build && pnpm docs:check && git diff --check",
       "status": "pass"
     },
     "critique": {
-      "score": 36,
+      "score": 34,
       "maximum": 40
     },
     "audit": {
-      "score": 18,
+      "score": 17,
       "maximum": 20
     },
     "unresolved": {
@@ -50,12 +50,14 @@
     "detector": {
       "posture": "advisory",
       "findings": [
-        "The incumbent Onyx visual language retains four intentional gradient-text treatments outside the changelog surface."
+        "The deterministic detector returned zero findings.",
+        "The page-level review noted a pre-existing roaming-character overlap and compact social targets outside this loading and stream-boundary change.",
+        "The ambient profile orb lacked reduced-motion handling; this pass fixed it."
       ]
     }
   },
   "ownerFeedback": {
     "decision": "delegated",
-    "note": "The owner explicitly delegated changelog implementation across all projects on 2026-07-29."
+    "note": "The owner explicitly approved all Fleet issue work and delegated final judgment on 2026-07-31."
   }
 }

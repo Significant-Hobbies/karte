@@ -20,6 +20,9 @@ cleaner handoff.
 
 ## Timeline
 
+- **2026-07-31** — Made uncached public profiles stream a stable loading shell
+  while D1 data resolves, and removed the duplicate full-profile query from
+  the `[slug]` layout. The existing lazy chat bundle remains deferred.
 - **2026-07-31** — Completed the source-level public route contract for seven
   static pages plus ready published-profile modes, with matching sitemap,
   robots, metadata, Markdown, llms, and agent-catalog surfaces; private and

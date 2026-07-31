@@ -1,23 +1,12 @@
-'use client';
-
-import {
-  type CSSProperties,
-  type ReactNode,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-
-import { useReducedMotion } from '@/lib/use-reduced-motion';
+import type { CSSProperties, ReactNode } from 'react';
 
 /**
- * Wraps children in a one-shot fade-up animation triggered when the
- * element enters the viewport. CSS-only animation, IntersectionObserver
- * for the trigger. Honors `prefers-reduced-motion` — users with it set
- * see content immediately, no animation.
+ * Wraps children in a one-shot CSS entrance animation. Content is visible
+ * from the first render; motion embellishes the handoff without an
+ * IntersectionObserver briefly hiding resolved server content.
  *
- * Stagger via the `delay` prop in ms. Negligible JS cost (one observer,
- * one state flip).
+ * Stagger via the `delay` prop in ms. Reduced-motion users see content
+ * immediately with no animation.
  */
 export function AnimatedReveal({
   children,
@@ -30,45 +19,15 @@ export function AnimatedReveal({
   className?: string;
   as?: 'div' | 'section' | 'article';
 }) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const reducedMotion = useReducedMotion();
-  const [intersected, setIntersected] = useState(false);
-  // Reduced-motion users skip the observer and render fully visible
-  // from the start — derived at render so the effect doesn't have to
-  // setState synchronously to handle that branch.
-  const visible = reducedMotion || intersected;
-
-  useEffect(() => {
-    if (reducedMotion) return;
-    const node = ref.current;
-    if (!node) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setIntersected(true);
-            observer.disconnect();
-            return;
-          }
-        }
-      },
-      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' },
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [reducedMotion]);
-
-  const style: CSSProperties = {
-    transition:
-      'opacity 700ms cubic-bezier(0.16, 1, 0.3, 1), transform 700ms cubic-bezier(0.16, 1, 0.3, 1)',
-    transitionDelay: visible ? `${delay}ms` : '0ms',
-    opacity: visible ? 1 : 0,
-    transform: visible ? 'translateY(0)' : 'translateY(16px)',
-    willChange: visible ? 'auto' : 'transform, opacity',
-  };
+  const style = {
+    '--karte-reveal-delay': `${delay}ms`,
+  } as CSSProperties;
 
   return (
-    <As ref={ref as never} className={className} style={style}>
+    <As
+      className={['animate-reveal', className].filter(Boolean).join(' ')}
+      style={style}
+    >
       {children}
     </As>
   );
