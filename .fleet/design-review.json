@@ -53,11 +53,7 @@
     },
     "browserReview": {
       "tool": "Chrome DevTools and Playwright against the local seeded profile",
-      "viewports": [
-        390,
-        768,
-        1440
-      ],
+      "viewports": [390, 768, 1440],
       "horizontalOverflow": false,
       "consoleErrors": 0,
       "note": "Fresh tracked captures verify 44-pixel interactive targets and no horizontal overflow. The roaming character is absent at 390 and 768, honors reduced motion, and at 1440 its chat-position-aware bounds keep it clear of the floating messenger. The changed footer link now exceeds WCAG AA contrast."
