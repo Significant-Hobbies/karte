@@ -1,8 +1,8 @@
 'use client';
 
-import posthog from 'posthog-js';
 import { useCallback, useRef, useState } from 'react';
 
+import { trackProfileModeGenerated } from '@/lib/analytics-events';
 import { captureActionFailure } from '@/lib/foundry-monitoring';
 import type { RoastContent } from '@/lib/generated-page-types';
 
@@ -48,8 +48,9 @@ export function RoastPageClient({
         throw new Error(data.error || 'Failed to generate roast');
       }
       const data: RoastContent = await res.json();
-      posthog.capture('profile_mode_generated', {
+      trackProfileModeGenerated({
         mode: 'roast',
+        source: 'public_mode_route',
       });
       setRoast(data);
     } catch (e) {

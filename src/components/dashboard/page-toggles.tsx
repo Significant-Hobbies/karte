@@ -1,7 +1,6 @@
 'use client';
 
-import posthog from 'posthog-js';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import {
   Button,
@@ -13,7 +12,11 @@ import {
   Toggle,
 } from '@/components/ui';
 import type { PageSettings } from '@/db/schema';
-import { trackCoreAction } from '@/lib/analytics-events';
+import {
+  trackCoreAction,
+  trackProfileModeConfigured,
+  trackProfileModeGenerated,
+} from '@/lib/analytics-events';
 
 interface PageTogglesProps {
   pageId: string;
@@ -73,6 +76,7 @@ export function PageToggles({
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [generating, setGenerating] = useState<string | null>(null);
+  const touchedModes = useRef(new Set<GeneratedModeSettingsKey>());
   const [expandedSettings, setExpandedSettings] = useState<Set<string>>(
     new Set(),
   );
@@ -94,6 +98,7 @@ export function PageToggles({
     field: string,
     value: string,
   ) {
+    touchedModes.current.add(type);
     setPageSettings((prev) => ({
       ...prev,
       [type]: {
@@ -117,6 +122,15 @@ export function PageToggles({
         setMessage(data.error || 'Failed to save');
         return;
       }
+      for (const feature of PAGE_FEATURES) {
+        if (!touchedModes.current.has(feature.settingsKey)) continue;
+        trackProfileModeConfigured({
+          mode: feature.settingsKey,
+          enabled: toggles[feature.key],
+          source: 'appearance_settings',
+        });
+      }
+      touchedModes.current.clear();
       setMessage('Saved successfully');
     } catch {
       setMessage('Failed to save');
@@ -125,7 +139,7 @@ export function PageToggles({
     }
   }
 
-  async function handleGenerate(type: string) {
+  async function handleGenerate(type: GeneratedModeSettingsKey) {
     setGenerating(type);
     try {
       const res = await fetch(`/api/pages/${pageId}/generate/${type}`, {
@@ -138,7 +152,7 @@ export function PageToggles({
         setMessage(data.error || `Failed to generate ${type}`);
         return;
       }
-      posthog.capture('profile_mode_generated', {
+      trackProfileModeGenerated({
         mode: type,
         source: 'dashboard_toggles',
       });
@@ -293,9 +307,13 @@ export function PageToggles({
                 </div>
                 <Toggle
                   checked={enabled}
-                  onChange={(checked) =>
-                    setToggles((prev) => ({ ...prev, [feature.key]: checked }))
-                  }
+                  onChange={(checked) => {
+                    touchedModes.current.add(feature.settingsKey);
+                    setToggles((prev) => ({
+                      ...prev,
+                      [feature.key]: checked,
+                    }));
+                  }}
                 />
               </div>
 

@@ -27,6 +27,15 @@ const PROJECT = 'linkchat' as const;
  * shareable AI profile modes (encyclopedia / newspaper / roast).
  */
 export type CoreAction = 'page_published' | 'mode_generated';
+export type ProfileMode = 'chat' | 'encyclopedia' | 'newspaper' | 'roast';
+export type GeneratedProfileMode = Exclude<ProfileMode, 'chat'>;
+export type ProfileModeConfigurationSource =
+  | 'chat_settings'
+  | 'appearance_settings';
+export type ProfileModeGenerationSource =
+  | 'dashboard_toggles'
+  | 'encyclopedia_editor'
+  | 'public_mode_route';
 
 interface AnalyticsEventMap {
   /** First session after an account is created. */
@@ -76,4 +85,19 @@ export function trackCoreAction(action: CoreAction): void {
 /** Fire on session start for a user who has prior activity. */
 export function trackReturned(): void {
   emit('returned', {});
+}
+
+export function trackProfileModeConfigured(properties: {
+  mode: ProfileMode;
+  enabled: boolean;
+  source: ProfileModeConfigurationSource;
+}): void {
+  trackEvent('profile_mode_configured', properties);
+}
+
+export function trackProfileModeGenerated(properties: {
+  mode: GeneratedProfileMode;
+  source: ProfileModeGenerationSource;
+}): void {
+  trackEvent('profile_mode_generated', properties);
 }

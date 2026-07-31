@@ -1,9 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import posthog from 'posthog-js';
 import { useState } from 'react';
 
+import { trackProfileModeGenerated } from '@/lib/analytics-events';
 import { captureActionFailure } from '@/lib/foundry-monitoring';
 
 interface GenerateEncyclopediaProps {
@@ -37,8 +37,9 @@ export function GenerateEncyclopedia({
         throw new Error(data.error || 'Failed to generate encyclopedia');
       }
 
-      posthog.capture('profile_mode_generated', {
+      trackProfileModeGenerated({
         mode: 'encyclopedia',
+        source: 'public_mode_route',
       });
 
       router.refresh();

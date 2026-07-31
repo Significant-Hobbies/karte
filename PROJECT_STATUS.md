@@ -20,6 +20,10 @@ cleaner handoff.
 
 ## Timeline
 
+- **2026-07-31** — Added privacy-bounded, owner-only PostHog events that make
+  successful configuration comparable across chat, encyclopedia, newspaper,
+  and roast and normalize generated-mode completion under Karte's fixed
+  project taxonomy; public visitor analytics remains first-party.
 - **2026-07-31** — Made uncached public profiles stream a stable loading shell
   while D1 data resolves, and removed the duplicate full-profile query from
   the `[slug]` layout. The existing lazy chat bundle remains deferred.
@@ -66,6 +70,7 @@ The durable feature inventory lives in
 
 ## Work queue
 
-Open work is tracked only in [GitHub Issues](https://github.com/sarthakagrawal927/karte/issues).
+Open work is tracked only in
+[GitHub Issues](https://github.com/Significant-Hobbies/karte/issues).
 An open issue is a to-do, a linked pull request is in progress, and merge plus
 issue closure makes the work done.
