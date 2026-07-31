@@ -4,12 +4,15 @@
   // Custom entry wraps OpenNext with caches.default for GET / — see worker.mjs.
   "main": "worker.mjs",
   "workers_dev": true,
-  // Worker serves: karte.cc apex + any *.karte.cc subdomain. Custom hostnames
+  // Worker is the origin for karte.cc and origin.karte.cc. The apex uses a
+  // Custom Domain so Cloudflare owns its proxied DNS record and certificate;
+  // the wildcard route remains for configured *.karte.cc profile domains.
+  // Custom hostnames
   // (Cloudflare for SaaS) attach to the zone via the CF API in
   // src/lib/cloudflare-domains.ts. Requires the karte.cc zone in this account
   // and secrets CLOUDFLARE_API_TOKEN + CLOUDFLARE_ZONE_ID via `wrangler secret put`.
   "routes": [
-    { "pattern": "karte.cc/*", "zone_name": "karte.cc" },
+    { "pattern": "karte.cc", "custom_domain": true },
     { "pattern": "*.karte.cc/*", "zone_name": "karte.cc" },
     { "pattern": "origin.karte.cc", "custom_domain": true }
   ],

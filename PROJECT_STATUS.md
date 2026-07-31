@@ -24,6 +24,9 @@ cleaner handoff.
   successful configuration comparable across chat, encyclopedia, newspaper,
   and roast and normalize generated-mode completion under Karte's fixed
   project taxonomy; public visitor analytics remains first-party.
+- **2026-07-31** — Made the `karte.cc` apex a Worker Custom Domain so
+  Cloudflare owns the required proxied DNS record and certificate instead of
+  depending on a missing origin-route DNS record.
 - **2026-07-31** — Made uncached public profiles stream a stable loading shell
   while D1 data resolves, and removed the duplicate full-profile query from
   the `[slug]` layout. The existing lazy chat bundle remains deferred.
