@@ -22,7 +22,14 @@ Privacy mandate:
 | `ai_profile_revamp_generate` | User generates an AI revamp plan | ProfileRevampAssistant |
 | `ai_profile_revamp_apply` | User applies an AI revamp plan | ProfileRevampAssistant |
 | `profile_enrichment_run` | User runs the auto-enrichment process | InfoEditor/Enrich API |
-| `profile_mode_generated` | User generates an Encyclopedia/Newspaper/Roast mode | EncyclopediaEditor/etc. |
+| `profile_mode_configured` | Owner successfully saves a touched Chat/Encyclopedia/Newspaper/Roast mode | ChatSettings/PageToggles |
+| `profile_mode_generated` | Owner successfully generates an Encyclopedia/Newspaper/Roast mode | EncyclopediaEditor/PageToggles/public owner route |
+
+Both profile-mode events use a finite `mode` and `source` taxonomy.
+Configuration also records only the saved enabled boolean. These events
+measure authenticated owner actions, not public readership or chat quality.
+They never include page/profile identifiers, slugs, names, emails, prompts,
+generated content, chat transcripts, or visitor identifiers.
 
 ## Public Visitor Analytics
 

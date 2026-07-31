@@ -1,10 +1,12 @@
 'use client';
 
-import posthog from 'posthog-js';
 import { useCallback, useRef, useState } from 'react';
 
 import { Badge, Button, Card, Input, Label } from '@/components/ui';
-import { trackCoreAction } from '@/lib/analytics-events';
+import {
+  trackCoreAction,
+  trackProfileModeGenerated,
+} from '@/lib/analytics-events';
 import type { EncyclopediaContent } from '@/lib/generated-page-types';
 
 import { NovelEditor } from './novel-editor';
@@ -158,8 +160,9 @@ export function EncyclopediaEditor({
       }
 
       const newContent: EncyclopediaContent = await res.json();
-      posthog.capture('profile_mode_generated', {
+      trackProfileModeGenerated({
         mode: 'encyclopedia',
+        source: 'encyclopedia_editor',
       });
       // Owner-facing analytics — generating a shareable mode is a core action.
       trackCoreAction('mode_generated');

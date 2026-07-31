@@ -1,9 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import posthog from 'posthog-js';
 import { useState } from 'react';
 
+import { trackProfileModeGenerated } from '@/lib/analytics-events';
 import { captureActionFailure } from '@/lib/foundry-monitoring';
 
 interface GenerateNewspaperProps {
@@ -36,8 +36,9 @@ export function GenerateNewspaper({
         throw new Error(data.error || 'Failed to generate newspaper');
       }
 
-      posthog.capture('profile_mode_generated', {
+      trackProfileModeGenerated({
         mode: 'newspaper',
+        source: 'public_mode_route',
       });
 
       router.refresh();

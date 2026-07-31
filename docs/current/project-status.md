@@ -1,6 +1,6 @@
 # linkchat — project status record
 
-Last updated: 2026-07-25.
+Last updated: 2026-07-31.
 
 > **Living status** (objective, active work, blockers, unresolved questions,
 > next steps) lives in [`../../STATUS.md`](../../STATUS.md). This file is the
@@ -79,6 +79,11 @@ Browser → Cloudflare Worker (OpenNext) → D1 (app data + better-auth)
 
 ## Timeline
 
+- **2026-07-31** — Added typed, owner-only PostHog events for successful
+  profile-mode configuration across chat, encyclopedia, newspaper, and roast,
+  and normalized successful generated-mode events with fixed project and
+  source properties. Public visitor behavior and private content remain
+  outside PostHog.
 - **2026-07-25** — Removed the retired document-index key from Karte's Memory
   settings and from the chat retrieval gate. Managed Knowledgebase indexes now
   use lexical-only retrieval for non-trivial chat turns whenever `smIndexId`
@@ -153,6 +158,10 @@ Browser → Cloudflare Worker (OpenNext) → D1 (app data + better-auth)
 
 ### Integrations & quality
 
+- Privacy-bounded owner analytics compares successful profile-mode
+  configuration and generated-mode completion using fixed PostHog mode and
+  source taxonomies; public visitor analytics remains in Karte's first-party
+  pipeline.
 - Shared Cloudflare RAG integration is wired locally and build-verified; `infoBlocks`
   sync when `RAG_SERVICE_KEY` is configured after deploy.
 - React Compiler enabled — no hand-written `useMemo`/`useCallback`.

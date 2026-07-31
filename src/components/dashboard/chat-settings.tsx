@@ -10,6 +10,7 @@ import {
   Textarea,
   Toggle,
 } from '@/components/ui';
+import { trackProfileModeConfigured } from '@/lib/analytics-events';
 import { CHAT_POSITIONS, type ChatPosition } from '@/lib/themes';
 
 interface ChatSettingsProps {
@@ -52,6 +53,11 @@ export function ChatSettings({
         return;
       }
 
+      trackProfileModeConfigured({
+        mode: 'chat',
+        enabled: chatEnabled,
+        source: 'chat_settings',
+      });
       setMessage('Saved successfully');
     } catch {
       setMessage('Failed to save');
