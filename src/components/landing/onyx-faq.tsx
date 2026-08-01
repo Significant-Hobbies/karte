@@ -32,7 +32,7 @@ const FAQ_ENTRIES: { question: string; answer: string }[] = [
   {
     question: 'What tech stack does Karte use?',
     answer:
-      'Karte uses Next.js 16 with the App Router and React Compiler, deployed on Cloudflare Workers via OpenNext. App data lives in Turso (libSQL) through Drizzle ORM, auth uses better-auth with Google OAuth backed by Cloudflare D1, and images are stored in Cloudflare R2.',
+      'Karte uses Next.js 16 with the App Router and React Compiler, deployed on Cloudflare Workers via OpenNext. App and auth data live together in Cloudflare D1 through Drizzle ORM, authentication uses better-auth with Google OAuth, and images are stored in Cloudflare R2.',
   },
 ];
 

@@ -603,7 +603,7 @@ export const agentWaitlist = sqliteTable('agentWaitlist', {
 // MIME (postal-mime), forwards to the page owner's real inbox via
 // message.forward(), and POSTs metadata here. Raw body lives in R2
 // (IMAGES_BUCKET) under pages/{pageId}/inbox/{ts}-{uuid}.eml; this row
-// holds only the preview + R2 key so libSQL row-size limits stay safe.
+// holds only the preview + R2 key so relational rows stay bounded.
 // See docs/email-inbox.md and migrations/d1/009_email_inbox.sql.
 export type ReceivedEmailStatus = 'unread' | 'read' | 'deleted';
 
