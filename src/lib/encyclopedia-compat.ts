@@ -53,9 +53,36 @@ function convertLegacyToNew(
 
   return {
     markdown: parts.join('\n'),
-    infobox: legacy.infobox,
-    categories: legacy.categories,
+    infobox: normalizeStringRecord(legacy.infobox),
+    categories: normalizeStringList(legacy.categories),
   };
+}
+
+function normalizeStringRecord(value: unknown): Record<string, string> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+
+  return Object.fromEntries(
+    Object.entries(value).flatMap(([key, item]) => {
+      const normalized = normalizePrimitive(item);
+      return normalized === null ? [] : [[key, normalized]];
+    }),
+  );
+}
+
+function normalizeStringList(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    const normalized = normalizePrimitive(item);
+    return normalized === null ? [] : [normalized];
+  });
+}
+
+function normalizePrimitive(value: unknown): string | null {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+  return null;
 }
 
 function escapeHtml(text: string): string {
@@ -82,7 +109,13 @@ export function normalizeEncyclopediaContent(
 
   // Already in new format
   if ('markdown' in content) {
-    return content as EncyclopediaContent;
+    const current = content as Record<string, unknown>;
+    if (typeof current.markdown !== 'string') return null;
+    return {
+      markdown: current.markdown,
+      infobox: normalizeStringRecord(current.infobox),
+      categories: normalizeStringList(current.categories),
+    };
   }
 
   return null;
