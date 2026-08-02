@@ -31,6 +31,9 @@ The D1 migration history is the supported path:
 - **Local schema + fixtures:** `pnpm db:setup:local`.
 - **Production:** apply reviewed D1 migrations manually as part of the
   documented release procedure.
+- **Operator scripts:** `backfill:aggregates` and `enrich:profile` use local D1
+  unless the operator explicitly supplies `--remote`; local state can be
+  isolated further with `--persist-to <directory>`.
 
 The local command uses `wrangler.local.jsonc`, which pins
 `migrations_dir = migrations/d1`, always passes `--local`, and rejects

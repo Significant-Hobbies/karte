@@ -1,64 +1,54 @@
 #!/usr/bin/env node
 
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
-import { createClient } from '@libsql/client';
+import {
+  executeD1Statements,
+  parseD1TargetArgs,
+  queryD1,
+} from './lib/d1-command.mjs';
 
 const DEFAULT_MAX_URLS = 12;
 const TIMEOUT_MS = 8000;
 const MAX_CONTENT_LENGTH = 1800;
 
-function loadDotenv() {
-  const envPath = resolve(process.cwd(), '.env.local');
-  try {
-    const text = readFileSync(envPath, 'utf8');
-    for (const line of text.split(/\r?\n/)) {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('#') || !trimmed.includes('='))
-        continue;
-      const index = trimmed.indexOf('=');
-      const key = trimmed.slice(0, index).trim();
-      const value = trimmed
-        .slice(index + 1)
-        .trim()
-        .replace(/^["']|["']$/g, '');
-      if (key && process.env[key] === undefined) process.env[key] = value;
-    }
-  } catch {
-    // .env.local is optional; real deployments usually provide env directly.
-  }
-}
-
-function parseArgs() {
-  const args = process.argv.slice(2);
+export function parseArgs(args = process.argv.slice(2)) {
+  const { target, remaining } = parseD1TargetArgs(args);
   const parsed = {
     apply: false,
     updateBio: false,
     replaceExisting: true,
     maxUrls: DEFAULT_MAX_URLS,
+    target,
   };
 
-  for (let index = 0; index < args.length; index += 1) {
-    const arg = args[index];
+  for (let index = 0; index < remaining.length; index += 1) {
+    const arg = remaining[index];
     if (arg === '--apply') parsed.apply = true;
     else if (arg === '--update-bio') parsed.updateBio = true;
     else if (arg === '--no-replace-existing') parsed.replaceExisting = false;
     else if (arg === '--slug') {
       index += 1;
-      parsed.slug = args[index];
+      parsed.slug = remaining[index];
     } else if (arg === '--page-id') {
       index += 1;
-      parsed.pageId = args[index];
+      parsed.pageId = remaining[index];
     } else if (arg === '--max-urls') {
       index += 1;
-      parsed.maxUrls = Math.min(Number(args[index]) || DEFAULT_MAX_URLS, 20);
+      parsed.maxUrls = Math.min(
+        Number(remaining[index]) || DEFAULT_MAX_URLS,
+        20,
+      );
     } else if (arg === '--help') parsed.help = true;
+    else throw new Error(`Unknown argument: ${arg}`);
   }
 
   return parsed;
 }
 
-function usage() {}
+function usage() {
+  process.stdout.write(
+    'Usage: pnpm enrich:profile (--slug <slug> | --page-id <id>) [--apply] [--update-bio] [--no-replace-existing] [--max-urls <1-20>] [--remote | --persist-to <directory>]\n',
+  );
+}
 
 function normalizeUrl(url) {
   try {
@@ -337,44 +327,32 @@ function buildPlan(page, links, scraped, skippedUrls) {
 }
 
 async function main() {
-  loadDotenv();
   const args = parseArgs();
   if (args.help || (!args.slug && !args.pageId)) {
     usage();
     process.exit(args.help ? 0 : 1);
   }
 
-  if (!process.env.TURSO_DATABASE_URL) {
-    throw new Error('TURSO_DATABASE_URL is required');
-  }
-
-  const client = createClient({
-    url: process.env.TURSO_DATABASE_URL,
-    authToken: process.env.TURSO_AUTH_TOKEN,
-  });
-
   const pageQuery = args.pageId
-    ? await client.execute({
+    ? queryD1(args.target, {
         sql: 'SELECT * FROM pages WHERE id = ?',
         args: [args.pageId],
       })
-    : await client.execute({
+    : queryD1(args.target, {
         sql: 'SELECT * FROM pages WHERE slug = ?',
         args: [args.slug],
       });
   const page = pageQuery.rows[0];
   if (!page) throw new Error('Page not found');
 
-  const [linksResult, projectsResult] = await Promise.all([
-    client.execute({
-      sql: 'SELECT * FROM links WHERE pageId = ? ORDER BY sortOrder ASC',
-      args: [page.id],
-    }),
-    client.execute({
-      sql: 'SELECT * FROM projects WHERE pageId = ? ORDER BY sortOrder ASC',
-      args: [page.id],
-    }),
-  ]);
+  const linksResult = queryD1(args.target, {
+    sql: 'SELECT * FROM links WHERE pageId = ? ORDER BY sortOrder ASC',
+    args: [page.id],
+  });
+  const projectsResult = queryD1(args.target, {
+    sql: 'SELECT * FROM projects WHERE pageId = ? ORDER BY sortOrder ASC',
+    args: [page.id],
+  });
 
   const urls = sourceUrls(linksResult.rows, projectsResult.rows, args.maxUrls);
   const scrapedSettled = await Promise.allSettled(
@@ -388,6 +366,7 @@ async function main() {
   const plan = buildPlan(page, linksResult.rows, scraped, skippedUrls);
 
   if (args.apply) {
+    const statements = [];
     const existingProjectUrls = new Map(
       projectsResult.rows.map((project) => [
         normalizeUrl(project.url),
@@ -404,7 +383,7 @@ async function main() {
       const existing = existingProjectUrls.get(normalizeUrl(project.url));
       if (existing) {
         if (args.replaceExisting) {
-          await client.execute({
+          statements.push({
             sql: 'UPDATE projects SET title = ?, description = ?, enabled = 1 WHERE id = ? AND pageId = ?',
             args: [project.title, project.description, existing.id, page.id],
           });
@@ -412,7 +391,7 @@ async function main() {
         continue;
       }
 
-      await client.execute({
+      statements.push({
         sql: 'INSERT OR REPLACE INTO projects (id, pageId, title, url, description, sortOrder, enabled) VALUES (?, ?, ?, ?, ?, ?, 1)',
         args: [
           `auto-project-${stableIdFor(`${page.id}:${project.url}`)}`,
@@ -426,14 +405,14 @@ async function main() {
       nextProjectOrder += 1;
     }
 
-    const maxBlockResult = await client.execute({
+    const maxBlockResult = queryD1(args.target, {
       sql: 'SELECT MAX(sortOrder) AS maxSort FROM infoBlocks WHERE pageId = ?',
       args: [page.id],
     });
     let nextBlockOrder = Number(maxBlockResult.rows[0]?.maxSort ?? -1) + 1;
 
     for (const block of plan.memoryBlocks) {
-      await client.execute({
+      statements.push({
         sql: `INSERT INTO infoBlocks (id, pageId, type, title, content, sortOrder)
               VALUES (?, ?, ?, ?, ?, ?)
               ON CONFLICT(id) DO UPDATE SET type = excluded.type, title = excluded.title, content = excluded.content`,
@@ -450,13 +429,13 @@ async function main() {
     }
 
     if (args.updateBio && plan.bio) {
-      await client.execute({
+      statements.push({
         sql: 'UPDATE pages SET bio = ?, updatedAt = ? WHERE id = ?',
         args: [plan.bio, Date.now(), page.id],
       });
     }
 
-    await client.execute({
+    statements.push({
       sql: 'UPDATE pages SET scrapedContent = ?, updatedAt = ? WHERE id = ?',
       args: [
         JSON.stringify({ data: scraped, scrapedAt: Date.now() }),
@@ -464,6 +443,7 @@ async function main() {
         page.id,
       ],
     });
+    await executeD1Statements(args.target, statements);
   }
 }
 

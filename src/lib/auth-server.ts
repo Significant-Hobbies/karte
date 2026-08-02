@@ -28,7 +28,7 @@ export const getSession = cache(async () => {
 /**
  * Returns the current user's page row (or undefined). React.cached so the
  * dashboard layout's slug-fetch and each child page's page lookup
- * deduplicate to one Turso roundtrip per navigation. Previously every
+ * deduplicate to one D1 query per navigation. Previously every
  * dashboard nav cost 2 separate page queries.
  */
 export const getCurrentPage = cache(async (userId: string) => {

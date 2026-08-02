@@ -43,9 +43,9 @@ workers.
 
 ## Triage slow TTFB
 
-See `docs/knowledge/audits/perf-audit.md`. Public profile ~1.3s TTFB is a
-known remaining bottleneck (Turso RTT + heavy SSR). Quick wins documented
-there: lazy-load chat-widget, add `<Suspense>` to analytics + profile.
+See `docs/knowledge/audits/perf-audit.md`. Historical Turso latency findings
+predate the D1 cutover; use current production evidence before treating them as
+an active bottleneck.
 
 ## Run the docs validator
 

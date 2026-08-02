@@ -6,7 +6,7 @@ GitHub: sarthakagrawal927
 
 /* SITE */
 Last updated: 2026-05-15
-Software: Next.js, React, Drizzle ORM, Turso, Cloudflare Workers, better-auth
+Software: Next.js, React, Drizzle ORM, Cloudflare D1 and Workers, better-auth
 `;
 
 export function GET() {

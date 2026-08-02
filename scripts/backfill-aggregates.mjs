@@ -1,50 +1,19 @@
 #!/usr/bin/env node
 
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
-import { createClient } from '@libsql/client';
+import {
+  executeD1Statements,
+  parseD1TargetArgs,
+  queryD1,
+} from './lib/d1-command.mjs';
 
-function loadDotenv() {
-  const envPath = resolve(process.cwd(), '.env.local');
-  try {
-    const text = readFileSync(envPath, 'utf8');
-    for (const line of text.split(/\r?\n/)) {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('#') || !trimmed.includes('='))
-        continue;
-      const index = trimmed.indexOf('=');
-      const key = trimmed.slice(0, index).trim();
-      const value = trimmed
-        .slice(index + 1)
-        .trim()
-        .replace(/^["']|["']$/g, '');
-      if (key && process.env[key] === undefined) process.env[key] = value;
-    }
-  } catch {
-    // .env.local is optional
-  }
-}
+export function buildAggregateStatements(events) {
+  const statements = [
+    'DELETE FROM dailyStats',
+    'DELETE FROM dailyResourceStats',
+    'DELETE FROM dailyVisitorEvents',
+  ];
+  const visitors = new Set();
 
-async function main() {
-  loadDotenv();
-
-  const url = process.env.TURSO_DATABASE_URL;
-  const authToken = process.env.TURSO_AUTH_TOKEN;
-
-  if (!url) {
-    throw new Error('TURSO_DATABASE_URL is required');
-  }
-
-  const client = createClient({ url, authToken });
-  await client.execute('DELETE FROM dailyStats');
-  await client.execute('DELETE FROM dailyResourceStats');
-  await client.execute('DELETE FROM dailyVisitorEvents');
-  const eventsResult = await client.execute(
-    'SELECT * FROM pageEvents ORDER BY createdAt ASC',
-  );
-  const events = eventsResult.rows;
-
-  let count = 0;
   for (const event of events) {
     const {
       pageId,
@@ -55,38 +24,35 @@ async function main() {
       resourceLabel,
       createdAt,
     } = event;
-
-    // createdAt in DB is usually a timestamp (number) or ISO string
     const date = new Date(createdAt).toISOString().split('T')[0];
+    const visitorKey = visitorId
+      ? JSON.stringify([pageId, visitorId, date, eventType, resourceId ?? null])
+      : null;
+    const isNewVisitor = visitorKey ? !visitors.has(visitorKey) : false;
 
-    // Duplicate visitor logic
-    let isNewVisitor = false;
-    if (visitorId) {
-      try {
-        await client.execute({
-          sql: 'INSERT INTO dailyVisitorEvents (id, pageId, visitorId, date, eventType, resourceId) VALUES (?, ?, ?, ?, ?, ?)',
-          args: [
-            crypto.randomUUID(),
-            pageId,
-            visitorId,
-            date,
-            eventType,
-            resourceId || null,
-          ],
-        });
-        isNewVisitor = true;
-      } catch {
-        isNewVisitor = false;
-      }
+    if (visitorKey && isNewVisitor) {
+      visitors.add(visitorKey);
+      statements.push({
+        sql: 'INSERT INTO dailyVisitorEvents (id, pageId, visitorId, date, eventType, resourceId) VALUES (?, ?, ?, ?, ?, ?)',
+        args: [
+          crypto.randomUUID(),
+          pageId,
+          visitorId,
+          date,
+          eventType,
+          resourceId || null,
+        ],
+      });
     }
 
-    let effectiveEventType = eventType;
-    if (eventType === 'contact_submit' && !resourceId) {
-      effectiveEventType = 'dm_conversion';
-    }
+    const effectiveEventType =
+      eventType === 'contact_submit' && !resourceId
+        ? 'dm_conversion'
+        : eventType;
+    const visitorIncrement = isNewVisitor ? 1 : 0;
 
     if (resourceId && resourceType) {
-      await client.execute({
+      statements.push({
         sql: `INSERT INTO dailyResourceStats (id, pageId, date, eventType, resourceType, resourceId, resourceLabel, count, visitors)
               VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)
               ON CONFLICT(pageId, date, eventType, resourceId) DO UPDATE SET
@@ -101,13 +67,13 @@ async function main() {
           resourceType,
           resourceId,
           resourceLabel || null,
-          isNewVisitor ? 1 : 0,
-          isNewVisitor ? 1 : 0,
+          visitorIncrement,
+          visitorIncrement,
           resourceLabel || null,
         ],
       });
     } else {
-      await client.execute({
+      statements.push({
         sql: `INSERT INTO dailyStats (id, pageId, date, eventType, count, visitors)
               VALUES (?, ?, ?, ?, 1, ?)
               ON CONFLICT(pageId, date, eventType) DO UPDATE SET
@@ -118,19 +84,34 @@ async function main() {
           pageId,
           date,
           effectiveEventType,
-          isNewVisitor ? 1 : 0,
-          isNewVisitor ? 1 : 0,
+          visitorIncrement,
+          visitorIncrement,
         ],
       });
     }
-
-    count++;
-    if (count % 100 === 0) {
-    }
   }
+
+  return statements;
 }
 
-main().catch((err) => {
-  console.error('Backfill failed:', err);
-  process.exit(1);
-});
+export async function backfillAggregates(args = process.argv.slice(2)) {
+  const { target, remaining } = parseD1TargetArgs(args);
+  if (remaining.length) {
+    throw new Error(
+      'Usage: pnpm backfill:aggregates [--remote | --persist-to <directory>]',
+    );
+  }
+  const { rows } = queryD1(
+    target,
+    'SELECT * FROM pageEvents ORDER BY createdAt ASC',
+  );
+  await executeD1Statements(target, buildAggregateStatements(rows));
+  process.stdout.write(`Backfilled ${rows.length} page events.\n`);
+}
+
+if (process.argv[1] === new URL(import.meta.url).pathname) {
+  backfillAggregates().catch((error) => {
+    process.stderr.write(`Backfill failed: ${error.message}\n`);
+    process.exitCode = 1;
+  });
+}

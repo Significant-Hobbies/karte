@@ -16,12 +16,7 @@ const nextConfig: NextConfig = {
   // standard records Lightning CSS belongs in the Vite/Astro projects
   // where it can actually run; future Next.js Tailwind v4 work will pick
   // it up automatically once Next removes the postcss conflict.
-  serverExternalPackages: [
-    '@libsql/client',
-    '@libsql/hrana-client',
-    '@libsql/isomorphic-ws',
-    'drizzle-orm',
-  ],
+  serverExternalPackages: ['drizzle-orm'],
   async headers() {
     // CF's edge PoP cache requires explicit Cache-Control to actually
     // cache responses. Even when a page is force-static + has

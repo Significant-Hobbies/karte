@@ -43,7 +43,7 @@ signal → drafted → approved | dismissed
 
 ## Data
 
-- Table: `creatorOpportunities` (Turso). Additive only; no existing data
+- Table: `creatorOpportunities` (Cloudflare D1). Additive only; no existing data
   transformed. See `migrations/d1/010_creator_opportunities.sql`.
 - Request paths never create or alter this table at runtime; apply the
   migration explicitly before enabling the production surface.

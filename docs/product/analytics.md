@@ -96,15 +96,14 @@ raw rows.
 ### Backfill
 
 ```bash
-pnpm backfill:aggregates   # repopulate aggregates from historical pageEvents
+pnpm backfill:aggregates                     # local D1
+pnpm backfill:aggregates -- --remote         # production D1, explicit
 ```
 
-### Turso vs D1
+### D1 persistence
 
-Aggregates currently live in **Turso** alongside the primary app data. The
-schema in `src/db/schema.ts` is plain SQLite and is D1-compatible if we later
-move aggregates to D1 (swap `src/db/index.ts` to the D1 driver in the
-Cloudflare runtime). Raw events could then offload to D1 or a time-series
-store while aggregates stay in the app DB for fast dashboard reads.
+Aggregates live in the same **Cloudflare D1** database as the primary app data.
+The backfill command uses the tracked D1 schema and defaults to local state;
+remote execution must be requested explicitly.
 
 > Historical migration plan retained at `docs/archive/analytics-migration.md`.

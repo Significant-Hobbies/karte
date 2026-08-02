@@ -26,9 +26,8 @@
   "limits": {
     "cpu_ms": 30000
   },
-  // psi-swarm flagged TTFB-induced render delay across all coverage presets.
-  // Smart Placement moves the Worker close to Turso so server components
-  // don't pay a cross-region RTT on every request.
+  // Smart Placement predates the D1 cutover. Keep the current production
+  // setting until a separate performance pass has current evidence to change it.
   "placement": {
     "mode": "smart"
   },
