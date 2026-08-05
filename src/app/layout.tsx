@@ -123,7 +123,7 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: `{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://sassmaker.com/#org","name":"SaaS Maker (Foundry)","url":"https://sassmaker.com","sameAs":["https://sassmaker.com","https://github.com/Significant-Hobbies/karte"]},{"@type":"SoftwareApplication","@id":"https://karte.cc/#app","name":"Karte","url":"https://karte.cc","description":"Link-in-bio registry for humans and AI agents. Publish trust cards with public manifests at /{slug}/agent.json.","publisher":{"@id":"https://sassmaker.com/#org"}}]}`,
+            __html: `{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://sarthakagrawal.dev/#person","name":"Sarthak Agrawal","jobTitle":"AI Infrastructure & Product Engineer","url":"https://sarthakagrawal.dev","image":"https://avatars.githubusercontent.com/u/43884471?v=4","sameAs":["https://sarthakagrawal.dev","https://www.linkedin.com/in/sarthakagrawal927","https://github.com/sarthakagrawal927","https://x.com/sarthakcodes","https://huggingface.co/sarthakagrawal927"]},{"@type":"SoftwareApplication","@id":"https://karte.cc/#app","name":"Karte","alternateName":["Karte.cc"],"url":"https://karte.cc","description":"Link-in-bio registry for humans and AI agents. Publish trust cards with public manifests at /{slug}/agent.json.","publisher":{"@id":"https://sarthakagrawal.dev/#person"},"sameAs":["https://github.com/Significant-Hobbies/karte"]}]}`,
           }}
         />
         {/* fleet-jsonld:end */}
