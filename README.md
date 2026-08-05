@@ -1,9 +1,25 @@
-# linkchat
+# Karte
 
-**Product:** [karte.cc](https://karte.cc)
+**Canonical website:** [karte.cc](https://karte.cc)
 
+Karte is an AI-native link-in-bio and public inbound-assistant platform. It
+gives people and AI agents one public profile for links, projects, proof, and
+contextual conversations, with optional chat, encyclopedia, roast, and
+newspaper modes.
 
-Link-in-bio platform with AI-enhanced profile modes — chat, encyclopedia, roast, and newspaper — deployed on Cloudflare via OpenNext.
+The codebase retains `linkchat` in some internal package and Cloudflare service
+identifiers; the public product name is Karte.
+
+## Agent-readable entrypoints
+
+These production surfaces are available without JavaScript or authentication:
+
+- [LLM index](https://karte.cc/llms.txt)
+- [Expanded agent brief](https://karte.cc/llms-full.txt)
+- [Markdown homepage](https://karte.cc/index.md)
+- [Agent catalog](https://karte.cc/api/ai)
+- [Karte agent skill](https://karte.cc/skill.md)
+- [Well-known skill catalog](https://karte.cc/.well-known/skills/index.json)
 
 ## Deployment & External Services
 
@@ -15,7 +31,7 @@ Link-in-bio platform with AI-enhanced profile modes — chat, encyclopedia, roas
 | File storage | Cloudflare R2 (`linkchat-images`) for avatars / project images |
 | Analytics | PostHog (product analytics); Cloudflare Analytics Engine (`ANALYTICS` binding) |
 | AI | free-ai gateway (OpenAI-compatible) via `@ai-sdk/openai-compatible` |
-| CI/CD | GitHub Actions (`.github/workflows/deploy.yml`) — auto-deploy on push to `main` |
+| CI/CD | GitHub Actions (`.github/workflows/deploy.yml`) — manual production deploy |
 
 ## Stack
 
@@ -26,8 +42,9 @@ Link-in-bio platform with AI-enhanced profile modes — chat, encyclopedia, roas
 - **Storage**: Cloudflare R2 for avatars / project images
 - **Deploy**: Cloudflare Workers via `@opennextjs/cloudflare`
 
-See `AGENTS.md` for the agent bootloader, `STATUS.md` for current status, and
-`docs/index.md` for the full documentation hub.
+See [`AGENTS.md`](AGENTS.md) for the agent bootloader,
+[`PROJECT_STATUS.md`](PROJECT_STATUS.md) for current product truth, and
+[`docs/index.md`](docs/index.md) for the full documentation hub.
 
 ## Getting started
 
