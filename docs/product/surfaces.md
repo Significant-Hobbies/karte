@@ -9,6 +9,7 @@ deeper behavior lives in the per-feature docs linked from here and in code.
 | --- | --- | --- |
 | `/` | Landing | Astro overlay on production build (see `docs/operations/deploy.md`). |
 | `/about`, `/privacy`, `/terms` | Public product/legal pages | Next-rendered and included in the public sitemap. |
+| `/ai-link-in-bio` | AI link-in-bio guide | Source-backed Astro evaluation page with `.md` and negotiated Markdown companions. |
 | `/faq`, `/changelog` | Public content pages | Astro overlays included in the public sitemap. |
 | `/create` | Page creation wizard | First thing a new user sees. |
 | `/[slug]` | Public profile page (SSR) | Heavy server render; see `docs/knowledge/audits/perf-audit.md`. |
@@ -18,7 +19,7 @@ deeper behavior lives in the per-feature docs linked from here and in code.
 | `/[slug]/data.json` | Public profile JSON | Agent-readable profile payload. |
 | `/[slug]/vcard` | vCard download | |
 
-The indexable HTML contract is the seven static product pages above plus
+The indexable HTML contract is the eight static product pages above plus
 published profile roots and profile modes that are both enabled and ready.
 Login, welcome, dashboard, API, JSON, and download routes are intentionally
 excluded from the HTML sitemap. Every sitemap route has a `.md` alternate and

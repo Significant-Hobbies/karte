@@ -2,37 +2,37 @@
   "$schema": "fleet.design-review.v1",
   "version": 1,
   "project": "karte",
-  "target": "Public profile loading and stream boundary",
+  "target": "AI link-in-bio guide",
   "mode": "preserve",
   "register": "product",
   "context": {
     "product": "PRODUCT.md",
-    "design": "src/app/globals.css"
+    "design": "DESIGN.md"
   },
   "direction": {
     "references": [],
     "probes": [],
     "selected": "existing-design",
     "approval": "not-required",
-    "before": "artifacts/design/before-profile-stream.png"
+    "before": "artifacts/design/ai-link-in-bio-before-1440.png"
   },
   "evidence": {
     "screenshots": [
       {
         "width": 390,
-        "path": "artifacts/design/profile-after-390.png"
+        "path": "artifacts/design/ai-link-in-bio-after-390.png"
       },
       {
         "width": 768,
-        "path": "artifacts/design/profile-after-768.png"
+        "path": "artifacts/design/ai-link-in-bio-after-768.png"
       },
       {
         "width": 1440,
-        "path": "artifacts/design/profile-after-1440.png"
+        "path": "artifacts/design/ai-link-in-bio-after-1440.png"
       }
     ],
     "projectCheck": {
-      "command": "pnpm typecheck && pnpm lint && pnpm test && pnpm build && git diff --check",
+      "command": "pnpm --filter ./landing-astro build",
       "status": "pass"
     },
     "critique": {
@@ -49,18 +49,36 @@
     },
     "detector": {
       "posture": "advisory",
-      "findings": []
-    },
-    "browserReview": {
-      "tool": "Chrome DevTools and Playwright against the local seeded profile",
-      "viewports": [390, 768, 1440],
-      "horizontalOverflow": false,
-      "consoleErrors": 0,
-      "note": "Fresh tracked captures verify 44-pixel interactive targets and no horizontal overflow. The roaming character is absent at 390 and 768, honors reduced motion, and at 1440 its chat-position-aware bounds keep it clear of the floating messenger. The changed footer link now exceeds WCAG AA contrast."
+      "findings": [
+        {
+          "rule": "gradient-text",
+          "file": "landing-astro/src/styles/landing.css",
+          "line": 401,
+          "resolution": "Pre-existing home-page style outside this preserve-mode surface."
+        },
+        {
+          "rule": "gradient-text",
+          "file": "landing-astro/src/styles/landing.css",
+          "line": 465,
+          "resolution": "Pre-existing home-page style outside this preserve-mode surface."
+        },
+        {
+          "rule": "gradient-text",
+          "file": "landing-astro/src/styles/landing.css",
+          "line": 694,
+          "resolution": "Pre-existing home-page style outside this preserve-mode surface."
+        },
+        {
+          "rule": "gradient-text",
+          "file": "landing-astro/src/styles/landing.css",
+          "line": 831,
+          "resolution": "Pre-existing home-page style outside this preserve-mode surface."
+        }
+      ]
     }
   },
   "ownerFeedback": {
     "decision": "delegated",
-    "note": "The owner explicitly approved all Fleet issue work and delegated final judgment on 2026-07-31."
+    "note": "Owner approved successor campaign manifest 1f9759d9437cf41687d459cf95138abbdf944401956d5dbf628481ea4108d357 and delegated its preserve-mode implementation on 2026-08-05."
   }
 }

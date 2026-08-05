@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { test } from 'vitest';
 
 import { AGENT_SURFACE, handleAgentEdge } from '../agent-edge.mjs';
+import {
+  AI_LINK_IN_BIO_MARKDOWN,
+  AI_LINK_IN_BIO_PAGE,
+} from '../content-pages/ai-link-in-bio.mjs';
 import {
   buildPublicProfilePaths,
   htmlPathFromMarkdown,
@@ -16,13 +21,14 @@ const STATIC_PATHS = [
   '/',
   '/about',
   '/create',
+  '/ai-link-in-bio',
   '/faq',
   '/changelog',
   '/privacy',
   '/terms',
 ];
 
-test('defines one canonical inventory of seven static public HTML routes', () => {
+test('defines one canonical inventory of eight static public HTML routes', () => {
   assert.deepEqual(
     STATIC_PUBLIC_ROUTES.map((route) => route.path),
     STATIC_PATHS,
@@ -32,6 +38,53 @@ test('defines one canonical inventory of seven static public HTML routes', () =>
     AGENT_SURFACE.catalog.surfaces.map((surface) => surface.url),
     STATIC_PATHS.map((path) => `https://karte.cc${path}`),
   );
+});
+
+test('keeps the AI link-in-bio source substantive and aligned with discovery', () => {
+  assert.equal(AI_LINK_IN_BIO_PAGE.path, '/ai-link-in-bio');
+  assert.equal(
+    AI_LINK_IN_BIO_PAGE.canonicalUrl,
+    'https://karte.cc/ai-link-in-bio',
+  );
+  for (const expected of [
+    'Conventional link-in-bio vs conversational profile',
+    'What agents can inspect',
+    'Public and private boundaries',
+    'Frequently asked questions',
+    'Sources and next steps',
+    'Draft your Karte profile',
+  ]) {
+    assert.match(AI_LINK_IN_BIO_MARKDOWN, new RegExp(expected));
+  }
+
+  const catalog = JSON.parse(
+    readFileSync(new URL('../public/api-ai.json', import.meta.url), 'utf8'),
+  );
+  const matches = catalog.surfaces.filter(
+    (surface) => surface.url === AI_LINK_IN_BIO_PAGE.canonicalUrl,
+  );
+  assert.equal(matches.length, 1);
+  assert.equal(matches[0].md, 'https://karte.cc/ai-link-in-bio.md');
+  assert.match(AGENT_SURFACE.llmsTxt, /https:\/\/karte\.cc\/ai-link-in-bio/);
+  assert.match(
+    AGENT_SURFACE.llmsFullTxt,
+    /https:\/\/karte\.cc\/ai-link-in-bio/,
+  );
+  assert.match(AGENT_SURFACE.indexMd, /https:\/\/karte\.cc\/ai-link-in-bio/);
+});
+
+test('serves the AI link-in-bio Astro asset before the profile catch-all', () => {
+  const worker = readFileSync(
+    new URL('../worker.mjs', import.meta.url),
+    'utf8',
+  );
+  for (const setName of ['CACHEABLE_EXACT', 'ASTRO_ASSET_PATHS']) {
+    const block = worker.match(
+      new RegExp(`const ${setName} = new Set\\(\\[([\\s\\S]*?)\\]\\);`),
+    );
+    assert.ok(block, `${setName} must remain an explicit array-backed set`);
+    assert.match(block[1], /['"]\/ai-link-in-bio['"]/);
+  }
 });
 
 test('adds published profile modes only when enabled and ready', () => {
@@ -116,7 +169,7 @@ test('keeps robots and the agent catalog on the current origin', async () => {
   );
   const catalog = await response.json();
   assert.equal(catalog.url, 'https://preview.example');
-  assert.equal(catalog.surfaces.length, 7);
+  assert.equal(catalog.surfaces.length, 8);
   assert.ok(
     catalog.surfaces.every((surface) =>
       surface.md.startsWith('https://preview.example/'),

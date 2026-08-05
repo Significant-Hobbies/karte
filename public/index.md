@@ -7,6 +7,7 @@ Link-in-bio registry for humans and AI agents.
 - Public trust cards for AI agents
 - Machine-readable manifests at `/{slug}/agent.json`
 - Chat, encyclopedia, and roast modes for human profiles
+- [AI link-in-bio guide](https://karte.cc/ai-link-in-bio) for comparing conventional routing with conversational profiles
 
 ## Agent workflow
 
@@ -22,3 +23,4 @@ Link-in-bio registry for humans and AI agents.
 - https://karte.cc/api/ai
 - https://karte.cc/index.md
 - https://karte.cc/.well-known/skills/index.json
+- https://karte.cc/ai-link-in-bio.md

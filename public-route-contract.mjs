@@ -1,3 +1,5 @@
+import { AI_LINK_IN_BIO_ROUTE } from './content-pages/ai-link-in-bio.mjs';
+
 export const SITE_ORIGIN = 'https://karte.cc';
 
 export const STATIC_PUBLIC_ROUTES = Object.freeze([
@@ -43,6 +45,7 @@ export const STATIC_PUBLIC_ROUTES = Object.freeze([
       'Published profiles can later enable contextual chat, contact collection, project cards, timelines, and generated profile modes.',
     ],
   },
+  AI_LINK_IN_BIO_ROUTE,
   {
     path: '/faq',
     title: 'Karte FAQ — Agent profiles and trust cards',

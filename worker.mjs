@@ -40,6 +40,7 @@ export class RateLimiterDO extends RateLimiterDurableObject {}
 const CACHEABLE_EXACT = new Set([
   '/',
   '/about',
+  '/ai-link-in-bio',
   '/changelog',
   '/create',
   '/faq',
@@ -48,7 +49,12 @@ const CACHEABLE_EXACT = new Set([
   '/privacy',
   '/terms',
 ]);
-const ASTRO_ASSET_PATHS = new Set(['/', '/changelog', '/faq']);
+const ASTRO_ASSET_PATHS = new Set([
+  '/',
+  '/ai-link-in-bio',
+  '/changelog',
+  '/faq',
+]);
 function isCacheableDocumentPath(pathname) {
   return CACHEABLE_EXACT.has(pathname);
 }
