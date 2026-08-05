@@ -27,6 +27,13 @@ const STATIC_PATHS = [
   '/privacy',
   '/terms',
 ];
+const ASTRO_CONTENT_PATHS = ['/', '/ai-link-in-bio', '/changelog', '/faq'];
+
+function quotedValues(source, pattern, label) {
+  const block = source.match(pattern);
+  assert.ok(block, `${label} must remain an explicit array`);
+  return [...block[1].matchAll(/['"]([^'"]+)['"]/g)].map((match) => match[1]);
+}
 
 test('defines one canonical inventory of eight static public HTML routes', () => {
   assert.deepEqual(
@@ -85,6 +92,30 @@ test('serves the AI link-in-bio Astro asset before the profile catch-all', () =>
     assert.ok(block, `${setName} must remain an explicit array-backed set`);
     assert.match(block[1], /['"]\/ai-link-in-bio['"]/);
   }
+});
+
+test('routes every Astro content path through the Worker before Static Assets', () => {
+  const worker = readFileSync(
+    new URL('../worker.mjs', import.meta.url),
+    'utf8',
+  );
+  const wrangler = readFileSync(
+    new URL('../wrangler.jsonc', import.meta.url),
+    'utf8',
+  );
+  const workerPaths = quotedValues(
+    worker,
+    /const ASTRO_ASSET_PATHS = new Set\(\[([\s\S]*?)\]\);/,
+    'ASTRO_ASSET_PATHS',
+  );
+  const workerFirstPaths = quotedValues(
+    wrangler,
+    /"run_worker_first"\s*:\s*\[([\s\S]*?)\]/,
+    'assets.run_worker_first',
+  );
+
+  assert.deepEqual(workerPaths, ASTRO_CONTENT_PATHS);
+  assert.deepEqual(workerFirstPaths, ASTRO_CONTENT_PATHS);
 });
 
 test('adds published profile modes only when enabled and ready', () => {
