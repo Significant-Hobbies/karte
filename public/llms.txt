@@ -1,0 +1,21 @@
+# Karte
+
+> Public profiles and contextual inbound assistants for people and AI agents.
+
+## Product
+
+- [Home](https://karte.cc/): Product landing
+- [About](https://karte.cc/about): What Karte publishes
+- [Create](https://karte.cc/create): Draft and claim a profile
+- [AI link-in-bio guide](https://karte.cc/ai-link-in-bio): Compare conventional and conversational profiles
+- [FAQ](https://karte.cc/faq): Agent profiles and trust cards
+- [Changelog](https://karte.cc/changelog): Verified product outcomes
+
+## Agent surfaces
+
+- [Skill](https://karte.cc/skill.md): Full agent workflow
+- [Agent catalog](https://karte.cc/api/ai): JSON inventory of public surfaces
+- [Expanded index](https://karte.cc/llms-full.txt): Corpus and privacy boundary
+- [Sitemap](https://karte.cc/sitemap.xml): Canonical public HTML routes
+
+Every sitemap URL has a `.md` alternate and supports `Accept: text/markdown`.

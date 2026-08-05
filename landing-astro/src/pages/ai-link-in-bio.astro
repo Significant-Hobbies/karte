@@ -1,0 +1,248 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import {
+  AI_LINK_IN_BIO_PAGE,
+  richTextPlain,
+} from '../../../content-pages/ai-link-in-bio.mjs';
+
+const page = AI_LINK_IN_BIO_PAGE;
+const externalRel = (href) => href.startsWith('http') ? 'noopener noreferrer' : undefined;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': `${page.canonicalUrl}#webpage`,
+      url: page.canonicalUrl,
+      name: page.title,
+      description: page.description,
+      isPartOf: {
+        '@type': 'WebSite',
+        name: 'Karte',
+        url: 'https://karte.cc',
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Karte',
+          item: 'https://karte.cc',
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'AI link-in-bio',
+          item: page.canonicalUrl,
+        },
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: page.faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.question.replaceAll('`', ''),
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: richTextPlain(faq.answer),
+        },
+      })),
+    },
+  ],
+};
+---
+
+<Layout title={page.title} description={page.description} canonicalPath={page.path}>
+  <main>
+    <header class="onyx-faq-header">
+      <a href="/" class="onyx-faq-header-brand">
+        <span class="onyx-faq-header-diamond" aria-hidden="true">◆</span>
+        <span class="onyx-faq-header-name">Karte</span>
+      </a>
+      <a href="/" class="onyx-faq-header-back">← Back to home</a>
+    </header>
+
+    <article class="onyx-guide" aria-labelledby="guide-title">
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+
+      <div class="onyx-guide-inner">
+        <header class="onyx-guide-hero">
+          <p class="onyx-eyebrow">
+            <span class="onyx-eyebrow-dot" aria-hidden="true"></span>
+            GUIDE · AI LINK-IN-BIO
+          </p>
+          <h1 id="guide-title">{page.heading}</h1>
+          <div class="onyx-guide-intro">
+            {page.intro.map((paragraph) => (
+              <p>{paragraph.map((part) => part.text)}</p>
+            ))}
+          </div>
+          <div class="onyx-guide-actions" aria-label="Guide actions">
+            {page.actions.map((action) => (
+              <a
+                href={action.href}
+                class={action.primary ? 'onyx-btn-primary' : 'onyx-guide-secondary-link'}
+              >
+                {action.label}{action.primary && <span aria-hidden="true">→</span>}
+              </a>
+            ))}
+          </div>
+        </header>
+
+        <section class="onyx-guide-section" aria-labelledby="comparison-title">
+          <h2 id="comparison-title">{page.comparison.heading}</h2>
+          <div
+            class="onyx-guide-table-wrap"
+            tabindex="0"
+            role="region"
+            aria-label="Conventional link-in-bio and Karte conversational profile comparison"
+          >
+            <table>
+              <thead>
+                <tr>
+                  {page.comparison.columns.map((column) => <th scope="col">{column}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {page.comparison.rows.map((row) => (
+                  <tr>
+                    {row.map((cell, index) => index === 0
+                      ? <th scope="row">{cell}</th>
+                      : <td>{cell}</td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="onyx-guide-note">
+            {page.comparison.note.map((part) => part.href
+              ? <a href={part.href} rel={externalRel(part.href)}>{part.text}</a>
+              : part.text)}
+          </p>
+        </section>
+
+        <section class="onyx-guide-section onyx-guide-split" aria-labelledby="questions-title">
+          <div>
+            <h2 id="questions-title">{page.questions.heading}</h2>
+            <p>{richTextPlain(page.questions.intro)}</p>
+          </div>
+          <div>
+            <ul class="onyx-guide-list">
+              {page.questions.items.map((item) => <li>{item}</li>)}
+            </ul>
+            <p class="onyx-guide-note">{richTextPlain(page.questions.limitation)}</p>
+          </div>
+        </section>
+
+        <section class="onyx-guide-section onyx-guide-split" aria-labelledby="agent-title">
+          <div>
+            <h2 id="agent-title">{page.agentInspection.heading}</h2>
+            <p>
+              {page.agentInspection.intro.map((part) => part.code
+                ? <code>{part.text}</code>
+                : part.text)}
+            </p>
+            <a class="onyx-guide-text-link" href={page.agentInspection.action.href}>
+              {page.agentInspection.action.label} →
+            </a>
+          </div>
+          <div>
+            <ul class="onyx-guide-list">
+              {page.agentInspection.items.map((item) => <li>{item}</li>)}
+            </ul>
+            <p class="onyx-guide-note">{richTextPlain(page.agentInspection.limitation)}</p>
+          </div>
+        </section>
+
+        <section class="onyx-guide-section" aria-labelledby="boundaries-title">
+          <h2 id="boundaries-title">{page.boundaries.heading}</h2>
+          <div class="onyx-guide-columns">
+            {page.boundaries.groups.map((group) => (
+              <section aria-labelledby={`boundary-${group.heading.toLowerCase().replaceAll(' ', '-')}`}>
+                <h3 id={`boundary-${group.heading.toLowerCase().replaceAll(' ', '-')}`}>
+                  {group.heading}
+                </h3>
+                {group.paragraphs.map((paragraph) => (
+                  <p>
+                    {paragraph.map((part) => part.href
+                      ? <a href={part.href}>{part.text}</a>
+                      : part.text)}
+                  </p>
+                ))}
+              </section>
+            ))}
+          </div>
+        </section>
+
+        <section class="onyx-guide-section" aria-labelledby="workflow-title">
+          <h2 id="workflow-title">{page.workflows.heading}</h2>
+          <div class="onyx-guide-columns">
+            {page.workflows.groups.map((group) => (
+              <section aria-labelledby={`workflow-${group.heading.toLowerCase().replaceAll(' ', '-')}`}>
+                <h3 id={`workflow-${group.heading.toLowerCase().replaceAll(' ', '-')}`}>
+                  {group.heading}
+                </h3>
+                <ol class="onyx-guide-steps">
+                  {group.steps.map((step) => (
+                    <li>
+                      {step.map((part) => part.href
+                        ? <a href={part.href}>{part.text}</a>
+                        : part.code
+                          ? <code>{part.text}</code>
+                          : part.text)}
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            ))}
+          </div>
+        </section>
+
+        <section class="onyx-guide-section" aria-labelledby="faq-title">
+          <h2 id="faq-title">Frequently asked questions</h2>
+          <dl class="onyx-guide-faqs">
+            {page.faqs.map((faq) => (
+              <div>
+                <dt>{faq.question.replaceAll('`', '')}</dt>
+                <dd>{richTextPlain(faq.answer)}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        <section class="onyx-guide-section onyx-guide-sources" aria-labelledby="sources-title">
+          <h2 id="sources-title">Sources and next steps</h2>
+          <p>
+            {page.sources.map((part) => part.href
+              ? <a href={part.href} rel={externalRel(part.href)}>{part.text}</a>
+              : part.text)}
+          </p>
+          <p class="onyx-guide-closing">
+            {page.closing.map((part) => part.href
+              ? <a href={part.href}>{part.text}</a>
+              : part.text)}
+          </p>
+        </section>
+
+      </div>
+    </article>
+
+    <footer class="fleet-footer">
+      <p class="fleet-footer-label">More from the fleet</p>
+      <ul class="fleet-footer-list">
+        <li><a href="/faq">FAQ</a><span>Common questions about Karte</span></li>
+        <li><a href="/changelog">Changelog</a><span>What changed in Karte</span></li>
+        <li><a href="https://github.com/Significant-Hobbies/karte">Source</a><span>View the repository</span></li>
+        <li><a href="https://sassmaker.com" rel="noopener noreferrer">Foundry</a><span>SaaS factory floor</span></li>
+        <li><a href="https://aliveville.com" rel="noopener noreferrer">Aliveville</a><span>AI world simulator</span></li>
+        <li><a href="https://codevetter.com" rel="noopener noreferrer">CodeVetter</a><span>AI code review</span></li>
+        <li><a href="https://highsignal.app" rel="noopener noreferrer">High Signal</a><span>Daily tech/startup brief</span></li>
+        <li><a href="https://rolepatch.com" rel="noopener noreferrer">RolePatch</a><span>AI resume tailoring</span></li>
+        <li><a href="https://significanthobbies.com" rel="noopener noreferrer">Significant Hobbies</a><span>Hobby journey mapper</span></li>
+        <li><a href="https://materia.significanthobbies.com" rel="noopener noreferrer">Materia</a><span>Evidence-graded remedies</span></li>
+      </ul>
+    </footer>
+  </main>
+</Layout>

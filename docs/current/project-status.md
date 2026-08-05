@@ -1,6 +1,6 @@
 # linkchat — project status record
 
-Last updated: 2026-07-31.
+Last updated: 2026-08-05.
 
 > **Living status** (objective, active work, blockers, unresolved questions,
 > next steps) lives in [`../../STATUS.md`](../../STATUS.md). This file is the
@@ -116,6 +116,7 @@ Browser → Cloudflare Worker (OpenNext) → D1 (app data + better-auth)
 | Opportunity Desk | `/dashboard/opportunities` | Owner-reviewed creator partnership signals and drafts |
 | Agent API v1 | `/api/v1/agents/[slug]` | Read/publish for external agents |
 | Landing | `/` | Astro overlay on production build |
+| AI link-in-bio guide | `/ai-link-in-bio` | Public guide with authored Markdown alternate |
 | Onboarding | `/create`, `/welcome`, `/login` | Page creation and auth entry |
 
 ## Features (shipped)
@@ -123,6 +124,8 @@ Browser → Cloudflare Worker (OpenNext) → D1 (app data + better-auth)
 ### Public surfaces
 
 - `/` — landing (Astro overlay on production build).
+- `/ai-link-in-bio` — public guide with authored `.md`, sitemap, API catalog,
+  and llms discovery coverage.
 - `/login` — Google sign-in.
 - `/create` — page creation wizard.
 - `/[slug]` — public profile SSR.

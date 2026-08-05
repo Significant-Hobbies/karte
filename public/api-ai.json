@@ -33,6 +33,13 @@
       "description": "Draft a Karte profile, choose a public username, add your links and bio, and sign in only when you are ready to claim and publish it."
     },
     {
+      "id": "ai-link-in-bio",
+      "url": "https://karte.cc/ai-link-in-bio",
+      "md": "https://karte.cc/ai-link-in-bio.md",
+      "kind": "static",
+      "description": "Compare a conventional link-in-bio with a conversational Karte profile, including public trust cards, agent.json, privacy boundaries, questions, and publishing steps."
+    },
+    {
       "id": "faq",
       "url": "https://karte.cc/faq",
       "md": "https://karte.cc/faq.md",

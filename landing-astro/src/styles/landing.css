@@ -1134,6 +1134,10 @@ html:has(.onyx-deck) body::-webkit-scrollbar { display: none; }
   margin: 0 auto 8px;
   text-align: center;
 }
+.onyx-faq-intro a {
+  color: #d7b97e;
+  text-underline-offset: 4px;
+}
 .onyx-faq-list {
   list-style: none;
   margin: 18px 0 0;
@@ -1190,4 +1194,286 @@ html:has(.onyx-deck) body::-webkit-scrollbar { display: none; }
   .onyx-faq-q { font-size: 19px; }
   .onyx-faq-a { font-size: 14px; }
   .onyx-faq-intro { font-size: 14px; }
+}
+
+/* ── AI link-in-bio guide ─────────────────────────────────────────── */
+.onyx-guide {
+  width: 100%;
+  box-sizing: border-box;
+  background: radial-gradient(120% 50% at 50% 0%, #1c1813 0%, #0d0a07 48%, #050403 100%);
+  color: #e8dfca;
+  padding: clamp(56px, 9vh, 104px) clamp(20px, 5vw, 72px) clamp(72px, 10vh, 120px);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+.onyx-guide-inner {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.onyx-guide-hero {
+  max-width: 840px;
+  padding-bottom: clamp(56px, 9vh, 96px);
+}
+
+.onyx-guide-hero h1 {
+  max-width: 12ch;
+  margin: 18px 0 28px;
+  color: #f4ebd4;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: clamp(48px, 8vw, 88px);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.onyx-guide-intro {
+  max-width: 72ch;
+  color: rgba(232, 223, 202, 0.8);
+  font-size: clamp(16px, 1.7vw, 19px);
+  line-height: 1.72;
+}
+
+.onyx-guide-intro p {
+  margin: 0;
+}
+
+.onyx-guide-intro p + p {
+  margin-top: 18px;
+}
+
+.onyx-guide-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px 28px;
+  margin-top: 32px;
+}
+
+.onyx-guide-secondary-link,
+.onyx-guide-text-link,
+.onyx-guide a:not(.onyx-btn-primary) {
+  color: #d7b97e;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+
+.onyx-guide-secondary-link {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.onyx-guide a:focus-visible,
+.onyx-faq-header a:focus-visible,
+.fleet-footer a:focus-visible,
+.onyx-guide-table-wrap:focus-visible {
+  outline: 2px solid #c4a46b;
+  outline-offset: 5px;
+}
+
+.onyx-guide-section {
+  padding: clamp(48px, 8vh, 80px) 0;
+  border-top: 1px dotted rgba(196, 164, 107, 0.28);
+}
+
+.onyx-guide-section > h2,
+.onyx-guide-section > div > h2 {
+  max-width: 16ch;
+  margin: 0 0 24px;
+  color: #f0e6cf;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: clamp(34px, 5vw, 56px);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.onyx-guide-section h3 {
+  margin: 0 0 16px;
+  color: #f0e6cf;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: clamp(22px, 2.6vw, 30px);
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.onyx-guide-section p,
+.onyx-guide-section li,
+.onyx-guide-section dd {
+  color: rgba(232, 223, 202, 0.78);
+  font-size: 15px;
+  line-height: 1.72;
+}
+
+.onyx-guide-table-wrap {
+  margin-top: 32px;
+  overflow-x: auto;
+  border-top: 1px solid rgba(196, 164, 107, 0.38);
+  border-bottom: 1px solid rgba(196, 164, 107, 0.24);
+}
+
+.onyx-guide-table-wrap table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.onyx-guide-table-wrap th,
+.onyx-guide-table-wrap td {
+  padding: 20px 18px;
+  border-bottom: 1px dotted rgba(196, 164, 107, 0.22);
+  vertical-align: top;
+  color: rgba(232, 223, 202, 0.76);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.onyx-guide-table-wrap thead th {
+  color: #c4a46b;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.onyx-guide-table-wrap tbody th {
+  width: 22%;
+  color: #f0e6cf;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.onyx-guide-table-wrap tr:last-child > * {
+  border-bottom: 0;
+}
+
+.onyx-guide-note {
+  max-width: 74ch;
+  margin: 24px 0 0;
+  color: rgba(232, 223, 202, 0.62) !important;
+  font-size: 14px !important;
+}
+
+.onyx-guide-split,
+.onyx-guide-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(36px, 7vw, 88px);
+}
+
+.onyx-guide-split > div > p {
+  max-width: 44ch;
+  margin: 0;
+}
+
+.onyx-guide-list,
+.onyx-guide-steps {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.onyx-guide-list li + li,
+.onyx-guide-steps li + li {
+  margin-top: 12px;
+}
+
+.onyx-guide-text-link {
+  display: inline-block;
+  margin-top: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.onyx-guide-columns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 32px;
+}
+
+.onyx-guide-columns section {
+  padding-top: 20px;
+  border-top: 1px solid rgba(196, 164, 107, 0.26);
+}
+
+.onyx-guide-columns p {
+  margin: 0;
+}
+
+.onyx-guide-columns p + p {
+  margin-top: 16px;
+}
+
+.onyx-guide code {
+  color: #f0e6cf;
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  font-size: 0.9em;
+}
+
+.onyx-guide-faqs {
+  margin: 32px 0 0;
+}
+
+.onyx-guide-faqs > div {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(24px, 5vw, 72px);
+  padding: 24px 0;
+  border-top: 1px dotted rgba(196, 164, 107, 0.24);
+}
+
+.onyx-guide-faqs > div:last-child {
+  border-bottom: 1px dotted rgba(196, 164, 107, 0.24);
+}
+
+.onyx-guide-faqs dt {
+  color: #f0e6cf;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 21px;
+  line-height: 1.2;
+}
+
+.onyx-guide-faqs dd {
+  margin: 0;
+}
+
+.onyx-guide-sources p {
+  max-width: 76ch;
+}
+
+.onyx-guide-closing {
+  margin-top: 24px;
+  color: #e8dfca !important;
+}
+
+@media (max-width: 768px) {
+  .onyx-guide-hero h1 {
+    font-size: clamp(44px, 13vw, 68px);
+  }
+  .onyx-guide-split,
+  .onyx-guide-columns,
+  .onyx-guide-faqs > div {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .onyx-guide-split > div > p {
+    max-width: 70ch;
+  }
+}
+
+@media (max-width: 480px) {
+  .onyx-guide-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .onyx-guide-table-wrap {
+    margin-right: -20px;
+    padding-right: 20px;
+  }
 }

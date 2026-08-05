@@ -1,6 +1,6 @@
 # Karte — PROJECT STATUS
 
-Last updated: 2026-07-31. Deeper historical detail lives at
+Last updated: 2026-08-05. Deeper historical detail lives at
 [`docs/current/project-status.md`](docs/current/project-status.md).
 
 ## Why / What
@@ -20,6 +20,9 @@ cleaner handoff.
 
 ## Timeline
 
+- **2026-08-05** — Added a substantive `/ai-link-in-bio` guide whose HTML,
+  authored Markdown, sitemap entry, `/api/ai` record, and llms discovery derive
+  from the shared public-route and content contract.
 - **2026-07-31** — Added privacy-bounded, owner-only PostHog events that make
   successful configuration comparable across chat, encyclopedia, newspaper,
   and roast and normalize generated-mode completion under Karte's fixed

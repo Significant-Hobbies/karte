@@ -8,6 +8,7 @@ import {
   type NewspaperContent,
   type RoastContent,
 } from '@/lib/generated-page-types';
+import { AI_LINK_IN_BIO_MARKDOWN } from '../../content-pages/ai-link-in-bio.mjs';
 import {
   parsePublicHtmlPath,
   SITE_ORIGIN,
@@ -23,6 +24,7 @@ export async function renderPublicRouteMarkdown(
   if (parsed.kind === 'static') {
     const route = parsed.route;
     if (!route) return null;
+    if (parsed.path === '/ai-link-in-bio') return AI_LINK_IN_BIO_MARKDOWN;
     return document(
       route.title,
       source,
