@@ -118,6 +118,20 @@ test('routes every Astro content path through the Worker before Static Assets', 
   assert.deepEqual(workerFirstPaths, ASTRO_CONTENT_PATHS);
 });
 
+test('does not precompress Astro assets before Cloudflare content negotiation', () => {
+  const worker = readFileSync(
+    new URL('../worker.mjs', import.meta.url),
+    'utf8',
+  );
+  const astroAssetBlock = worker.match(
+    /if \(env\.ASSETS && ASTRO_ASSET_PATHS\.has\(url\.pathname\)\) \{([\s\S]*?)\n {6}\}\n\n {6}const cache/u,
+  );
+  assert.ok(astroAssetBlock, 'Astro asset branch must remain explicit');
+  assert.doesNotMatch(astroAssetBlock[1], /CompressionStream/u);
+  assert.doesNotMatch(astroAssetBlock[1], /content-encoding/iu);
+  assert.doesNotMatch(astroAssetBlock[1], /encodeBody/u);
+});
+
 test('adds published profile modes only when enabled and ready', () => {
   const profile = {
     slug: 'sarthak',

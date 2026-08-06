@@ -114,10 +114,10 @@ export default {
       // straight from the assets binding instead of letting the Next catch-all
       // interpret `/faq` or `/changelog` as profile slugs.
       //
-      // The Workers Static Assets binding does NOT auto-compress its
-      // responses (Lighthouse flagged ~80 KB wasted on uncompressed HTML
-      // even with CF Edge cache HIT). Compress with gzip here so the
-      // response — and the downstream CF Edge cache entry — is small.
+      // Return the asset representation unchanged. Manual precompression here
+      // poisoned the shared edge cache: Cloudflare could negotiate another
+      // encoding around the already-gzipped body, leaving browsers with gzip
+      // bytes after their advertised encoding was decoded.
       if (env.ASSETS && ASTRO_ASSET_PATHS.has(url.pathname)) {
         const assetResp = await env.ASSETS.fetch(request);
         // The assets binding answers If-None-Match revalidations with 304.
@@ -131,39 +131,9 @@ export default {
           return new Response(null, { status: 304, headers });
         }
         if (assetResp.ok && assetResp.body) {
-          const acceptEnc = request.headers.get('accept-encoding') ?? '';
-          const wantsGzip = acceptEnc.includes('gzip');
           const headers = new Headers(assetResp.headers);
           headers.set('Cache-Control', CACHE_CONTROL);
           headers.set('x-edge-cache', 'ASSET');
-
-          if (wantsGzip && !headers.has('content-encoding')) {
-            headers.set('content-encoding', 'gzip');
-            headers.delete('content-length');
-            // `Vary: Accept-Encoding` so a future no-encoding client
-            // gets a separately negotiated entry.
-            const vary = headers.get('vary');
-            headers.set(
-              'vary',
-              vary ? `${vary}, Accept-Encoding` : 'Accept-Encoding',
-            );
-            return new Response(
-              assetResp.body.pipeThrough(new CompressionStream('gzip')),
-              {
-                status: assetResp.status,
-                statusText: assetResp.statusText,
-                headers,
-                // The body is ALREADY gzip-encoded. Without this flag the
-                // Workers runtime treats it as raw and gzips it a second
-                // time (encodeBody defaults to "automatic"), so every
-                // gzip-accepting browser received double-compressed bytes
-                // — i.e. a garbled landing page. Verified against local
-                // workerd; Cloudflare's own asset server sets the same.
-                encodeBody: 'manual',
-              },
-            );
-          }
-
           return new Response(assetResp.body, {
             status: assetResp.status,
             statusText: assetResp.statusText,
