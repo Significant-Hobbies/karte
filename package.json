@@ -27,7 +27,15 @@
     "docs:check": "node scripts/docs-check.mjs",
     "db:setup:local": "node scripts/setup-local-d1.mjs",
     "knip": "knip --no-exit-code --reporter symbols",
-    "knip:strict": "knip --reporter symbols"
+    "knip:strict": "knip --reporter symbols",
+    "quality:unused": "node scripts/check-code-health.mjs unused",
+    "quality:complexity": "node scripts/check-code-health.mjs complexity",
+    "quality:duplication": "node scripts/check-code-health.mjs duplication",
+    "quality:cycles": "node scripts/check-code-health.mjs cycles",
+    "quality:dependencies": "node scripts/check-code-health.mjs dependencies",
+    "quality:suppressions": "node scripts/check-code-health.mjs suppressions",
+    "quality:hygiene": "node scripts/check-code-health.mjs hygiene",
+    "quality": "pnpm check && pnpm typecheck && pnpm test:coverage && pnpm docs:check && pnpm --dir email-worker typecheck && pnpm quality:unused && pnpm quality:complexity && pnpm quality:duplication && pnpm quality:cycles && pnpm quality:dependencies && pnpm quality:suppressions && pnpm quality:hygiene"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "2.0.41",
@@ -66,6 +74,7 @@
     "beasties": "^0.3.5",
     "dotenv": "17.4.2",
     "drizzle-kit": "0.31.10",
+    "jscpd": "5.0.14",
     "knip": "^6.29.0",
     "tailwindcss": "^4.3.3",
     "typescript": "6.0.3",
