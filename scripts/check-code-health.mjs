@@ -26,18 +26,18 @@ const paths = [
 const baselines = {
   unused: {
     files: 0,
-    exports: 1,
+    exports: 0,
     types: 0,
     dependencies: 0,
     devDependencies: 1,
     unlisted: 0,
     unresolved: 0,
   },
-  complexity: { violations: 92, maxCcn: 53, maxLength: 449, maxParams: 15 },
+  complexity: { violations: 92, maxCcn: 49, maxLength: 449, maxParams: 15 },
   duplication: {
     clones: 98,
     duplicatedLines: 2207,
-    percentage: 4.619957714931653,
+    percentage: 4.616478758340828,
   },
   suppressions: 7,
   dependencies: { critical: 0, highIds: 20, highFindings: 25 },

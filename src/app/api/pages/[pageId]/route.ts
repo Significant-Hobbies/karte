@@ -55,72 +55,12 @@ export async function PUT(
         ? incoming.trim()
         : null;
 
-  if (slug && !isValidSlug(slug)) {
-    return NextResponse.json(
-      {
-        error:
-          'Slug must be 3-50 chars, lowercase alphanumeric and hyphens only',
-      },
-      { status: 400 },
-    );
-  }
+  const validationError = validatePageUpdateFields(body);
+  if (validationError) return validationError;
 
-  if (bio && bio.length > MAX_BIO_LENGTH) {
-    return NextResponse.json(
-      { error: 'Bio too long (max 500 chars)' },
-      { status: 400 },
-    );
-  }
-
-  if (avatarUrl !== undefined && avatarUrl !== null && avatarUrl !== '') {
-    if (typeof avatarUrl !== 'string' || !isValidUrl(avatarUrl)) {
-      return NextResponse.json(
-        { error: 'Avatar URL must be a valid URL' },
-        { status: 400 },
-      );
-    }
-  }
-
-  if (
-    dmMode !== undefined &&
-    (typeof dmMode !== 'string' || !DM_MODES.has(dmMode))
-  ) {
-    return NextResponse.json(
-      { error: 'DM mode must be off, anonymous, or email' },
-      { status: 400 },
-    );
-  }
-
-  let normalizedThemeConfig = page.themeConfig ?? resolveThemeConfig();
-  if (themeConfig !== undefined) {
-    if (
-      themeConfig !== null &&
-      (typeof themeConfig !== 'object' || Array.isArray(themeConfig))
-    ) {
-      return NextResponse.json(
-        { error: 'themeConfig must be an object' },
-        { status: 400 },
-      );
-    }
-
-    if (themeConfig === null) {
-      normalizedThemeConfig = resolveThemeConfig();
-    } else {
-      const presetId =
-        typeof themeConfig.presetId === 'string' ? themeConfig.presetId : '';
-
-      if (presetId && !isThemePresetId(presetId)) {
-        return NextResponse.json(
-          { error: 'Invalid theme preset' },
-          { status: 400 },
-        );
-      }
-
-      normalizedThemeConfig = resolveThemeConfig(
-        presetId ? { presetId } : page.themeConfig,
-      );
-    }
-  }
+  const themeResult = resolveThemeUpdate(themeConfig, page.themeConfig);
+  if ('error' in themeResult) return themeResult.error;
+  const normalizedThemeConfig = themeResult.config;
 
   // Validate slug uniqueness if changed
   if (slug && slug !== page.slug) {
@@ -164,4 +104,106 @@ export async function PUT(
     .returning();
 
   return NextResponse.json(updated);
+}
+
+type PageUpdateBody = {
+  slug?: string;
+  bio?: string;
+  avatarUrl?: string | null;
+  dmMode?: string;
+  themeConfig?: { presetId?: string } | null;
+};
+
+function validatePageUpdateFields(body: PageUpdateBody): NextResponse | null {
+  const { slug, bio, avatarUrl, dmMode } = body;
+
+  if (slug && !isValidSlug(slug)) {
+    return NextResponse.json(
+      {
+        error:
+          'Slug must be 3-50 chars, lowercase alphanumeric and hyphens only',
+      },
+      { status: 400 },
+    );
+  }
+
+  if (bio && bio.length > MAX_BIO_LENGTH) {
+    return NextResponse.json(
+      { error: 'Bio too long (max 500 chars)' },
+      { status: 400 },
+    );
+  }
+
+  if (avatarUrl !== undefined && avatarUrl !== null && avatarUrl !== '') {
+    if (typeof avatarUrl !== 'string' || !isValidUrl(avatarUrl)) {
+      return NextResponse.json(
+        { error: 'Avatar URL must be a valid URL' },
+        { status: 400 },
+      );
+    }
+  }
+
+  if (
+    dmMode !== undefined &&
+    (typeof dmMode !== 'string' || !DM_MODES.has(dmMode))
+  ) {
+    return NextResponse.json(
+      { error: 'DM mode must be off, anonymous, or email' },
+      { status: 400 },
+    );
+  }
+
+  return null;
+}
+
+type ThemeUpdateResult =
+  | { error: NextResponse; config?: never }
+  | {
+      config: NonNullable<typeof pages.$inferSelect.themeConfig>;
+      error?: never;
+    };
+
+function resolveThemeUpdate(
+  themeConfig: unknown,
+  currentTheme: typeof pages.$inferSelect.themeConfig,
+): ThemeUpdateResult {
+  if (themeConfig === undefined) {
+    return { config: currentTheme ?? resolveThemeConfig() };
+  }
+
+  if (
+    themeConfig !== null &&
+    (typeof themeConfig !== 'object' || Array.isArray(themeConfig))
+  ) {
+    return {
+      error: NextResponse.json(
+        { error: 'themeConfig must be an object' },
+        { status: 400 },
+      ),
+    };
+  }
+
+  if (themeConfig === null) {
+    return { config: resolveThemeConfig() };
+  }
+
+  const presetId =
+    typeof (themeConfig as { presetId?: unknown }).presetId === 'string'
+      ? (themeConfig as { presetId: string }).presetId
+      : '';
+
+  if (presetId && !isThemePresetId(presetId)) {
+    return {
+      error: NextResponse.json(
+        { error: 'Invalid theme preset' },
+        { status: 400 },
+      ),
+    };
+  }
+
+  return {
+    config: resolveThemeConfig(
+      presetId ? ({ presetId } as never) : currentTheme,
+    ),
+  };
 }

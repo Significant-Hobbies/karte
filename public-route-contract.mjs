@@ -234,7 +234,7 @@ export function robotsTextFor(origin = SITE_ORIGIN) {
   ].join('\n');
 }
 
-export function normalizePath(pathname) {
+function normalizePath(pathname) {
   if (!pathname || pathname === '/') return '/';
   const leading = pathname.startsWith('/') ? pathname : `/${pathname}`;
   return leading.replace(/\/{2,}/g, '/').replace(/\/+$/, '') || '/';
