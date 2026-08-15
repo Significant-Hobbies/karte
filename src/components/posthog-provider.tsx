@@ -1,10 +1,15 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
 import { useEffect, useRef } from 'react';
 
-import { trackReturned, trackSignup } from '@/lib/analytics-events';
+import {
+  trackPageView,
+  trackReturned,
+  trackSignup,
+} from '@/lib/analytics-events';
 import { authClient } from '@/lib/auth-client';
 import { installBrowserMonitoring } from '@/lib/foundry-monitoring';
 
@@ -14,6 +19,12 @@ const DEFAULT_POSTHOG_HOST = 'https://us.i.posthog.com';
 export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   const { data: session } = authClient.useSession();
   const trackedSessionId = useRef<string | null>(null);
+  const pathname = usePathname();
+
+  // Track a page_view on mount and on every route change.
+  useEffect(() => {
+    trackPageView();
+  }, [pathname]);
 
   useEffect(() => {
     const key = process.env.NEXT_PUBLIC_POSTHOG_KEY ?? DEFAULT_POSTHOG_KEY;

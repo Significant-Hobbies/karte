@@ -1,10 +1,10 @@
 /**
- * Owner-facing analytics — the fixed 4-event taxonomy.
+ * Owner-facing analytics — the fixed 5-event taxonomy.
  *
- * Every project in the fleet emits exactly these four events — `signup`,
- * `activated`, `core_action`, `returned` — so a single PostHog project can
- * build one cross-fleet funnel (signup -> activated -> core_action) and a
- * D1/D7 retention insight, with no custom dashboard.
+ * Every project in the fleet emits exactly these five events — `signup`,
+ * `activated`, `core_action`, `returned`, `page_view` — so a single PostHog
+ * project can build one cross-fleet funnel (signup -> activated ->
+ * core_action) and a D1/D7 retention insight, with no custom dashboard.
  *
  * Every event carries `project_id: "linkchat"`.
  *
@@ -46,6 +46,8 @@ interface AnalyticsEventMap {
   core_action: { project_id: typeof PROJECT; action: CoreAction };
   /** A return session by a user with prior activity. */
   returned: { project_id: typeof PROJECT };
+  /** A page view, tracked on mount and on route changes. */
+  page_view: { project_id: typeof PROJECT };
 }
 
 export function trackEvent(
@@ -85,6 +87,11 @@ export function trackCoreAction(action: CoreAction): void {
 /** Fire on session start for a user who has prior activity. */
 export function trackReturned(): void {
   emit('returned', {});
+}
+
+/** Fire on mount and on every route change. */
+export function trackPageView(): void {
+  emit('page_view', {});
 }
 
 export function trackProfileModeConfigured(properties: {
