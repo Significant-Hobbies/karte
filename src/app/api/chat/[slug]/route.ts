@@ -124,12 +124,7 @@ export async function POST(
 
       // Lazy-persist email onto an existing conversation that doesn't have one yet
       // (covers conversations created before this feature shipped).
-      if (
-        !storedEmail &&
-        providedEmail &&
-        EMAIL_RE.test(providedEmail) &&
-        providedEmail.length <= 254
-      ) {
+      if (!storedEmail && isValidVisitorEmail(providedEmail)) {
         await db
           .update(conversations)
           .set({ visitorEmail: providedEmail })
@@ -140,12 +135,7 @@ export async function POST(
   }
 
   const effectiveEmail =
-    storedEmail ||
-    (providedEmail &&
-    EMAIL_RE.test(providedEmail) &&
-    providedEmail.length <= 254
-      ? providedEmail
-      : '');
+    storedEmail || (isValidVisitorEmail(providedEmail) ? providedEmail : '');
 
   if (!effectiveEmail) {
     return new Response(JSON.stringify({ error: 'Email required to chat' }), {
@@ -614,4 +604,8 @@ function buildIntentHint(intent: string | undefined): string {
     default:
       return '';
   }
+}
+
+function isValidVisitorEmail(email: string): boolean {
+  return Boolean(email && EMAIL_RE.test(email) && email.length <= 254);
 }
