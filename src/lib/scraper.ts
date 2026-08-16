@@ -1,5 +1,5 @@
-import { decodeEntities } from './html-entities';
 import { isBlockedUrl } from './blocked-url';
+import { decodeEntities } from './html-entities';
 
 const DEFAULT_MAX_URLS = 10;
 const DEFAULT_TIMEOUT_MS = 5000;
