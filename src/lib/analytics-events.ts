@@ -38,6 +38,7 @@ export type ProfileModeGenerationSource =
   | 'public_mode_route';
 
 interface AnalyticsEventMap {
+  page_view: { project_id: typeof PROJECT };
   /** First session after an account is created. */
   signup: { project_id: typeof PROJECT };
   /** The user reaches first real value — their first published profile. */
@@ -65,6 +66,10 @@ function emit<K extends keyof AnalyticsEventMap>(
   props: Omit<AnalyticsEventMap[K], 'project_id'>,
 ): void {
   trackEvent(event, props);
+}
+
+export function trackPageView(): void {
+  emit('page_view', {});
 }
 
 /** Fire once, on the first session after an account is created. */
