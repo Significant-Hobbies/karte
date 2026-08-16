@@ -1,6 +1,10 @@
+import { isBlockedUrl } from '@/lib/blocked-url';
+import { decodeEntities } from '@/lib/html-entities';
 import { MAX_TITLE_LENGTH } from '@/lib/validation';
 
 import type { ImportedLink } from './types';
+
+export { isBlockedUrl };
 
 export const MAX_IMPORT_LINKS = 30;
 export const FETCH_TIMEOUT_MS = 8000;
@@ -49,43 +53,6 @@ const ASSET_EXTENSIONS = new Set([
   '.map',
 ]);
 
-export function isBlockedUrl(urlStr: string): boolean {
-  try {
-    const { hostname } = new URL(urlStr);
-    const lower = hostname.toLowerCase();
-
-    if (
-      lower === 'localhost' ||
-      lower.endsWith('.local') ||
-      lower.endsWith('.internal')
-    )
-      return true;
-    if (lower.includes('metadata') || lower.includes('internal')) return true;
-
-    const ipv4 = lower.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
-    if (ipv4) {
-      const [, a, b] = ipv4.map(Number);
-      if (a === 127 || a === 10 || a === 0) return true;
-      if (a === 172 && b >= 16 && b <= 31) return true;
-      if (a === 192 && b === 168) return true;
-      if (a === 169 && b === 254) return true;
-    }
-
-    if (
-      lower === '[::1]' ||
-      lower.startsWith('[fe80:') ||
-      lower.startsWith('[fc') ||
-      lower.startsWith('[fd')
-    ) {
-      return true;
-    }
-
-    return false;
-  } catch {
-    return true;
-  }
-}
-
 function isAssetUrl(urlStr: string): boolean {
   try {
     const url = new URL(urlStr);
@@ -105,19 +72,6 @@ function isAssetUrl(urlStr: string): boolean {
   } catch {
     return false;
   }
-}
-
-function decodeEntities(text: string) {
-  return text
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&apos;/g, "'")
-    .replace(/&#x27;/g, "'")
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
-    .replace(/&nbsp;/g, ' ');
 }
 
 function stripTags(value: string) {

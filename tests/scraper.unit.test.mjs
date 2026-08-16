@@ -1,83 +1,12 @@
 import { strict as assert } from 'node:assert';
 import { test } from 'vitest';
 
-// Re-implementation mirror of pure helpers from src/lib/scraper.ts. Kept
-// identical so this test runs without a TS compile step. If src/lib/scraper.ts
-// changes, mirror here.
-
-function isBlockedUrl(urlStr) {
-  try {
-    const { hostname } = new URL(urlStr);
-    const lower = hostname.toLowerCase();
-
-    if (
-      lower === 'localhost' ||
-      lower.endsWith('.local') ||
-      lower.endsWith('.internal')
-    )
-      return true;
-    if (lower.includes('metadata') || lower.includes('internal')) return true;
-
-    const ipv4 = lower.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
-    if (ipv4) {
-      const [, a, b] = ipv4.map(Number);
-      if (a === 127) return true;
-      if (a === 10) return true;
-      if (a === 172 && b >= 16 && b <= 31) return true;
-      if (a === 192 && b === 168) return true;
-      if (a === 169 && b === 254) return true;
-      if (a === 0) return true;
-    }
-
-    if (
-      lower === '[::1]' ||
-      lower.startsWith('[fe80:') ||
-      lower.startsWith('[fc') ||
-      lower.startsWith('[fd')
-    )
-      return true;
-
-    return false;
-  } catch {
-    return true;
-  }
-}
-
-function decodeEntities(text) {
-  return text
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&apos;/g, "'")
-    .replace(/&#x27;/g, "'")
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
-    .replace(/&nbsp;/g, ' ');
-}
-
-function extractDomain(url) {
-  try {
-    const fullUrl = url.startsWith('http') ? url : `https://${url}`;
-    return new URL(fullUrl).hostname;
-  } catch {
-    return url;
-  }
-}
-
-function hasUsefulContent(page) {
-  const content =
-    `${page.title} ${page.description} ${page.content}`.toLowerCase();
-  const isShell =
-    content.includes('enable javascript') ||
-    content.includes('just a moment') ||
-    content.includes('sign in') ||
-    content.includes('log in') ||
-    content.includes('abs.twimg.com') ||
-    content.includes('responsive-web/client-web');
-  if (isShell) return false;
-  return page.content.length > 220;
-}
+import {
+  decodeEntities,
+  extractDomain,
+  hasUsefulContent,
+  isBlockedUrl,
+} from '../src/lib/scraper.ts';
 
 test('isBlockedUrl blocks loopback IPv4', () => {
   assert.equal(isBlockedUrl('http://127.0.0.1/whoami'), true);
