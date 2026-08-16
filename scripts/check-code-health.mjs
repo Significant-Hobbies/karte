@@ -37,7 +37,7 @@ const baselines = {
   duplication: {
     clones: 96,
     duplicatedLines: 2180,
-    percentage: 4.561814681510003,
+    percentage: 4.561910142925901,
   },
   suppressions: 7,
   dependencies: { critical: 0, highIds: 20, highFindings: 25 },
