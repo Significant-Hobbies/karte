@@ -15,8 +15,12 @@ export function isBlockedUrl(urlStr: string): boolean {
     if (ipv4) {
       const [, a, b] = ipv4.map(Number);
       const privateOrLocal =
-        a === 127 || a === 10 || a === 0 || a === 169 && b === 254
-        || a === 192 && b === 168 || a === 172 && b >= 16 && b <= 31;
+        a === 127 ||
+        a === 10 ||
+        a === 0 ||
+        (a === 169 && b === 254) ||
+        (a === 192 && b === 168) ||
+        (a === 172 && b >= 16 && b <= 31);
       if (privateOrLocal) return true;
     }
 
