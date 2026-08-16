@@ -9,7 +9,7 @@ export type ScrapeOptions = {
   useReaderFallback?: boolean;
 };
 
-function isBlockedUrl(urlStr: string): boolean {
+export function isBlockedUrl(urlStr: string): boolean {
   try {
     const { hostname } = new URL(urlStr);
     const lower = hostname.toLowerCase();
@@ -213,7 +213,7 @@ function pageFromReader(
   };
 }
 
-function hasUsefulContent(page: ScrapedPage): boolean {
+export function hasUsefulContent(page: ScrapedPage): boolean {
   const content =
     `${page.title} ${page.description} ${page.content}`.toLowerCase();
   const isShell =
@@ -267,7 +267,7 @@ function extractBodyText(html: string): string {
   return text;
 }
 
-function decodeEntities(text: string): string {
+export function decodeEntities(text: string): string {
   return text
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
@@ -296,7 +296,7 @@ export function formatScrapedContent(scraped: ScrapedPage[]): string {
   return `Scraped content from their links and projects:\n${lines.join('\n')}`;
 }
 
-function extractDomain(url: string): string {
+export function extractDomain(url: string): string {
   try {
     const fullUrl = url.startsWith('http') ? url : `https://${url}`;
     return new URL(fullUrl).hostname;

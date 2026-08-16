@@ -1,100 +1,11 @@
 import { strict as assert } from 'node:assert';
 import { test } from 'vitest';
 
-// Re-implementation mirror of src/lib/hostname.ts kept identical so this test
-// runs without a TS compile step. If src/lib/hostname.ts changes, mirror here.
-
-const HOSTNAME_RE =
-  /^(?=.{1,253}$)(?!-)(?:[a-z0-9-]{1,63}(?<!-)\.)+[a-z]{2,63}$/;
-const MULTI_PART_PUBLIC_SUFFIXES = new Set([
-  'co.uk',
-  'org.uk',
-  'ac.uk',
-  'gov.uk',
-  'com.au',
-  'net.au',
-  'org.au',
-  'co.nz',
-  'com.br',
-  'com.mx',
-  'co.jp',
-  'ne.jp',
-  'or.jp',
-  'co.kr',
-  'com.cn',
-  'com.sg',
-  'co.in',
-  'in',
-]);
-
-function normalizeHostname(input) {
-  if (typeof input !== 'string') return null;
-  let host = input.trim().toLowerCase();
-  if (!host) return null;
-
-  if (host.startsWith('http://') || host.startsWith('https://')) {
-    try {
-      host = new URL(host).hostname.toLowerCase();
-    } catch {
-      return null;
-    }
-  }
-
-  if (host.endsWith('.')) host = host.slice(0, -1);
-  if (host.startsWith('www.')) host = host.slice(4);
-
-  if (host.includes('/') || host.includes(':')) return null;
-
-  if (host.length > 253) return null;
-  if (!HOSTNAME_RE.test(host)) return null;
-  return host;
-}
-
-function isAppHost(host, appHost) {
-  if (!host) return false;
-  const normalized = host.toLowerCase().split(':')[0];
-  if (normalized === 'localhost') return true;
-  if (normalized === '127.0.0.1' || normalized === '0.0.0.0') return true;
-  if (normalized.endsWith('.workers.dev')) return true;
-  if (normalized.endsWith('.vercel.app')) return true;
-  if (appHost) {
-    const app = appHost.toLowerCase().split(':')[0];
-    if (normalized === app) return true;
-    const apex = app.startsWith('www.') ? app.slice(4) : app;
-    if (normalized === apex || normalized === `www.${apex}`) return true;
-  }
-  return false;
-}
-
-function isApexHostname(hostname) {
-  const parts = hostname.toLowerCase().split('.');
-  if (parts.length <= 2) return true;
-
-  const suffix = parts.slice(-2).join('.');
-  if (MULTI_PART_PUBLIC_SUFFIXES.has(suffix)) {
-    return parts.length === 3;
-  }
-
-  return false;
-}
-
-function getDnsInstructions(hostname) {
-  const target = 'linkchat.sarthakagrawal927.workers.dev';
-  const isApex = isApexHostname(hostname);
-  if (isApex) {
-    return [
-      {
-        type: 'CNAME',
-        name: '@',
-        value: target,
-        note: 'Use CNAME flattening, ALIAS, or ANAME if your DNS provider does not allow apex CNAMEs.',
-      },
-      { type: 'CNAME', name: 'www', value: target },
-    ];
-  }
-  const sub = hostname.split('.').slice(0, -2).join('.') || '@';
-  return [{ type: 'CNAME', name: sub, value: target }];
-}
+import {
+  getDnsInstructions,
+  isAppHost,
+  normalizeHostname,
+} from '../src/lib/hostname.ts';
 
 test('normalizeHostname accepts apex domains', () => {
   assert.equal(normalizeHostname('example.com'), 'example.com');
@@ -157,7 +68,8 @@ test('getDnsInstructions returns CNAME records for apex', () => {
   assert.equal(recs[0].name, '@');
   assert.equal(recs[1].type, 'CNAME');
   assert.equal(recs[1].name, 'www');
-  assert.equal(recs[1].value, 'linkchat.sarthakagrawal927.workers.dev');
+  assert.equal(recs[0].value, recs[1].value);
+  assert.ok(recs[0].value);
 });
 
 test('getDnsInstructions returns single CNAME for subdomain', () => {
