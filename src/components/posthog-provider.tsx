@@ -4,7 +4,11 @@ import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
 import { useEffect, useRef } from 'react';
 
-import { trackPageView, trackReturned, trackSignup } from '@/lib/analytics-events';
+import {
+  trackPageView,
+  trackReturned,
+  trackSignup,
+} from '@/lib/analytics-events';
 import { authClient } from '@/lib/auth-client';
 import { installBrowserMonitoring } from '@/lib/foundry-monitoring';
 
