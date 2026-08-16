@@ -1,3 +1,6 @@
+import { decodeEntities } from './html-entities';
+import { isBlockedUrl } from './blocked-url';
+
 const DEFAULT_MAX_URLS = 10;
 const DEFAULT_TIMEOUT_MS = 5000;
 const DEFAULT_MAX_CONTENT_LENGTH = 500;
@@ -9,45 +12,7 @@ export type ScrapeOptions = {
   useReaderFallback?: boolean;
 };
 
-export function isBlockedUrl(urlStr: string): boolean {
-  try {
-    const { hostname } = new URL(urlStr);
-    const lower = hostname.toLowerCase();
-
-    if (
-      lower === 'localhost' ||
-      lower.endsWith('.local') ||
-      lower.endsWith('.internal')
-    )
-      return true;
-    if (lower.includes('metadata') || lower.includes('internal')) return true;
-
-    // Check if hostname is an IP address
-    const ipv4 = lower.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
-    if (ipv4) {
-      const [, a, b] = ipv4.map(Number);
-      if (a === 127) return true; // 127.0.0.0/8
-      if (a === 10) return true; // 10.0.0.0/8
-      if (a === 172 && b >= 16 && b <= 31) return true; // 172.16.0.0/12
-      if (a === 192 && b === 168) return true; // 192.168.0.0/16
-      if (a === 169 && b === 254) return true; // 169.254.0.0/16
-      if (a === 0) return true; // 0.0.0.0/8
-    }
-
-    // IPv6 loopback / link-local
-    if (
-      lower === '[::1]' ||
-      lower.startsWith('[fe80:') ||
-      lower.startsWith('[fc') ||
-      lower.startsWith('[fd')
-    )
-      return true;
-
-    return false;
-  } catch {
-    return true;
-  }
-}
+export { isBlockedUrl };
 
 export interface ScrapedPage {
   url: string;
@@ -267,18 +232,7 @@ function extractBodyText(html: string): string {
   return text;
 }
 
-export function decodeEntities(text: string): string {
-  return text
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&apos;/g, "'")
-    .replace(/&#x27;/g, "'")
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
-    .replace(/&nbsp;/g, ' ');
-}
+export { decodeEntities };
 
 /**
  * Format scraped pages into a context string for AI prompts.

@@ -35,9 +35,9 @@ const baselines = {
   },
   complexity: { violations: 92, maxCcn: 49, maxLength: 449, maxParams: 15 },
   duplication: {
-    clones: 98,
-    duplicatedLines: 2207,
-    percentage: 4.616478758340828,
+    clones: 96,
+    duplicatedLines: 2180,
+    percentage: 4.561814681510003,
   },
   suppressions: 7,
   dependencies: { critical: 0, highIds: 20, highFindings: 25 },
