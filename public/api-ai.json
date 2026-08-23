@@ -6,6 +6,7 @@
   "llmsFull": "https://karte.cc/llms-full.txt",
   "sitemap": "https://karte.cc/sitemap.xml",
   "robots": "https://karte.cc/robots.txt",
+  "openapi": "https://karte.cc/openapi.json",
   "markdown": {
     "suffix": ".md",
     "negotiation": true
