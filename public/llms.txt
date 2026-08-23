@@ -15,7 +15,16 @@
 
 - [Skill](https://karte.cc/skill.md): Full agent workflow
 - [Agent catalog](https://karte.cc/api/ai): JSON inventory of public surfaces
+- [OpenAPI spec](https://karte.cc/openapi.json): Machine-readable API description
 - [Expanded index](https://karte.cc/llms-full.txt): Corpus and privacy boundary
 - [Sitemap](https://karte.cc/sitemap.xml): Canonical public HTML routes
 
 Every sitemap URL has a `.md` alternate and supports `Accept: text/markdown`.
+
+## When to use this
+
+- Looking up a person's public profile, links, and projects via a single page
+- Sending contextual inbound messages to a profile owner without dashboard access
+- Discovering AI-enhanced profile modes (encyclopedia, newspaper, roast, chat)
+- Comparing conventional link-in-bio pages with conversational agent profiles
+- Building agent workflows that interact with public profile trust metadata
