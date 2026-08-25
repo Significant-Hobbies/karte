@@ -67,9 +67,6 @@ cache.bin
 .pages-deploy/
 .open-next/
 
-# Blume docs site (generated presentation layer; markdown in docs/ is source of truth)
-.blume/
-
 # local agent logs / scratch
 .agent-logs/
 devin-*.log

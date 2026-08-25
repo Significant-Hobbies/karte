@@ -10,7 +10,7 @@ where to find it.
 | `ci.yml` | push/PR to `main`/`master` | `pnpm lint`, `typecheck`, `test` | `ci.yml` |
 | `deploy.yml` | `workflow_dispatch` (manual) | `pnpm cf:build` → `wrangler-action deploy` → curl smoke | `deploy.yml` |
 | `weekly.yml` | cron `0 9 * * 1` (Mon 09:00 UTC) + `workflow_dispatch` | Runs available quality scripts (lint, typecheck, test, build) | `weekly.yml` |
-| `docs.yml` | push/PR (docs + scripts + workflow changes) | `pnpm docs:check` (required) + Blume build (non-blocking) | `docs.yml` |
+| `docs.yml` | push/PR (docs + scripts + workflow changes) | `pnpm docs:check` (required) | `docs.yml` |
 
 > The deploy workflow is **manual**. Pushing to `main` does not auto-deploy.
 

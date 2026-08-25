@@ -9,9 +9,8 @@ Local-first knowledge system for **Karte** (`linkchat`) — a link-in-bio
 platform with AI-enhanced profile modes, deployed on Cloudflare Workers via
 OpenNext. Product: <https://karte.cc>.
 
-> **Source of truth:** the Markdown in this `docs/` tree. Blume is only the
-> presentation/search layer (`blume.config.ts`). Code and executable config
-> remain authoritative for implementation details and schedules.
+> **Source of truth:** the Markdown in this `docs/` tree. Code and executable
+> config remain authoritative for implementation details and schedules.
 
 ## Start here
 
@@ -46,7 +45,7 @@ OpenNext. Product: <https://karte.cc>.
 
 ## Operations
 
-- [`operations/deploy.md`](operations/deploy.md) — `cf:build` pipeline, Astro overlay, Blume.
+- [`operations/deploy.md`](operations/deploy.md) — `cf:build` pipeline and Astro overlay.
 - [`operations/env-and-secrets.md`](operations/env-and-secrets.md) — env + bindings + secrets reference.
 - [`operations/observability.md`](operations/observability.md) — logs, timing, analytics.
 - [`operations/jobs.md`](operations/jobs.md) — CI workflows + cron.

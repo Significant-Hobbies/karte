@@ -20,7 +20,8 @@ roast, newspaper — deployed on Cloudflare Workers via OpenNext. Product:
 - **Open work and blockers:** GitHub Issues.
 - **Docs hub:** `docs/index.md` — full navigation. Start there for any non-trivial question.
 - **Detailed status record:** `docs/current/project-status.md` — timeline, products, feature inventory.
-- Markdown in `docs/` is the **source of truth**. Blume (`blume.config.ts`) is only the presentation/search layer.
+- Markdown in `docs/` is the **source of truth**. Code and executable config
+  remain authoritative for implementation details and schedules.
 
 ## Stack
 

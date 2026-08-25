@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Node.js 22+ (Blume docs tooling wants 22.12+; the app CI uses 22).
+- Node.js 22+ (the app CI uses 22).
 - pnpm 10+ (`packageManager` is pinned in `package.json`).
 - Wrangler (installed with the project dependencies).
 

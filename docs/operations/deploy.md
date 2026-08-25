@@ -57,17 +57,3 @@ against the workers.dev origin.
   `linkchat` and `karte-email` workers (`docs/product/email-inbox.md`).
 - For custom domains, confirm `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ZONE_ID`
   are set (`docs/product/custom-domains.md`).
-
-## Blume docs site (separate, optional)
-
-The `docs/` tree is also publishable via Blume. Blume is the presentation
-layer only — Markdown in `docs/` remains the source of truth.
-
-```bash
-npx blume dev       # local docs preview
-npx blume build     # static build (output: .blume/dist by default)
-```
-
-Config: `blume.config.ts` (root). Blume is invoked via `npx`; it is **not**
-a package dependency, so it does not affect the install/lockfile. Generated
-output is gitignored (`.blume/`).
