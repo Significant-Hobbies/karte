@@ -17,7 +17,7 @@
       "url": "https://karte.cc/",
       "md": "https://karte.cc/index.md",
       "kind": "static",
-      "description": "Karte turns a personal page into a public inbound agent that answers visitor questions, collects context, and sends cleaner messages to your inbox."
+      "description": "Karte gives creators and independent operators one public profile for links, projects, visitor questions, and better-contextualized inbound."
     },
     {
       "id": "about",
@@ -38,14 +38,14 @@
       "url": "https://karte.cc/ai-link-in-bio",
       "md": "https://karte.cc/ai-link-in-bio.md",
       "kind": "static",
-      "description": "Compare a conventional link-in-bio with a conversational Karte profile, including public trust cards, agent.json, privacy boundaries, questions, and publishing steps."
+      "description": "Compare a conventional link-in-bio with a conversational Karte profile, including public context, agent manifests, privacy, and publishing steps."
     },
     {
       "id": "faq",
       "url": "https://karte.cc/faq",
       "md": "https://karte.cc/faq.md",
       "kind": "static",
-      "description": "Answers about Karte agent profiles, public trust cards, agent.json manifests, contextual chat, and AI-enhanced profile modes."
+      "description": "Straight answers about Karte public profiles, visitor chat, owner access, current cost, agent pages, and the not-yet-shipped company workflow."
     },
     {
       "id": "changelog",

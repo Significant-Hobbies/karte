@@ -20,16 +20,16 @@ import { metadataForStaticPath } from '@/lib/public-route-metadata';
 export const metadata: Metadata = metadataForStaticPath('/');
 
 /**
- * Karte landing — Onyx deck.
+ * Karte fallback landing — Onyx deck.
  *
- * Five cards, deck-numbered. Each card is an OnyxCard frame around a
+ * Six cards, deck-numbered. Each card is an OnyxCard frame around a
  * body component. The deck IS the page — no above-deck nav decoration,
  * no below-deck proof sections; everything the visitor needs to buy
  * the pitch lives inside these five surfaces.
  *
- * Ported from Claude Design handoff bundle (variations/onyx.jsx +
- * onyx-mobile.jsx). See docs/plans/agent-subtype-spec.md for what
- * card IV's CTA pipes into.
+ * The production Cloudflare build overlays the purpose-led Astro landing at
+ * `/`. This fallback remains aligned with access and commercial truth so a
+ * missing overlay does not restore the old permanent-free claim.
  */
 export default function Home() {
   return (
@@ -92,7 +92,7 @@ export default function Home() {
           idx="vi"
           serial="№ 00476"
           kicker="CLAIM YOUR NAME · LAST CARD"
-          footL="One link · one public agent · free forever"
+          footL="One public profile · free today"
           footR="© MMXXVI · Karte"
         >
           <OnyxCta />

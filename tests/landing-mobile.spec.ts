@@ -11,20 +11,23 @@ import { expect, test } from '@playwright/test';
  * flow is verified manually against the mobile conventions doc.
  */
 test.describe('landing page', () => {
-  test('renders the inbound-agent deck with no horizontal scroll', async ({
+  test('renders the public inbound desk with no horizontal scroll', async ({
     page,
   }) => {
     await page.goto('/');
 
     await expect(
-      page.getByRole('heading', { name: /Everyone gets an agent/i, level: 1 }),
+      page.getByRole('heading', {
+        name: /A public card that answers back/i,
+        level: 1,
+      }),
     ).toBeVisible();
 
     await expect(
-      page.getByText(/The public agent for your inbound/i),
+      page.getByText(/creators and independent operators/i),
     ).toBeVisible();
     await expect(
-      page.getByRole('link', { name: /Claim your name/i }).first(),
+      page.getByRole('link', { name: /Create your page/i }).first(),
     ).toBeVisible();
 
     const overflow = await page.evaluate(
@@ -35,34 +38,40 @@ test.describe('landing page', () => {
     expect(overflow).toBe(false);
   });
 
-  test('assistant and inbound desk cards are present', async ({ page }) => {
+  test('the shipped capability and company boundaries are present', async ({
+    page,
+  }) => {
     await page.goto('/');
 
     await page
-      .getByText(/The inbound desk/i)
+      .getByText(/What ships today/i)
       .first()
       .scrollIntoViewIfNeeded();
     await expect(
-      page.getByRole('heading', { name: /Four ways to handle inbound/i }),
+      page.getByRole('heading', { name: /One profile. Several useful doors/i }),
     ).toBeVisible();
     await expect(
-      page.locator('.onyx-surfaces-list').getByText('Email', { exact: true }),
+      page
+        .locator('.capability-ledger')
+        .locator('dt', { hasText: 'Contact and inbox' }),
     ).toBeVisible();
     await expect(
-      page.locator('.onyx-surfaces-list').getByText('Leads', { exact: true }),
+      page
+        .locator('.capability-ledger')
+        .locator('dt', { hasText: 'Owner dashboard' }),
     ).toBeVisible();
 
-    await page.locator('.onyx-agents').scrollIntoViewIfNeeded();
+    await page.locator('.boundary-section').scrollIntoViewIfNeeded();
     await expect(
       page.getByRole('heading', {
-        name: /Your assistant takes the first pass/i,
+        name: /The foundation fits a company introduction/i,
       }),
     ).toBeVisible();
   });
 
   test('the primary CTA is a large enough touch target', async ({ page }) => {
     await page.goto('/');
-    const cta = page.getByRole('link', { name: /Claim your name/i }).first();
+    const cta = page.getByRole('link', { name: /Create your page/i }).first();
     const box = await cta.boundingBox();
     expect(box).not.toBeNull();
     expect(box?.height).toBeGreaterThanOrEqual(44);

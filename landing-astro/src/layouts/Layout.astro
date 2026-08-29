@@ -9,8 +9,12 @@
 import '@fontsource-variable/playfair-display';
 import '@fontsource-variable/playfair-display/wght-italic.css';
 import '@fontsource-variable/inter';
+import playfairNormalUrl from '@fontsource-variable/playfair-display/files/playfair-display-latin-wght-normal.woff2?url';
+import playfairItalicUrl from '@fontsource-variable/playfair-display/files/playfair-display-latin-wght-italic.woff2?url';
+import interNormalUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import '@/styles/landing.css';
 import { SITE_ORIGIN, staticPublicRoute } from '../../../public-route-contract.mjs';
+import { product } from '@/lib/product';
 
 interface Props {
   title: string;
@@ -29,6 +33,7 @@ const canonicalUrl = new URL(canonicalPath, SITE_ORIGIN);
 // reproduce that. Post-cutover Pages takes `/` and Workers keeps every
 // other route, so this URL still resolves. See README → cutover notes.
 const OG_IMAGE = `${SITE_ORIGIN}/opengraph-image`;
+const markdownPath = canonicalPath === '/' ? '/index.md' : `${canonicalPath}.md`;
 ---
 
 <!doctype html>
@@ -40,8 +45,15 @@ const OG_IMAGE = `${SITE_ORIGIN}/opengraph-image`;
     <title>{resolvedTitle}</title>
     <meta name="description" content={resolvedDescription} />
     <meta name="application-name" content="Karte" />
+    <meta name="theme-color" content="#0a0805" />
+
+    <link rel="preload" href={playfairNormalUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={playfairItalicUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={interNormalUrl} as="font" type="font/woff2" crossorigin />
 
     <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" type="text/markdown" href={new URL(markdownPath, SITE_ORIGIN)} />
+    <link rel="alternate" type="text/plain" href={new URL('/llms.txt', SITE_ORIGIN)} />
 
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
@@ -66,12 +78,13 @@ const OG_IMAGE = `${SITE_ORIGIN}/opengraph-image`;
       applicationCategory: 'WebApplication',
       operatingSystem: 'Web Browser',
       url: 'https://karte.cc',
-      description:
-        'Personal page with a public inbound assistant for visitor questions, contact messages, leads, and AI-enhanced profile modes.',
+      description: product.description,
+      isAccessibleForFree: true,
       offers: {
         '@type': 'Offer',
         price: '0',
         priceCurrency: 'USD',
+        description: 'No billing is implemented in the current product; future pricing is not committed.',
       },
       creator: {
         '@type': 'Person',
@@ -99,10 +112,19 @@ const OG_IMAGE = `${SITE_ORIGIN}/opengraph-image`;
       }
       html.dark { color-scheme: dark; }
       body { margin: 0; }
+      portfolio-project-strip,
+      ai-chat-footer { display: block; }
+      portfolio-project-strip { min-height: 2.875rem; }
+      ai-chat-footer { min-height: 6rem; }
+      @media (max-width: 1000px) {
+        ai-chat-footer { min-height: 9rem; }
+      }
     </style>
   </head>
   <body class="antialiased">
     <slot />
+    <portfolio-project-strip current-project="karte"></portfolio-project-strip>
+    <ai-chat-footer product-name="Karte"></ai-chat-footer>
     <script
       is:inline
       src="https://sassmaker.com/project-strip.js"
@@ -113,6 +135,7 @@ const OG_IMAGE = `${SITE_ORIGIN}/opengraph-image`;
       is:inline
       src="https://sassmaker.com/ai-chat-footer.js"
       data-name="Karte"
+      data-compose="false"
       defer
     ></script>
   </body>

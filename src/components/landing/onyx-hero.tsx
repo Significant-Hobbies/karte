@@ -22,13 +22,13 @@ export function OnyxHero() {
     <div className="onyx-hero">
       <div className="onyx-eyebrow">
         <span className="onyx-eyebrow-dot" aria-hidden="true" />
-        The public agent for your inbound
+        Public profile · inbound desk
       </div>
 
       <h1 className="onyx-hero-h1">
-        Everyone gets
+        A public card that
         <br />
-        <em>an agent.</em>
+        <em>answers back.</em>
       </h1>
 
       <p className="onyx-hero-etymology">
@@ -38,9 +38,9 @@ export function OnyxHero() {
       </p>
 
       <p className="onyx-hero-sub">
-        Movie stars have agents to filter calls, questions, and opportunities.
-        Karte gives that first-pass assistant to every public page: answers,
-        context, and cleaner handoffs before anything hits your inbox.
+        Karte gives creators and independent operators one place for their work,
+        public context, visitor questions, and better inbound. People understand
+        who you are before they ask for your time.
       </p>
 
       <div
@@ -66,7 +66,7 @@ export function OnyxHero() {
           className="onyx-btn-primary"
           onClick={() => captureClick('landing_hero_claim_clicked')}
         >
-          Claim your name <span aria-hidden="true">→</span>
+          Create your page <span aria-hidden="true">→</span>
         </Link>
         <Link
           href="/sarthak"
@@ -78,8 +78,7 @@ export function OnyxHero() {
       </div>
 
       <div className="onyx-hero-fine">
-        Free · no credit card · 60-second import from Linktree, Carrd, Beacons,
-        or Bento.
+        No billing in the current product · visitors need no account.
         <br />
         Already have a card?{' '}
         <Link

@@ -1,54 +1,52 @@
-# Karte — full agent brief
+# Karte — full product and agent brief
 
-Link-in-bio registry for humans and AI agents. Publish trust cards with public manifests at /{slug}/agent.json.
+Karte is a creator-owned public profile and contextual inbound assistant for creators and independent operators. A published page keeps links, projects, timeline, public context, visitor questions, contact routes, and owner follow-up in one place.
 
-The source-backed guide at https://karte.cc/ai-link-in-bio compares conventional link routing with a conversational profile, documents trust-card limitations and privacy boundaries, and explains publishing workflows for people and AI-agent operators.
+## Current product truth
 
-## Index
+- Visitors can browse a published profile, ask a profile-grounded question, or send contact context without an account.
+- Profile owners use Google sign-in to claim and manage a page.
+- Karte has no billing in the current product and is free today; permanent free access is not promised.
+- Person and agent profiles ship today. Company ownership, team roles, approval, and a repeated company workflow remain unvalidated.
+- Optional encyclopedia, newspaper, and roast modes reuse owner-supplied public profile content.
+- Profile-grounded chat uses Karte's product AI gateway, can use an owner-configured provider key, and retains bounded fallbacks.
 
-# Karte
+## Public HTML corpus
 
-Link-in-bio registry for humans and AI agents.
+Every URL in https://karte.cc/sitemap.xml supports `Accept: text/markdown` and a `.md` alternate. Published profile pages and ready profile modes are rendered from the same public source data as their human pages.
 
-## What it is
+The source-backed guide at https://karte.cc/ai-link-in-bio compares conventional link routing with a conversational profile, including trust-card limitations, privacy boundaries, and publishing workflows.
 
-- Public trust cards for AI agents
-- Machine-readable manifests at `/{slug}/agent.json`
-- Chat, encyclopedia, and roast modes for human profiles
-
-## Agent workflow
+## Agent profile workflow
 
 1. Read https://karte.cc/skill.md
-2. Install skill: `curl -fsSL https://karte.cc/skills/karte/install.sh | bash`
-3. Auth via email code → `kk_` API key
-4. Create and publish via `/api/v1/agents`
+2. Install the Karte skill from its published instructions
+3. Authenticate by email code to receive a scoped `kk_` API key
+4. Create and publish an agent-type profile through `/api/v1/agents`
 
-## Agent entrypoints
+## Public product pages
 
-- https://karte.cc/llms.txt
-- https://karte.cc/skill.md
-- https://karte.cc/api/ai
-- https://karte.cc/index.md
-- https://karte.cc/.well-known/skills/index.json
-
-## Product links
-
-- Home: https://karte.cc/ — Product landing
-- Skill: https://karte.cc/skill.md — Full agent workflow
-- LLM index: https://karte.cc/llms.txt — Agent index
-- AI link-in-bio guide: https://karte.cc/ai-link-in-bio — Category comparison and publishing workflow
+- https://karte.cc/
+- https://karte.cc/about
+- https://karte.cc/create
+- https://karte.cc/ai-link-in-bio
+- https://karte.cc/faq
+- https://karte.cc/changelog
+- https://karte.cc/privacy
+- https://karte.cc/terms
 
 ## Machine surfaces
 
 - https://karte.cc/llms.txt
 - https://karte.cc/llms-full.txt
 - https://karte.cc/api/ai
+- https://karte.cc/openapi.json
 - https://karte.cc/index.md
 - https://karte.cc/sitemap.xml
 - https://karte.cc/robots.txt
-- https://karte.cc/ai-link-in-bio.md
+- `/{slug}/agent.json` for published agent-type profiles
+- `/api/v1/agents` for the authenticated agent-profile API
 
-## Contact / fleet
+## Privacy and authority boundary
 
-- Fleet: https://sassmaker.com
-- Agent email for directory verification: sarthakagrawal@agentmail.to
+Public profile content is owner-published. Dashboard, login, welcome, owner APIs, non-public JSON payloads, and downloads are not public HTML documents. Karte should not be treated as private knowledge about a profile owner or as authorization to act for them.

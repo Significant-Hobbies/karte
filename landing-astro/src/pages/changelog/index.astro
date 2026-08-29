@@ -1,5 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
+import ProductFooter from '@/components/ProductFooter.astro';
+import SiteHeader from '@/components/SiteHeader.astro';
 
 const repository = 'https://github.com/Significant-Hobbies/karte';
 const releases = [
@@ -43,9 +45,10 @@ const releases = [
   description="Meaningful improvements to Karte’s public profiles, inbound assistant, and creator workflows."
   canonicalPath="/changelog"
 >
-  <main class="changelog-shell">
+  <main class="karte-page">
+    <SiteHeader current="changelog" />
+    <section class="changelog-shell">
     <header class="changelog-header">
-      <a class="changelog-brand" href="/">Karte</a>
       <p class="changelog-kicker">Product history</p>
       <h1>Changelog</h1>
       <p>
@@ -78,5 +81,7 @@ const releases = [
         ))
       }
     </ol>
+    </section>
+    <ProductFooter />
   </main>
 </Layout>

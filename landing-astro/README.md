@@ -1,8 +1,8 @@
 # landing-astro
 
-Static Astro port of the karte.cc `/` route — the Onyx Deck. Deploys to
-Cloudflare Pages, intended to take over `/` from the Next.js Workers
-deploy once verified.
+Static Astro source for the public karte.cc landing, FAQ, changelog, and
+AI link-in-bio guide. The full Cloudflare build overlays these files into the
+OpenNext Worker assets; it is not an independently released Pages product.
 
 ## Why a separate project?
 
@@ -23,9 +23,9 @@ runtime; this project mirrors that config (output: `'static'`,
 - Cloudflare Pages — see `wrangler.toml` (`pages_build_output_dir =
   "dist"`)
 
-No SSR adapter, no React, no client JS. The Onyx Deck visuals (gold
-foil, sheen, corner glyphs, deck numbering) are all pure CSS — the
-copied `src/styles/landing.css` does the heavy lifting unchanged.
+No SSR adapter, React, or page-owned client JavaScript. The Onyx reading-room
+materials and the public-inbound-desk layout are pure CSS. Shared project-strip
+and Ask AI scripts load after the authored product footer.
 
 ## Commands
 
@@ -44,61 +44,31 @@ landing-astro/
                             # inlineStylesheets: 'always', Lightning CSS.
   wrangler.toml             # CF Pages, pages_build_output_dir = "dist".
   src/
-    pages/index.astro       # Composes the six OnyxCard sections.
-    layouts/Layout.astro    # Meta tags, font preloads (Playfair + Inter).
-    components/             # Six .astro ports of the React components.
-    styles/landing.css      # Copied verbatim from src/app/landing.css.
+    pages/index.astro       # Purpose-led public inbound desk.
+    pages/faq.astro         # Current product and commercial boundaries.
+    layouts/Layout.astro    # Metadata, schema, fonts, and shared loaders.
+    components/             # Shared product header and authored footer.
+    lib/product.ts          # Landing and FAQ product truth.
+    styles/landing.css      # Onyx reading room plus supporting content routes.
   public/_headers           # CF Pages cache headers.
 ```
 
-## Compromises vs. the Next.js original
+## Static surface boundaries
 
-The React landing had three places with real interactivity. The static
-port handles each as follows:
-
-- **OnyxCard sheen** — the React version tracked the cursor and fed
-  `--mx`/`--my` CSS vars to a radial-gradient overlay. Dropped. The
-  CSS already defaults `--mx: 50%; --my: 50%`, which is what touch
-  devices and no-hover users always saw.
-- **OnyxCta form** — React version called `router.push('/create?slug=…')`
-  with client-side sanitisation. Replaced with a native
-  `<form action="/create" method="GET">` + `<input name="slug">`.
-  Browser produces the same URL. The on-type lowercase/regex filter
-  is gone; `/create` re-validates server-side.
-- **OnyxAgents waitlist** — the React version opened an inline AJAX
-  POST to `/api/agent-waitlist`. The static port renders only the
-  "Coming soon — claim a card" CTA, pointing to `/create`. The proper
-  waitlist returns when the agent-subtype flow ships
-  (`docs/plans/agent-subtype-spec.md`).
-- **PostHog click events** — `landing_hero_*`, `landing_samples_*`,
-  `landing_cta_*` are not fired on this build. The Next.js Worker
-  still owns every funnel route (`/create`, `/dashboard`, the public
-  slugs) so the downstream events still fire on conversion. Add
-  PostHog later via an Astro layout `<script>` if the upper-funnel
-  attribution turns out to matter.
+- **Create form:** the native GET form sends the chosen slug to `/create`,
+  where the application validates it and handles sign-in.
+- **Product state:** the page describes person and agent profiles as shipped;
+  company ownership, team roles, and approval remain the next validation.
+- **Analytics:** the static marketing surface does not ship page-owned PostHog
+  JavaScript. Application routes retain their existing instrumentation.
 - **OG / Twitter image** — Next.js generates `/opengraph-image` via the
   `opengraph-image.tsx` file convention. The Astro layout points
   `og:image` at `https://karte.cc/opengraph-image`; post-cutover the
   Worker still owns that route, so the URL keeps resolving.
 
-## Cutover (NOT done yet)
+## Build and release boundary
 
-This deploy is **additive**. The Next.js Workers deploy at
-`linkchat.sarthakagrawal927.workers.dev` is untouched: same
-`wrangler.jsonc`, same `package.json`, same routes. Cutover is a
-follow-up step:
-
-1. `cd landing-astro && pnpm install && pnpm build` — verify clean.
-2. `wrangler pages deploy dist/` (or wire the CF dashboard build) to a
-   preview URL. QA the deck against the Next.js version.
-3. In the Cloudflare dashboard, route `karte.cc/` (exact) → Pages
-   project, leave `karte.cc/*` on the Worker. Verify the Worker still
-   owns `/<slug>`, `/dashboard/*`, `/api/*`, `/create`, `/login`,
-   `/welcome`, `/about`, `/privacy`, `/terms`.
-4. Run psi-swarm against `karte.cc/`, confirm LCP < 500 ms p75 desktop.
-5. Delete `src/app/page.tsx`, `src/components/landing/*`, and
-   `src/app/landing.css` from the linkchat root **only after**
-   the route is observably stable for ~a week.
-
-Do not delete the React landing until the Pages route is the source of
-truth in production.
+`pnpm cf:build` builds Next/OpenNext, builds this Astro package, and overlays
+the four authored routes into `.open-next/assets`. Local qualification or a
+Quick Tunnel does not release production. Production deployment remains the
+separate manual `pnpm deploy:cf` workflow.

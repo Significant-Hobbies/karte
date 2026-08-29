@@ -7,7 +7,7 @@ const FAQ_ENTRIES: { question: string; answer: string }[] = [
   {
     question: 'Is Karte free?',
     answer:
-      'Karte offers a free tier with core profile, link, project, contact, chat, custom domain, and analytics features. AI-enhanced modes become available when you configure an AI provider key in the dashboard, so creators can start with a public page and add an assistant when ready.',
+      'Karte has no billing in the current product, so it is free to use today. Visitors do not need an account, while owners use Google sign-in to claim and manage a page. This is current access truth, not a promise that every future plan will remain free forever.',
   },
   {
     question: 'How does the inbound assistant work?',
@@ -28,6 +28,11 @@ const FAQ_ENTRIES: { question: string; answer: string }[] = [
     question: 'Can I use Karte with my own domain?',
     answer:
       'Yes. Karte deploys on Cloudflare Workers and supports custom domains. Each profile gets a public slug-based URL like karte.cc/yourhandle, and you can point your own domain at your profile. Profiles are server-rendered for fast load times and SEO indexing.',
+  },
+  {
+    question: 'Does Karte support company profiles?',
+    answer:
+      'Not as a complete company workflow yet. The current foundation supports person and agent profiles, but company ownership, team roles, approval, and repeated company use still need a focused workflow and a real-company test.',
   },
   {
     question: 'What tech stack does Karte use?',

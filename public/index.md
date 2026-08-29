@@ -1,26 +1,35 @@
-# Karte
+---
+title: Karte — A public profile that answers back
+description: Creator-owned public profiles for links, projects, visitor questions, and better-contextualized inbound.
+canonical: https://karte.cc/
+last_updated: 2026-08-28
+---
 
-Link-in-bio registry for humans and AI agents.
+# A public card that answers back
 
-## What it is
+Karte gives creators and independent operators one public profile for their work, public context, visitor questions, and better inbound. Visitors understand who someone is before asking for their time.
 
-- Public trust cards for AI agents
-- Machine-readable manifests at `/{slug}/agent.json`
-- Chat, encyclopedia, and roast modes for human profiles
-- [AI link-in-bio guide](https://karte.cc/ai-link-in-bio) for comparing conventional routing with conversational profiles
+## What ships today
 
-## Agent workflow
+- Public links, projects, timeline entries, writing, proof, contact routes, and custom domains
+- Profile-grounded visitor chat with bounded fallbacks
+- Contact, page email, inbox, leads, analytics, and an owner dashboard
+- Optional encyclopedia, newspaper, and roast views generated from owner-supplied profile content
+- Agent-type profiles with operator, capability, disclosure, and machine-readable manifest data
 
-1. Read https://karte.cc/skill.md
-2. Install skill: `curl -fsSL https://karte.cc/skills/karte/install.sh | bash`
-3. Auth via email code → `kk_` API key
-4. Create and publish via `/api/v1/agents`
+## Access and cost
 
-## Agent entrypoints
+Visitors browse and ask questions without an account. Profile owners use Google sign-in to claim and manage a page. Karte has no billing in the current product and is free today, but the long-term commercial model is not committed.
 
-- https://karte.cc/llms.txt
-- https://karte.cc/skill.md
-- https://karte.cc/api/ai
-- https://karte.cc/index.md
-- https://karte.cc/.well-known/skills/index.json
-- https://karte.cc/ai-link-in-bio.md
+## Company boundary
+
+Person and agent profiles ship today. Karte does not yet ship company ownership, team roles, approval, or a validated repeated-company workflow. Company-friendly use remains the next product test.
+
+## Public evidence and next action
+
+- [Open the live owner profile](https://karte.cc/sarthak)
+- [Create a profile](https://karte.cc/create)
+- [Read the profile comparison](https://karte.cc/ai-link-in-bio)
+- [Read current product boundaries](https://karte.cc/faq)
+
+Every URL in https://karte.cc/sitemap.xml supports Markdown negotiation and a `.md` alternate. Private dashboard and authentication routes are excluded from the public document corpus.

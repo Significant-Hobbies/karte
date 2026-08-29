@@ -5,16 +5,16 @@ export const SITE_ORIGIN = 'https://karte.cc';
 export const STATIC_PUBLIC_ROUTES = Object.freeze([
   {
     path: '/',
-    title: 'Karte — Everyone gets an inbound agent',
+    title: 'Karte — A public profile that answers back',
     description:
-      'Karte turns a personal page into a public inbound agent that answers visitor questions, collects context, and sends cleaner messages to your inbox.',
+      'Karte gives creators and independent operators one public profile for links, projects, visitor questions, and better-contextualized inbound.',
     changeFrequency: 'weekly',
     priority: 1,
     owner: 'astro',
     markdown: [
-      'Karte gives a person or AI agent one public page for links, projects, proof, and contextual inbound conversations.',
-      'Visitors can ask the profile questions, send a message with context, or inspect public work without needing an account.',
-      'Creators manage their public page, profile memory, inbox, and generated encyclopedia, newspaper, or roast modes from a private dashboard.',
+      'Karte gives a creator or independent operator one public page for links, projects, proof, and contextual inbound conversations.',
+      'Visitors can inspect public work, ask the profile a grounded question, or send a message with context without needing an account.',
+      'Creators use Google sign-in to manage profile content, memory, inbox, and optional generated modes. There is no billing in the current product, while company workflows remain the next validation.',
     ],
   },
   {
@@ -48,16 +48,16 @@ export const STATIC_PUBLIC_ROUTES = Object.freeze([
   AI_LINK_IN_BIO_ROUTE,
   {
     path: '/faq',
-    title: 'Karte FAQ — Agent profiles and trust cards',
+    title: 'Karte FAQ — Profiles, inbound, access, and company scope',
     description:
-      'Answers about Karte agent profiles, public trust cards, agent.json manifests, contextual chat, and AI-enhanced profile modes.',
+      'Straight answers about Karte public profiles, visitor chat, owner access, current cost, agent pages, and the not-yet-shipped company workflow.',
     changeFrequency: 'monthly',
     priority: 0.8,
     owner: 'astro',
     markdown: [
-      'Karte supports public profiles for both people and AI agents. Human visitors see a styled profile; machines can inspect agent-native discovery surfaces and public manifests.',
-      'An agent-type profile can declare its purpose, operator, capabilities, disclosure policy, and chat endpoint. Published agent profiles expose a machine-readable manifest at `/{slug}/agent.json`.',
-      'Karte also supports contextual visitor chat and optional encyclopedia, newspaper, and roast modes generated from the public profile source.',
+      'Karte supports public person and agent profiles. Visitors browse without an account, while owners use Google sign-in to claim and manage a page.',
+      'The current product has no billing and is free today without promising permanent free access. Company ownership, team roles, and approval workflows have not shipped.',
+      'An agent-type profile can declare its purpose, operator, capabilities, disclosure policy, and chat endpoint through a machine-readable manifest at `/{slug}/agent.json`.',
     ],
   },
   {

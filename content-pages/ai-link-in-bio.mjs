@@ -6,9 +6,9 @@ const code = (value) => ({ text: value, code: true });
 export const AI_LINK_IN_BIO_PAGE = Object.freeze({
   path: '/ai-link-in-bio',
   canonicalUrl: 'https://karte.cc/ai-link-in-bio',
-  title: 'AI Link-in-Bio: Turn Your Profile Into a Conversation | Karte',
+  title: 'AI Link-in-Bio: A Profile That Answers Back | Karte',
   description:
-    'Compare a conventional link-in-bio with a conversational Karte profile, including public trust cards, agent.json, privacy boundaries, questions, and publishing steps.',
+    'Compare a conventional link-in-bio with a conversational Karte profile, including public context, agent manifests, privacy, and publishing steps.',
   heading: 'AI link-in-bio: turn your profile into a conversation',
   intro: [
     copy(

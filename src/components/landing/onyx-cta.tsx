@@ -35,13 +35,13 @@ export function OnyxCta() {
     <div className="onyx-cta">
       <div className="onyx-eyebrow center">· CLAIM YOUR NAME ·</div>
       <h2 className="onyx-cta-h">
-        Claim the agent
+        Create the profile
         <br />
-        <em>people talk to.</em>
+        <em>people can ask.</em>
       </h2>
       <p className="onyx-cta-sub">
-        One link. One public assistant. Fewer cold messages, better handoffs.
-        Free forever.
+        Start with your public context. Add chat, inbox, and profile modes when
+        they improve the handoff.
       </p>
       <form className="onyx-cta-form" onSubmit={handleSubmit}>
         <span className="onyx-cta-prefix">karte.cc /</span>
@@ -62,7 +62,7 @@ export function OnyxCta() {
         </button>
       </form>
       <div className="onyx-cta-fine">
-        Free · no credit card · 60-second import.
+        Free today · no billing in the current product.
       </div>
     </div>
   );

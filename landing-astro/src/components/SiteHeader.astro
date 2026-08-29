@@ -1,0 +1,20 @@
+---
+interface Props {
+  current?: 'home' | 'guide' | 'faq' | 'changelog';
+}
+
+const { current = 'home' } = Astro.props;
+---
+
+<header class="karte-header">
+  <a class="karte-brand" href="/" aria-label="Karte home">
+    <span aria-hidden="true">◆</span>
+    <strong>Karte</strong>
+  </a>
+  <nav aria-label="Primary navigation">
+    <a href="/ai-link-in-bio" aria-current={current === 'guide' ? 'page' : undefined}>How it works</a>
+    <a href="/faq" aria-current={current === 'faq' ? 'page' : undefined}>FAQ</a>
+    <a href="/changelog" aria-current={current === 'changelog' ? 'page' : undefined}>Changelog</a>
+    <a class="karte-header-action" href="/create">Create a page</a>
+  </nav>
+</header>

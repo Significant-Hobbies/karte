@@ -1,116 +1,144 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import OnyxCard from '@/components/OnyxCard.astro';
-import OnyxHero from '@/components/OnyxHero.astro';
-import OnyxHow from '@/components/OnyxHow.astro';
-import OnyxSurfaces from '@/components/OnyxSurfaces.astro';
-import OnyxAgents from '@/components/OnyxAgents.astro';
-import OnyxSamples from '@/components/OnyxSamples.astro';
-import OnyxCta from '@/components/OnyxCta.astro';
+import ProductFooter from '@/components/ProductFooter.astro';
+import SiteHeader from '@/components/SiteHeader.astro';
+import { product } from '@/lib/product';
 
-// Karte landing — Onyx deck.
-//
-// Six cards, deck-numbered. Each card is an OnyxCard frame around a
-// body component. The deck IS the page — no above-deck nav decoration,
-// no below-deck proof sections; everything the visitor needs to buy
-// the pitch lives inside these six surfaces.
-//
-// Port of /src/app/page.tsx (Next.js). The composition (idx / serial /
-// kicker / footL / footR / body) mirrors the React file 1:1 so the
-// existing landing.css selectors keep working unchanged.
-
-const TITLE = 'Karte — Personal page with a public inbound AI agent';
-const DESCRIPTION =
-  'Karte is a personal page with a public inbound AI agent (not Elkarte). Visitors ask questions; you get cleaner context in your inbox. Free to start.';
+const capabilities = [
+  ['Public profile', 'Links, projects, timeline, writing, and proof stay together on one owned page.'],
+  ['Contextual chat', 'Visitors ask against public profile context instead of sending a blank “hey.”'],
+  ['Contact and inbox', 'Chat, direct contact, and optional page email preserve who asked and why.'],
+  ['Owner dashboard', 'The owner controls content, appearance, memory, leads, analytics, and custom domains.'],
+  ['Profile modes', 'Optional encyclopedia, newspaper, and roast views reuse the same owner-supplied profile.'],
+  ['Agent profile', 'Agent-type pages can publish operator, capability, disclosure, and machine-readable manifest data.'],
+] as const;
 ---
 
-<Layout title={TITLE} description={DESCRIPTION}>
-  <main>
-    {/* Top nav intentionally omitted on the landing page — the deck
-        is self-contained and the nav was competing with card I's
-        own header strip. CTAs inside cards I + VI cover login/create. */}
-    <div class="onyx-deck">
-      <OnyxCard
-        idx="i"
-        serial="№ 00471"
-        kicker="INBOUND AGENT · CARD V2026"
-        footL="karte.cc/yourhandle"
-        footR="Free · first-pass assistant"
-      >
-        <OnyxHero />
-      </OnyxCard>
+<Layout title={product.title} description={product.description}>
+  <main class="karte-page">
+    <SiteHeader current="home" />
 
-      <OnyxCard
-        idx="ii"
-        serial="№ 00472"
-        kicker="HOW IT WORKS · CARD II"
-        footL="Three steps · one afternoon"
-        footR="Scroll for next →"
-      >
-        <OnyxHow />
-      </OnyxCard>
+    <section class="karte-hero" aria-labelledby="hero-title">
+      <div class="karte-hero-copy">
+        <p class="section-label"><span aria-hidden="true"></span> PUBLIC PROFILE · INBOUND DESK</p>
+        <h1 id="hero-title">A public card that <em>answers back.</em></h1>
+        <p class="hero-summary">
+          Karte gives creators and independent operators one place for their work,
+          public context, visitor questions, and better inbound. People understand
+          who you are before they ask for your time.
+        </p>
+        <div class="hero-actions">
+          <a class="onyx-btn-primary" href="/create">Create your page <span aria-hidden="true">→</span></a>
+          <a class="onyx-btn-ghost" href="/sarthak">Open a live profile <span aria-hidden="true">↗</span></a>
+        </div>
+        <dl class="hero-ledger" aria-label="Karte access summary">
+          <div><dt>Visitor</dt><dd>No account</dd></div>
+          <div><dt>Owner</dt><dd>Google sign-in</dd></div>
+          <div><dt>Cost today</dt><dd>No billing</dd></div>
+          <div><dt>Company use</dt><dd>Next validation</dd></div>
+        </dl>
+      </div>
 
-      <OnyxCard
-        idx="iii"
-        serial="№ 00473"
-        kicker="THE INBOUND DESK · CARD III"
-        footL="Chat · email · leads · public proof"
-        footR="Same memory"
-      >
-        <OnyxSurfaces />
-      </OnyxCard>
+      <div class="inbound-specimen" aria-label="Illustrative Karte profile and inbound handoff">
+        <div class="specimen-topline"><span>PUBLIC CARD · /SARTHAK</span><span>LIVE PROFILE</span></div>
+        <div class="specimen-profile">
+          <div class="specimen-avatar" aria-hidden="true">SA</div>
+          <div>
+            <p class="specimen-name">Sarthak Agrawal</p>
+            <p>Backend and AI infrastructure · product builder</p>
+          </div>
+          <span class="specimen-status">Ask profile</span>
+        </div>
+        <ul class="specimen-links" aria-label="Public profile contents">
+          <li><span>01</span>Selected projects and proof</li>
+          <li><span>02</span>Experience and public writing</li>
+          <li><span>03</span>Contact routes and boundaries</li>
+        </ul>
+        <div class="specimen-conversation">
+          <p class="specimen-message visitor"><span>Visitor</span> Is Sarthak open to helping with AI infrastructure?</p>
+          <p class="specimen-message assistant"><span>Karte</span> His public profile shows current work in backend systems, AI infrastructure, and developer tools. Share the system, stage, and the specific help you need.</p>
+        </div>
+        <div class="specimen-handoff">
+          <span>CONTEXTUAL HANDOFF</span>
+          <strong>Topic, project stage, contact, and ask captured together.</strong>
+        </div>
+        <p class="specimen-note">Illustrative handoff using the live owner profile as product evidence. Karte does not claim private knowledge.</p>
+      </div>
+    </section>
 
-      <OnyxCard
-        idx="iv"
-        serial="№ 00474"
-        kicker="THE ASSISTANT · CARD IV"
-        footL="Issued to humans · for their inbound"
-        footR="karte.cc/assistant"
-      >
-        <OnyxAgents />
-      </OnyxCard>
+    <section class="journey-section" aria-labelledby="journey-title">
+      <div class="section-heading">
+        <p class="section-label">THE VISITOR PATH · THREE MOVES</p>
+        <h2 id="journey-title">Not just links. <em>A better arrival.</em></h2>
+        <p>A Karte page remains useful as a normal profile. The assistant adds context when a visitor needs more than a link.</p>
+      </div>
+      <ol class="journey-list">
+        <li><span>01</span><h3>Browse the owned context</h3><p>Links, projects, timeline entries, writing, rates, and boundaries give the visitor a real first read.</p></li>
+        <li><span>02</span><h3>Ask the public profile</h3><p>Chat answers from owner-supplied public memory and falls back safely when the AI path cannot respond.</p></li>
+        <li><span>03</span><h3>Hand off with intent</h3><p>Contact, chat, page email, leads, and the owner dashboard keep the question attached to the person who asked it.</p></li>
+      </ol>
+    </section>
 
-      <OnyxCard
-        idx="v"
-        serial="№ 00475"
-        kicker="THE MEMBERS · CARD V"
-        footL="Sample cards built from public writing"
-        footR="Open one, talk to it →"
-      >
-        <OnyxSamples />
-      </OnyxCard>
+    <section class="capability-section" aria-labelledby="capability-title">
+      <div class="section-heading split-heading">
+        <div>
+          <p class="section-label">WHAT SHIPS TODAY</p>
+          <h2 id="capability-title">One profile. <em>Several useful doors.</em></h2>
+        </div>
+        <p>Every feature starts with the same source: content the profile owner publishes or connects. AI is optional; the page is not.</p>
+      </div>
+      <dl class="capability-ledger">
+        {capabilities.map(([term, detail], index) => (
+          <div>
+            <dt><span>{String(index + 1).padStart(2, '0')}</span>{term}</dt>
+            <dd>{detail}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
 
-      <OnyxCard
-        idx="vi"
-        serial="№ 00476"
-        kicker="CLAIM YOUR NAME · LAST CARD"
-        footL="One link · one public agent · free forever"
-        footR="© MMXXVI · Karte"
-      >
-        <OnyxCta />
-      </OnyxCard>
-    </div>
+    <section class="boundary-section" aria-labelledby="boundary-title">
+      <div class="boundary-stamp" aria-hidden="true">PERSON<br />FIRST</div>
+      <div>
+        <p class="section-label">COMPANY-FRIENDLY · NOT COMPANY-FINISHED</p>
+        <h2 id="boundary-title">The foundation fits a company introduction. <em>The workflow still needs proof.</em></h2>
+        <p>
+          Karte can already collect public context, projects, answers, and inbound on one page.
+          It does not yet ship company ownership, team roles, approval, or a validated repeated-company workflow.
+          That is the next product test—not a capability hidden behind marketing copy.
+        </p>
+        <div class="boundary-columns">
+          <div><h3>Available now</h3><p>Person profiles, agent profiles, public content, chat, contact, inboxes, leads, custom domains, and owner controls.</p></div>
+          <div><h3>Needs validation</h3><p>Company identity, multiple contributors, approvals, company-specific intake, and one real company using the whole loop.</p></div>
+        </div>
+      </div>
+    </section>
 
-    {/* Fleet cross-link footer — sits below the snap-scroll deck so it
-        doesn't steal a snap viewport from the six cards. Styled in the
-        same Onyx palette (gold-on-near-black, Playfair italics) so it
-        reads as a colophon rather than a separate section. */}
-    <footer class="fleet-footer">
-      <p class="fleet-footer-label">More from the fleet</p>
-      <ul class="fleet-footer-list">
-        <li><a href="/ai-link-in-bio">AI link-in-bio guide</a><span>Compare profile patterns</span></li>
-        <li><a href="/faq" rel="noopener noreferrer">FAQ</a><span>Common questions about Karte</span></li>
-        <li><a href="/changelog">Changelog</a><span>What changed in Karte</span></li>
-        <li><a href="https://github.com/Significant-Hobbies/karte/issues">Roadmap</a><span>Open work on GitHub</span></li>
-        <li><a href="https://github.com/Significant-Hobbies/karte">Source</a><span>View the repository</span></li>
-        <li><a href="https://sassmaker.com" rel="noopener noreferrer">Foundry</a><span>SaaS factory floor</span></li>
-        <li><a href="https://aliveville.com" rel="noopener noreferrer">Aliveville</a><span>AI world simulator</span></li>
-        <li><a href="https://codevetter.com" rel="noopener noreferrer">CodeVetter</a><span>AI code review</span></li>
-        <li><a href="https://highsignal.app" rel="noopener noreferrer">High Signal</a><span>Daily tech/startup brief</span></li>
-        <li><a href="https://rolepatch.com" rel="noopener noreferrer">RolePatch</a><span>AI resume tailoring</span></li>
-        <li><a href="https://significanthobbies.com" rel="noopener noreferrer">Significant Hobbies</a><span>Hobby journey mapper</span></li>
-        <li><a href="https://materia.io" rel="noopener noreferrer">Materia</a><span>Evidence-graded remedies</span></li>
-      </ul>
-    </footer>
+    <section class="access-section" aria-labelledby="access-title">
+      <div class="section-heading">
+        <p class="section-label">ACCESS · COST · CONTROL</p>
+        <h2 id="access-title">Free today. <em>Not a promise forever.</em></h2>
+        <p>{product.commercial} Visitors do not need an account; owners sign in to claim and manage their page.</p>
+      </div>
+      <div class="access-rail">
+        <div><span>PUBLIC</span><strong>Browse, ask, or contact</strong><p>No visitor account is required on a published profile.</p></div>
+        <div><span>OWNER</span><strong>Claim and manage</strong><p>Google sign-in opens the dashboard and owner-only settings.</p></div>
+        <div><span>AI</span><strong>Grounded, with fallbacks</strong><p>Karte’s gateway is the default; a profile owner can configure another provider key.</p></div>
+      </div>
+    </section>
+
+    <section class="closing-section" aria-labelledby="closing-title">
+      <p class="section-label">ISSUE A PUBLIC CARD</p>
+      <h2 id="closing-title">Give the relevant visitor <em>a better first move.</em></h2>
+      <p>Start with the profile. Add chat, inbox, generated modes, and agent metadata only when they improve the handoff.</p>
+      <form class="closing-form" action="/create" method="GET">
+        <label for="karte-slug">karte.cc /</label>
+        <input id="karte-slug" name="slug" placeholder="yourname" maxlength="40" pattern="[a-z0-9\-]{1,40}" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" />
+        <button class="onyx-btn-primary" type="submit">Create <span aria-hidden="true">→</span></button>
+      </form>
+      <p class="closing-note">No billing in the current product. Sign in only when you are ready to claim the page.</p>
+    </section>
+
+    <ProductFooter />
   </main>
 </Layout>

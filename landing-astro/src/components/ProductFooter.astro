@@ -1,0 +1,39 @@
+---
+import { product } from '@/lib/product';
+---
+
+<footer class="product-footer">
+  <div class="product-footer-main">
+    <div>
+      <p class="section-label">CURRENT PRODUCT STATE · AUGUST 2026</p>
+      <h2>A public page for one owner. <em>Company cards are next.</em></h2>
+      <p>{product.state}</p>
+    </div>
+    <dl>
+      <div>
+        <dt>Access</dt>
+        <dd>{product.access}</dd>
+      </div>
+      <div>
+        <dt>Cost</dt>
+        <dd>{product.commercial}</dd>
+      </div>
+      <div>
+        <dt>AI boundary</dt>
+        <dd>{product.ai}</dd>
+      </div>
+    </dl>
+  </div>
+  <div class="product-footer-bottom">
+    <a class="karte-brand" href="/"><span aria-hidden="true">◆</span><strong>Karte</strong></a>
+    <nav aria-label="Product links">
+      <a href="/faq">FAQ</a>
+      <a href="/changelog">Changelog</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="/skill.md">Agent API</a>
+      <a href="https://github.com/Significant-Hobbies/karte">Source</a>
+    </nav>
+    <p>Live and maintained for direct personal use.</p>
+  </div>
+</footer>

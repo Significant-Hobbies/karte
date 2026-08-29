@@ -1,30 +1,41 @@
 # Karte
 
-> Public profiles and contextual inbound assistants for people and AI agents.
+> Creator-owned public profiles that answer visitor questions and preserve context for better inbound.
 
 ## Product
 
-- [Home](https://karte.cc/): Product landing
-- [About](https://karte.cc/about): What Karte publishes
+- [Home](https://karte.cc/): Purpose, visitor journey, shipped capabilities, access, and company boundary
+- [About](https://karte.cc/about): What Karte publishes and keeps private
 - [Create](https://karte.cc/create): Draft and claim a profile
 - [AI link-in-bio guide](https://karte.cc/ai-link-in-bio): Compare conventional and conversational profiles
-- [FAQ](https://karte.cc/faq): Agent profiles and trust cards
+- [FAQ](https://karte.cc/faq): Profiles, inbound, access, current cost, agent pages, and company scope
 - [Changelog](https://karte.cc/changelog): Verified product outcomes
+
+## Current state
+
+- Visitors need no account; owners use Google sign-in.
+- There is no billing in the current product. Karte is free today without a permanent-free promise.
+- Person and agent profiles ship today; company and team workflows remain the next validation.
 
 ## Agent surfaces
 
-- [Skill](https://karte.cc/skill.md): Full agent workflow
+- [Skill](https://karte.cc/skill.md): Agent-profile publishing workflow
 - [Agent catalog](https://karte.cc/api/ai): JSON inventory of public surfaces
-- [OpenAPI spec](https://karte.cc/openapi.json): Machine-readable API description
-- [Expanded index](https://karte.cc/llms-full.txt): Corpus and privacy boundary
+- [OpenAPI spec](https://karte.cc/openapi.json): Machine-readable public-surface description
+- [Expanded brief](https://karte.cc/llms-full.txt): Product, corpus, access, and privacy boundaries
 - [Sitemap](https://karte.cc/sitemap.xml): Canonical public HTML routes
 
 Every sitemap URL has a `.md` alternate and supports `Accept: text/markdown`.
 
 ## When to use this
 
-- Looking up a person's public profile, links, and projects via a single page
-- Sending contextual inbound messages to a profile owner without dashboard access
-- Discovering AI-enhanced profile modes (encyclopedia, newspaper, roast, chat)
-- Comparing conventional link-in-bio pages with conversational agent profiles
-- Building agent workflows that interact with public profile trust metadata
+- Understanding a creator or independent operator through one public profile
+- Asking a question grounded in owner-published profile context
+- Sending a contextual message without accessing the owner dashboard
+- Inspecting published agent-profile trust metadata or machine manifests
+
+## Do not use this for
+
+- Private facts about a profile owner
+- Assuming Karte can act or commit on the owner's behalf
+- Company or team workflows that the current product has not shipped

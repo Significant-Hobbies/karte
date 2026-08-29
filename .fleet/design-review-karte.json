@@ -1,0 +1,115 @@
+{
+  "$schema": "fleet.design-review.v1",
+  "version": 1,
+  "project": "karte",
+  "target": "Karte public landing and supporting explanation pages",
+  "surfaceMode": "persuade",
+  "mode": "overhaul",
+  "register": "product",
+  "context": {
+    "product": "PRODUCT.md",
+    "design": "DESIGN.md"
+  },
+  "direction": {
+    "references": [
+      "Editorial reading rooms for the quiet Onyx hierarchy",
+      "Public profile cards for owned identity and context",
+      "Inbound desks for the question-to-handoff evidence flow"
+    ],
+    "probes": [],
+    "selected": "public-inbound-desk",
+    "approval": "agent-selected",
+    "before": "landing-astro/artifacts/design/karte-before-1440.png",
+    "contract": {
+      "purpose": "Give one creator or independent operator a public profile that can answer contextual questions and preserve cleaner inbound for the owner.",
+      "purposeSource": "PRODUCT.md plus current profile, authentication, inbox, AI, agent API, and billing source",
+      "canonicalPurpose": "A creator-owned public profile that answers visitor questions and preserves context for better inbound.",
+      "purposeAlignment": "match",
+      "driftNote": "The portfolio's company-friendly ambition remains the next validation; team roles, approvals, and company workflows are not presented as shipped.",
+      "audience": "Creators and independent operators now, with small-company use to be validated after the person-owned workflow proves useful.",
+      "job": "Publish owned context once, let visitors understand or ask a relevant question, and receive a more useful handoff without making every visitor create an account.",
+      "thesis": "A public card is more useful when it carries enough owner-controlled context to answer a question and improve the resulting inbound.",
+      "system": "An Onyx reading-room page moves from the public profile through a visitor question, bounded answer, contact handoff, owner controls, shipped-capability ledger, and company boundary.",
+      "signature": "The live-profile-inspired question and handoff specimen makes the product loop visible without claiming private knowledge or fabricated customer proof.",
+      "risk": "Avoid celebrity proof, permanent-free guarantees, invented company workflows, autonomous outreach, or claims that the assistant knows anything beyond owner-controlled public context."
+    }
+  },
+  "evidence": {
+    "screenshots": [
+      {
+        "width": 390,
+        "path": "landing-astro/artifacts/design/karte-after-390.png"
+      },
+      {
+        "width": 768,
+        "path": "landing-astro/artifacts/design/karte-after-768.png"
+      },
+      {
+        "width": 1440,
+        "path": "landing-astro/artifacts/design/karte-after-1440.png"
+      },
+      {
+        "width": 390,
+        "path": ".fleet/evidence/landing-audit/footer-390.png",
+        "surface": "footer project strip and Ask AI"
+      },
+      {
+        "width": 1440,
+        "path": ".fleet/evidence/landing-audit/footer-1440.png",
+        "surface": "footer project strip and Ask AI"
+      }
+    ],
+    "projectCheck": {
+      "command": "pnpm lint && pnpm typecheck && pnpm test && pnpm docs:check && pnpm cf:build",
+      "status": "pass"
+    },
+    "critique": {
+      "score": 37,
+      "maximum": 40
+    },
+    "audit": {
+      "score": 18,
+      "maximum": 20
+    },
+    "unresolved": {
+      "p0": 0,
+      "p1": 0
+    },
+    "detector": {
+      "posture": "advisory",
+      "findings": [
+        {
+          "rule": "editorial-density",
+          "count": 1,
+          "disposition": "Intentional for an evidence-led public profile; responsive checks confirm readable line lengths, one clear primary action, and no horizontal overflow."
+        }
+      ]
+    },
+    "comprehension": {
+      "status": "pass",
+      "reviewer": "independent agent review",
+      "answers": {
+        "product": "Karte is a creator-owned public profile that can answer visitor questions from published context and preserve a useful inbound handoff.",
+        "audience": "It is for creators and independent operators today; small-company use is an explicit next validation rather than a shipped team feature.",
+        "value": "Visitors understand the owner faster and owners receive questions or contact with more context.",
+        "mechanism": "The owner publishes profile material, links, projects, and optional AI modes; visitors browse, ask, or contact without creating an account; the owner follows up from the dashboard.",
+        "proof": "The page shows a profile-grounded question, bounded answer, handoff, current capabilities, access model, and honest company boundary.",
+        "nextAction": "Visit the current public profile example or use Google sign-in to claim and manage a Karte page."
+      },
+      "purposeScore": {
+        "product": 25,
+        "audience": 15,
+        "value": 15,
+        "mechanism": 15,
+        "proof": 15,
+        "nextAction": 15,
+        "total": 100
+      },
+      "mismatches": []
+    }
+  },
+  "ownerFeedback": {
+    "decision": "delegated",
+    "note": "The owner delegated final design judgment and asked the portfolio pass to continue without repeated feedback pauses, with effort weighted by SaaS Maker priority."
+  }
+}
