@@ -49,6 +49,21 @@ export const AGENT_SURFACE = {
   }
 };
 
+const AGENT_MUTABLE_PROPERTIES = {
+  displayName: { type: 'string', minLength: 1, maxLength: 120 },
+  agentPurpose: { type: 'string', maxLength: 500 },
+  agentOperator: { type: 'string', maxLength: 100 },
+  agentOperatorUrl: { type: 'string', format: 'uri' },
+  agentCapabilities: {
+    type: 'array',
+    items: { type: 'string' },
+  },
+  agentDisclosurePolicy: { type: 'string', maxLength: 1000 },
+  avatarUrl: { type: 'string', format: 'uri' },
+  brainEndpointUrl: { type: 'string', format: 'uri' },
+  brainEndpointAuth: { type: 'string', writeOnly: true },
+};
+
 const OPENAPI_SPEC = {
   openapi: '3.1.0',
   info: {
@@ -400,19 +415,8 @@ const OPENAPI_SPEC = {
         required: ['slug', 'displayName'],
         properties: {
           slug: { $ref: '#/components/parameters/AgentSlug/schema' },
-          displayName: { type: 'string', minLength: 1, maxLength: 120 },
-          agentPurpose: { type: 'string', maxLength: 500 },
-          agentOperator: { type: 'string', maxLength: 100 },
-          agentOperatorUrl: { type: 'string', format: 'uri' },
-          agentCapabilities: {
-            type: 'array',
-            items: { type: 'string' },
-          },
-          agentDisclosurePolicy: { type: 'string', maxLength: 1000 },
-          avatarUrl: { type: 'string', format: 'uri' },
+          ...AGENT_MUTABLE_PROPERTIES,
           chatEnabled: { type: 'boolean', default: true },
-          brainEndpointUrl: { type: 'string', format: 'uri' },
-          brainEndpointAuth: { type: 'string', writeOnly: true },
         },
         additionalProperties: false,
       },
@@ -420,19 +424,8 @@ const OPENAPI_SPEC = {
         type: 'object',
         minProperties: 1,
         properties: {
-          displayName: { type: 'string', minLength: 1, maxLength: 120 },
-          agentPurpose: { type: 'string', maxLength: 500 },
-          agentOperator: { type: 'string', maxLength: 100 },
-          agentOperatorUrl: { type: 'string', format: 'uri' },
-          agentCapabilities: {
-            type: 'array',
-            items: { type: 'string' },
-          },
-          agentDisclosurePolicy: { type: 'string', maxLength: 1000 },
-          avatarUrl: { type: 'string', format: 'uri' },
+          ...AGENT_MUTABLE_PROPERTIES,
           chatEnabled: { type: 'boolean' },
-          brainEndpointUrl: { type: 'string', format: 'uri' },
-          brainEndpointAuth: { type: 'string', writeOnly: true },
         },
         additionalProperties: false,
       },
