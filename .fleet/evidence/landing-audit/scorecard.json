@@ -1,0 +1,75 @@
+{
+  "$schema": "fleet.landing-audit.v1",
+  "project": "karte",
+  "priority": "P2",
+  "auditedAt": "2026-08-29",
+  "candidate": {
+    "kind": "local-cloudflare-worker",
+    "origin": "http://localhost:4344",
+    "deployed": false
+  },
+  "scores": {
+    "purpose": 100,
+    "visual": 97,
+    "seo": 99,
+    "geo": 100,
+    "performance": 97,
+    "weightedOverall": 99
+  },
+  "purpose": {
+    "canonical": "A creator-owned public profile that answers visitor questions and preserves context for better inbound.",
+    "alignment": "match",
+    "pricingTruth": "No billing exists in the current product; free today is not presented as a permanent guarantee.",
+    "currentState": "Live and maintained for personal use. Person and agent profiles ship today; company and team workflows remain the next validation.",
+    "comprehension": "pass"
+  },
+  "design": {
+    "direction": "public-inbound-desk in the Onyx reading-room system",
+    "critique": "37/40",
+    "audit": "18/20",
+    "responsiveWidths": [390, 768, 1440],
+    "horizontalOverflow": 0,
+    "browserErrors": 0,
+    "footerProjectStrip": "pass",
+    "footerAskAI": "pass"
+  },
+  "seo": {
+    "landingCriticalChecks": "14 pass, 0 fail, 1 advisory warning",
+    "robots": "pass on full local Worker",
+    "sitemap": "pass on full local Worker",
+    "liveLinkGraph": "30 pages, 0 internal errors, 0 redirects"
+  },
+  "geo": {
+    "productionAgentIndex": "S 100%",
+    "surfaces": ["/llms.txt", "/llms-full.txt", "/index.md", "/api/ai", "/skill.md"]
+  },
+  "performance": {
+    "tool": "PSI Swarm 0.4.2",
+    "runs": "20/20 successful",
+    "cwvGate": "GOOD",
+    "observedP75LcpMs": 1508,
+    "weightedLcpMs": 1110,
+    "slowMobileP75LcpMs": 3310,
+    "midMobileP75LcpMs": 1508,
+    "fastMobileP75LcpMs": 685,
+    "desktopP75LcpMs": 369,
+    "cls": 0,
+    "weightedTbtMs": 0,
+    "opportunities": 0,
+    "report": ".fleet/evidence/landing-audit/performance.html"
+  },
+  "verification": {
+    "lint": "pass",
+    "typecheck": "pass",
+    "tests": "94 pass across 21 files",
+    "docs": "0 errors, 8 archive-only warnings",
+    "cloudflareBuild": "pass",
+    "liveGuestRoutes": "7/7 sampled routes return 200",
+    "localPublicContracts": "pass"
+  },
+  "limitations": [
+    "The low-end slow-3G profile has 3.31s LCP, but the coverage p75 is 1.51s and Lighthouse found no actionable opportunity; preserving the defining editorial type is the deliberate tradeoff.",
+    "The already-running local Worker retained its pre-migration D1 handle; current production profile and creation routes were separately verified 200.",
+    "No deployment, release, billing action, or provider mutation was performed."
+  ]
+}
