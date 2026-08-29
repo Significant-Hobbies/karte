@@ -2,10 +2,16 @@
  * Portable agent-edge handler — copy or generate into each product.
  * Spec: fleet-ops/docs/agent-indexing-standard.md
  *
- * Usage in worker.mjs (before openNext.fetch):
- *   import { handleAgentEdge } from './agent-edge.mjs'
+ * The edge is a *strict pre-handler*: it answers only for the surfaces it
+ * genuinely owns and returns `null` for everything else. It must never decide
+ * that a path does not exist — only Next.js knows the route table.
+ *
+ * Usage in worker.mjs:
+ *   import { handleAgentEdge, withApiJsonNotFound } from './agent-edge.mjs'
  *   const agent = handleAgentEdge(request)
  *   if (agent) return agent
+ *   // ...and on the way back out, so unknown /api/* paths answer in JSON:
+ *   return withApiJsonNotFound(request, await openNext.fetch(request, env, ctx))
  */
 
 import {
@@ -574,6 +580,15 @@ function catalogFor(origin) {
 }
 
 /**
+ * Pre-handler: answers only for surfaces the edge itself owns, and returns
+ * `null` for everything else so the request reaches OpenNext/Next.js.
+ *
+ * The allow-list (`EXACT_ROUTES`) is additive — it *grants* the edge specific
+ * paths. There is deliberately no subtractive `/api/*` catch-all here: the edge
+ * does not know the Next.js route table and must never answer 404 on its
+ * behalf. Unknown `/api/*` paths are shaped into JSON by `withApiJsonNotFound`
+ * on the way back out instead.
+ *
  * @param {Request} request
  * @returns {Response | null}
  */
@@ -586,10 +601,10 @@ export function handleAgentEdge(request) {
   const exactResponse = exact ? exact(url) : null;
   if (exactResponse) return exactResponse;
 
-  // JSON errors for unknown /api/* paths.
-  if (path.startsWith('/api/')) {
-    return jsonError(404, 'not_found', `Unknown API path: ${path}`, path);
-  }
+  // `/api/*` belongs to Next.js route handlers. Fall through unconditionally —
+  // an Accept header must never divert a real API request away from its
+  // handler, and the edge must never claim the path is missing.
+  if (isApiPath(path)) return null;
 
   if (!wantsMarkdown(request)) return null;
 
@@ -605,6 +620,35 @@ export function handleAgentEdge(request) {
   if (!path.includes('.')) return markdown404(path, url.origin);
 
   return null;
+}
+
+/**
+ * Post-handler: shape Next.js's own 404 for `/api/*` into a JSON error body.
+ *
+ * The edge deliberately does not know which API routes exist — Next.js does.
+ * We call it, and only if *it* reports 404 do we swap the HTML error page for
+ * the machine-readable JSON envelope. That is why this shape cannot rot the way
+ * the previous `/api/*` catch-all did: a route handler added under
+ * `src/app/api/` is reachable with no edge change, because the edge never
+ * asserts non-existence.
+ *
+ * @param {Request} request
+ * @param {Response} response Response from the downstream Next.js handler.
+ * @returns {Response}
+ */
+export function withApiJsonNotFound(request, response) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') return response;
+  if (response.status !== 404) return response;
+  const path = new URL(request.url).pathname;
+  if (!isApiPath(path)) return response;
+  const contentType = response.headers.get('content-type') || '';
+  // A route handler's own JSON 404 is already machine-readable — leave it.
+  if (contentType.includes('application/json')) return response;
+  return jsonError(404, 'not_found', `Unknown API path: ${path}`, path);
+}
+
+function isApiPath(pathname) {
+  return pathname.startsWith('/api/');
 }
 
 /**

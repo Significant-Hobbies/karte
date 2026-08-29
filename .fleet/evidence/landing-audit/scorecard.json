@@ -41,7 +41,13 @@
   },
   "geo": {
     "productionAgentIndex": "S 100%",
-    "surfaces": ["/llms.txt", "/llms-full.txt", "/index.md", "/api/ai", "/skill.md"]
+    "surfaces": [
+      "/llms.txt",
+      "/llms-full.txt",
+      "/index.md",
+      "/api/ai",
+      "/skill.md"
+    ]
   },
   "performance": {
     "tool": "PSI Swarm 0.4.2",

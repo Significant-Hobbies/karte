@@ -31,6 +31,9 @@ React Compiler is **ON** (`babel-plugin-react-compiler`).
 - `middleware.ts` / `proxy.ts` for edge guards — not supported by the
   Cloudflare OpenNext adapter. Use `worker.mjs` / `worker-routing.mjs` /
   `agent-edge.mjs` (ADR 0001).
+- A subtractive `/api/*` catch-all in `agent-edge.mjs`. It 404'd every real
+  Next.js route handler on GET in production. See the carry-forward note in
+  `docs/architecture/edge-worker.md`.
 - SaaS Maker RAG as a profile-memory fallback — removed; only the shared
   `knowledgebase` Worker is used (`docs/architecture/rag-memory.md`).
 - The legacy `unsafe` native ratelimit binding — replaced by `RateLimiterDO`

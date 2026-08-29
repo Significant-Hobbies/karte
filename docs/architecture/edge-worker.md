@@ -28,6 +28,31 @@ live in `worker.mjs` / `worker-routing.mjs` / `agent-edge.mjs` instead.
 | `rate-limiter-do.mjs` | `RateLimiterDO` Durable Object backing `src/lib/rate-limit.ts`. |
 | `timing.mjs` | `withTiming()` wrapper for request timing. |
 
+## The edge never owns `/api/*` it did not declare
+
+`agent-edge.mjs` is a **strict pre-handler**. It answers only for the exact
+paths in its `EXACT_ROUTES` allow-list (`/llms.txt`, `/llms-full.txt`,
+`/index.md`, `/robots.txt`, `/openapi.json`, `/openapi.yaml`, `/api/ai`) and
+returns `null` for everything else, so the request reaches OpenNext. It must
+never conclude that a path does *not* exist — only Next.js knows the route
+table.
+
+The JSON error envelope for unknown API paths is a **post-handler**,
+`withApiJsonNotFound(request, response)`, applied in `worker.mjs` to the
+response coming back from OpenNext: only when Next.js itself answers 404 for an
+`/api/*` path does the HTML error page become
+`{"error":{"code":"not_found",…}}`. A route handler's own JSON 404 is left
+untouched.
+
+> **Carry-forward when regenerating `agent-edge.mjs`.** This file is a
+> copied/generated fleet artifact (see its header and the
+> `apply-agent-surfaces` payload marker). The upstream template's `/api/*`
+> catch-all 404 shadowed every real Next.js route handler in production —
+> `GET /api/pages` returned the edge's `not_found` envelope while `POST` to the
+> same path reached its handler. Regenerating from an unfixed template
+> reintroduces the outage. `tests/agent-edge-api-routing.unit.test.mjs` fails
+> loudly if it comes back; do not "fix" it by narrowing the test.
+
 ## Cacheable document paths
 
 `worker.mjs` keeps a `CACHEABLE_EXACT` set of landing/marketing document paths

@@ -22,6 +22,7 @@
     "**/eslint.config.*",
     "scripts/**",
     "tests/e2e/**",
+    "tests/fixtures/**",
     "test/**",
     "**/*.test.{ts,tsx,js,mjs}",
     "**/*.spec.{ts,tsx,js,mjs}",
