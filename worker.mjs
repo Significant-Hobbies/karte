@@ -16,7 +16,7 @@ import openNext, {
   DOQueueHandler as OpenNextDOQueueHandler,
   DOShardedTagCache as OpenNextDOShardedTagCache,
 } from './.open-next/worker.js';
-import { handleAgentEdge } from './agent-edge.mjs';
+import { handleAgentEdge, withApiJsonNotFound } from './agent-edge.mjs';
 import { handlePublicRouteMarkdown } from './public-route-markdown.mjs';
 import { RateLimiterDO as RateLimiterDurableObject } from './rate-limiter-do.mjs';
 import { withTiming } from './timing.mjs';
@@ -60,7 +60,8 @@ function isCacheableDocumentPath(pathname) {
 }
 export default {
   fetch: withTiming(async function fetch(request, env, ctx) {
-    // Agent / LLM indexing surfaces (fleet GEO standard)
+    // Agent / LLM indexing surfaces (fleet GEO standard). This only answers
+    // for paths the edge itself owns; everything else falls through below.
     {
       const agent = handleAgentEdge(request);
       if (agent) return agent;
@@ -93,12 +94,22 @@ export default {
       );
       if (markdown) return markdown;
 
+      // `withApiJsonNotFound` is applied on the way back out: Next.js owns the
+      // route table, so only its 404 (never an edge guess) turns into a JSON
+      // error body for `/api/*`. These two branches are the only ones an
+      // `/api/*` request can reach — API paths are never cacheable documents.
       if (request.method !== 'GET') {
-        return openNext.fetch(request, env, ctx);
+        return withApiJsonNotFound(
+          request,
+          await openNext.fetch(request, env, ctx),
+        );
       }
       const url = new URL(request.url);
       if (!isCacheableDocumentPath(url.pathname)) {
-        const response = await openNext.fetch(request, env, ctx);
+        const response = withApiJsonNotFound(
+          request,
+          await openNext.fetch(request, env, ctx),
+        );
         return routed.cacheProfile
           ? addProfileCacheHeaders(response)
           : response;
