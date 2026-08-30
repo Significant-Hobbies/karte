@@ -8,6 +8,7 @@ type WorkersAiBinding = Extract<
   { binding: unknown }
 >['binding'];
 const DEFAULT_WORKERS_AI_MODEL = '@cf/meta/llama-3.1-8b-instruct';
+const SYNCHRONOUS_CLOUDFLARE_CONTEXT = { async: false } as const;
 
 export type AiConfig = {
   binding?: WorkersAiBinding;
@@ -18,7 +19,7 @@ export type AiConfig = {
 
 export function getDefaultAiConfig(): AiConfig | null {
   try {
-    const { env } = getCloudflareContext({ async: false });
+    const { env } = getCloudflareContext(SYNCHRONOUS_CLOUDFLARE_CONTEXT);
     const binding = (env as { AI?: WorkersAiBinding }).AI;
     if (binding) return { binding, model: DEFAULT_WORKERS_AI_MODEL };
   } catch {
