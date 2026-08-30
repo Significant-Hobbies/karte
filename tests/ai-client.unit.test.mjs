@@ -9,22 +9,25 @@ function read(relativePath) {
   return readFileSync(join(root, relativePath), 'utf8');
 }
 
-describe('AI client free-ai contract', () => {
-  it('sends free-ai project routing explicitly', () => {
+describe('AI client direct-provider contract', () => {
+  it('requires explicit project-owned endpoint, key, and model', () => {
     const source = read('src/lib/ai-client.ts');
 
-    assert.match(source, /FREE_AI_PROJECT_ID\s*=\s*'linkchat'/);
-    assert.match(source, /DEFAULT_FAST_AI_MODEL\s*=\s*'auto'/);
+    assert.match(source, /LINKCHAT_DEFAULT_AI_ENDPOINT_URL/);
+    assert.match(source, /LINKCHAT_DEFAULT_AI_API_KEY/);
+    assert.match(source, /LINKCHAT_DEFAULT_AI_MODEL/);
     assert.match(source, /LINKCHAT_FAST_AI_MODEL/);
-    assert.match(source, /'x-gateway-project-id':\s*FREE_AI_PROJECT_ID/);
-    assert.match(source, /project_id:\s*FREE_AI_PROJECT_ID/);
+    assert.doesNotMatch(source, /ai-gateway\.sassmaker\.com/);
+    assert.doesNotMatch(source, /x-gateway-project-id/);
+    assert.doesNotMatch(source, /DEFAULT_FAST_AI_MODEL\s*=\s*'auto'/);
   });
 
-  it('maps UX reasoning levels to free-ai reasoning effort', () => {
+  it('uses the optional fast model without gateway-specific request fields', () => {
     const source = read('src/lib/ai-client.ts');
 
-    assert.match(source, /level === 'fast'.*return 'low'/s);
-    assert.match(source, /level === 'deep'.*return 'high'/s);
+    assert.match(source, /reasoningLevel === 'fast'.*LINKCHAT_FAST_AI_MODEL/s);
+    assert.match(source, /return config\.model/);
     assert.doesNotMatch(source, /reasoning_level/);
+    assert.doesNotMatch(source, /project_id/);
   });
 });

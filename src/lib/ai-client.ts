@@ -1,28 +1,39 @@
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
-import { generateText } from 'ai';
+import { generateText, type LanguageModel } from 'ai';
+import { createWorkersAI, type WorkersAISettings } from 'workers-ai-provider';
+
+type WorkersAiBinding = Extract<
+  WorkersAISettings,
+  { binding: unknown }
+>['binding'];
+const DEFAULT_WORKERS_AI_MODEL = '@cf/meta/llama-3.1-8b-instruct';
 
 export type AiConfig = {
-  endpointUrl: string;
-  apiKey: string;
+  binding?: WorkersAiBinding;
+  endpointUrl?: string;
+  apiKey?: string;
   model: string;
 };
 
-const DEFAULT_AI_ENDPOINT_URL = 'https://ai-gateway.sassmaker.com/v1';
-const DEFAULT_AI_MODEL = 'workers-ai-llama-3.3-70b';
-// Let free-ai route fast requests across healthy free providers. Pinning chat
-// to Workers AI bypasses its failover and can expose transient upstream 401s.
-const DEFAULT_FAST_AI_MODEL = 'auto';
-const FREE_AI_PROJECT_ID = 'linkchat';
-
 export function getDefaultAiConfig(): AiConfig | null {
+  try {
+    const { env } = getCloudflareContext({ async: false });
+    const binding = (env as { AI?: WorkersAiBinding }).AI;
+    if (binding) return { binding, model: DEFAULT_WORKERS_AI_MODEL };
+  } catch {
+    // Node tests and operator scripts fall through to explicit direct config.
+  }
+
+  const endpointUrl = process.env.LINKCHAT_DEFAULT_AI_ENDPOINT_URL;
   const apiKey = process.env.LINKCHAT_DEFAULT_AI_API_KEY;
-  if (!apiKey) return null;
+  const model = process.env.LINKCHAT_DEFAULT_AI_MODEL;
+  if (!endpointUrl || !apiKey || !model) return null;
 
   return {
-    endpointUrl:
-      process.env.LINKCHAT_DEFAULT_AI_ENDPOINT_URL || DEFAULT_AI_ENDPOINT_URL,
+    endpointUrl,
     apiKey,
-    model: process.env.LINKCHAT_DEFAULT_AI_MODEL || DEFAULT_AI_MODEL,
+    model,
   };
 }
 
@@ -44,54 +55,36 @@ export function resolveAiConfig(config?: {
 
 export type ReasoningLevel = 'fast' | 'deep';
 
-function reasoningEffortFor(
-  level?: ReasoningLevel,
-): 'low' | 'high' | undefined {
-  if (level === 'fast') return 'low';
-  if (level === 'deep') return 'high';
-  return undefined;
-}
-
-function isFreeAiGateway(config: AiConfig): boolean {
-  return (
-    config.endpointUrl.includes('ai-gateway.sassmaker.com') ||
-    config.endpointUrl.includes('free-ai-gateway.sarthakagrawal927.workers.dev')
-  );
-}
-
 function modelForReasoning(
   config: AiConfig,
   reasoningLevel?: ReasoningLevel,
 ): string {
-  if (reasoningLevel === 'fast' && isFreeAiGateway(config)) {
-    return process.env.LINKCHAT_FAST_AI_MODEL || DEFAULT_FAST_AI_MODEL;
+  if (reasoningLevel === 'fast' && process.env.LINKCHAT_FAST_AI_MODEL) {
+    return process.env.LINKCHAT_FAST_AI_MODEL;
   }
   return config.model;
 }
 
-function getProvider(config: AiConfig, reasoningLevel?: ReasoningLevel) {
-  const freeAi = isFreeAiGateway(config);
-  const reasoningEffort = reasoningEffortFor(reasoningLevel);
-  return createOpenAICompatible({
-    name: 'custom',
+function getModel(
+  config: AiConfig,
+  reasoningLevel?: ReasoningLevel,
+): LanguageModel {
+  const model = modelForReasoning(config, reasoningLevel);
+  if (config.binding)
+    return createWorkersAI({ binding: config.binding })(model);
+  if (!config.endpointUrl || !config.apiKey) {
+    throw new Error('Direct AI endpoint URL and API key are required');
+  }
+  const provider = createOpenAICompatible({
+    name: 'linkchat-direct',
     baseURL: config.endpointUrl,
     apiKey: config.apiKey,
-    headers: freeAi
-      ? { 'x-gateway-project-id': FREE_AI_PROJECT_ID }
-      : undefined,
-    transformRequestBody: freeAi
-      ? (body) => ({
-          ...body,
-          project_id: FREE_AI_PROJECT_ID,
-          ...(reasoningEffort ? { reasoning_effort: reasoningEffort } : {}),
-        })
-      : undefined,
   });
+  return provider.chatModel(model);
 }
 
-// Latency vs. quality intent. Sent to the free-ai gateway as OpenAI-compatible
-// `reasoning_effort`; the gateway picks the actual model. Karte
-// surfaces decide based on UX:
+// Latency vs. quality intent. Karte surfaces decide based on UX and may set a
+// separate project-owned fast model through LINKCHAT_FAST_AI_MODEL:
 //   - `fast`  → chat, demo-chat, welcome cards (real-time / one-shot
 //               where latency matters)
 //   - `deep`  → newspaper, encyclopedia, roast (one-shot generations
@@ -110,9 +103,8 @@ export async function generate(
     timeoutMs?: number;
   },
 ): Promise<string> {
-  const provider = getProvider(config, opts.reasoningLevel);
   const { text } = await generateText({
-    model: provider.chatModel(modelForReasoning(config, opts.reasoningLevel)),
+    model: getModel(config, opts.reasoningLevel),
     system: opts.system,
     prompt: opts.prompt,
     maxRetries: 0,
@@ -136,9 +128,8 @@ export async function generateChat(
     timeoutMs?: number;
   },
 ): Promise<string> {
-  const provider = getProvider(config, opts.reasoningLevel);
   const { text } = await generateText({
-    model: provider.chatModel(modelForReasoning(config, opts.reasoningLevel)),
+    model: getModel(config, opts.reasoningLevel),
     system: opts.system,
     messages: opts.messages,
     maxRetries: 0,
