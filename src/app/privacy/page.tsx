@@ -15,7 +15,7 @@ export default function PrivacyPage() {
         Privacy
       </h1>
       <p className="mt-4 text-xs text-karte-text-4">
-        Last updated: 2026-05-29.
+        Last updated: 2026-09-01.
       </p>
 
       <p className="mt-6 text-karte-text-3">
@@ -85,6 +85,12 @@ export default function PrivacyPage() {
           (us.i.posthog.com) — receives anonymous product analytics events (page
           views, button clicks, AI-component renders, errors). We identify by
           visitor cookie, not by name or email.
+        </li>
+        <li>
+          <strong className="text-karte-text">Microsoft Clarity</strong> —
+          measures aggregate use and session replay only on Karte&rsquo;s static
+          marketing pages. Public profiles, chat, contact forms, sign-in, and
+          authenticated dashboard routes do not load Clarity.
         </li>
         <li>
           <strong className="text-karte-text">AI inference providers</strong> —

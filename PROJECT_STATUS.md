@@ -1,6 +1,6 @@
 # Karte — PROJECT STATUS
 
-Last updated: 2026-08-05. Deeper historical detail lives at
+Last updated: 2026-09-01. Deeper historical detail lives at
 [`docs/current/project-status.md`](docs/current/project-status.md).
 
 ## Why / What
@@ -20,6 +20,11 @@ cleaner handoff.
 
 ## Timeline
 
+- **2026-09-01** — Wired the product's dedicated Microsoft Clarity project only
+  on the static Astro marketing layer, disclosed that boundary in the product
+  footer and privacy policy, and kept public profiles, chat, contact, sign-in,
+  and authenticated dashboard routes out of session replay; production remains
+  unchanged pending deploy.
 - **2026-08-05** — Added a substantive `/ai-link-in-bio` guide whose HTML,
   authored Markdown, sitemap entry, `/api/ai` record, and llms discovery derive
   from the shared public-route and content contract.

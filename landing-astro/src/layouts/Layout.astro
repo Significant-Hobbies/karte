@@ -120,6 +120,12 @@ const markdownPath = canonicalPath === '/' ? '/index.md' : `${canonicalPath}.md`
         ai-chat-footer { min-height: 9rem; }
       }
     </style>
+    <script
+      is:inline
+      async
+      src="https://www.clarity.ms/tag/y6bv15rm1t"
+      onload="window.clarity('set', 'project_id', 'karte')"
+    ></script>
   </head>
   <body class="antialiased">
     <slot />
@@ -135,7 +141,6 @@ const markdownPath = canonicalPath === '/' ? '/index.md' : `${canonicalPath}.md`
       is:inline
       src="https://sassmaker.com/ai-chat-footer.js"
       data-name="Karte"
-      data-compose="false"
       defer
     ></script>
   </body>
