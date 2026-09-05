@@ -4,6 +4,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { drizzle } from 'drizzle-orm/d1';
 
 import { account, session, user, verification } from '@/db/schema';
+import { ping } from '@/lib/ping';
 
 type D1Database = Parameters<typeof drizzle>[0];
 
@@ -48,6 +49,18 @@ export function createAuth() {
         : {}),
     },
     trustedOrigins: [baseURL],
+    databaseHooks: {
+      user: {
+        create: {
+          after: async (newUser) => {
+            await ping('signup', {
+              title: newUser.email,
+              props: { id: newUser.id, name: newUser.name },
+            });
+          },
+        },
+      },
+    },
     rateLimit: {
       enabled: false,
     },

@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server';
 
 import { db } from '@/db';
 import { agentWaitlist } from '@/db/schema';
+import { ping } from '@/lib/ping';
 import { rateLimit } from '@/lib/rate-limit';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -49,6 +50,8 @@ export async function POST(req: Request) {
       .insert(agentWaitlist)
       .values({ email, source })
       .onConflictDoNothing();
+    // Fire-and-forget: the client never throws and times out at 3s.
+    void ping('waitlist.join', { title: email, icon: '📝', props: { source } });
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json(
