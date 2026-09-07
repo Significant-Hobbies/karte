@@ -29,8 +29,9 @@ that test error was corrected before recording this final result.
 
 Targeted D1 counts for the exact reserved email were zero before and after.
 There are no created conversation/message IDs and no test records to delete.
-The browser contexts were closed. No schema, credentials or pre-existing
-application data were modified. Fresh protected response and grounding remain
+The browser contexts were closed. No schema or credentials were changed and
+no direct D1 mutation command ran. Ordinary public visits may produce the
+existing first-party visit telemetry; this is not a zero-write browsing claim. Fresh protected response and grounding remain
 open in [#82](https://github.com/Significant-Hobbies/karte/issues/82), along with
 owner URLs, onboarding, customer custom domains and company adoption.
 

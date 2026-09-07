@@ -57,6 +57,6 @@
   "syntheticConversationCountBefore": 0,
   "syntheticConversationCountAfter": 0,
   "chatQualification": "blocked: after one normal click on the visible real Turnstile checkbox, UI reported Verification failed to load. Refresh and try again. No token, Send disabled, no chat POSTs.",
-  "cleanup": "No conversation/message records created. Browser contexts closed. No D1 mutations or outbound contact messages.",
+  "cleanup": "No conversation/message records created. Browser contexts closed. No direct D1 mutations or outbound contact messages; normal first-party public-visit telemetry may be recorded.",
   "challengeAction": "one normal click at observed checkbox (50,654)"
 }
