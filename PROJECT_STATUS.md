@@ -98,3 +98,13 @@ live chat and domain qualification remain pending in
 [#82](https://github.com/Significant-Hobbies/karte/issues/82). No contact or
 booking action was sent. This is a bounded link repair, not live shareability
 or company-adoption qualification.
+
+### 2026-09-07 hosted link release
+
+Source `e7072fc` is deployed and the repaired public destinations are verified
+on the ordinary domain at desktop and 390px. Published profile modes load.
+Real Turnstile prevented the isolated synthetic chat attempt before any stored
+conversation or question; #82 remains open. See the
+[release receipt](docs/knowledge/audits/2026-09-07-release/README.md) for exact
+version, rollback, cleanup and qualification limits. No account, migration or
+production content correction was performed.

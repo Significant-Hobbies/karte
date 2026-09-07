@@ -1,5 +1,5 @@
 name: Deploy to Cloudflare Workers
-# Rollback: `wrangler versions rollback` from the repo root, or via
+# Rollback: `pnpm exec wrangler rollback <version-id> --name linkchat`, or via
 # dash.cloudflare.com → Workers → linkchat → Versions → "Rollback".
 on:
   workflow_dispatch:

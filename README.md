@@ -160,6 +160,12 @@ that any external destination accepts bookings or that live chat is grounded.
 
 The repository had zero open issues and PRs at this audit. Historical completed
 rows above were retained without reopening or re-certifying them. Remaining
-owner content correction, authorized deployment, fresh profile creation,
+owner content correction, fresh profile creation,
 protected live chat and domain qualification are consolidated in
 [issue #82](https://github.com/Significant-Hobbies/karte/issues/82).
+
+Hosted release `e7072fc` is now verified on the ordinary public profile. See
+[release evidence](docs/knowledge/audits/2026-09-07-release/README.md) for the
+100% Worker version, rollback and desktop/phone receipts. Protected chat is
+still unverified: real Turnstile did not issue a token in isolated automation;
+no question or lead was stored. This does not qualify onboarding or company use.

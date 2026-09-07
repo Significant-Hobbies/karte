@@ -53,6 +53,8 @@ OpenNext. Product: <https://karte.cc>.
 
 ## Knowledge
 
+- [2026-09-07 hosted link release](knowledge/audits/2026-09-07-release/README.md) — deployed proof and protected chat limitation.
+
 - [`knowledge/learnings/new-things.md`](knowledge/learnings/new-things.md) — study queue for non-standard tech.
 - [`knowledge/failed-approaches/custom-domains-saas-522.md`](knowledge/failed-approaches/custom-domains-saas-522.md) — CF-for-SaaS on a bare Worker.
 - [`knowledge/audits/`](knowledge/audits/) — security, perf, UI audits.

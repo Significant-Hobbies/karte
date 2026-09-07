@@ -1,0 +1,62 @@
+{
+  "errors": [],
+  "chatRequests": [],
+  "modes": [
+    {
+      "mode": "encyclopedia",
+      "status": 200,
+      "title": "Sarthak Agrawal",
+      "textLength": 6469
+    },
+    {
+      "mode": "newspaper",
+      "status": 200,
+      "title": "The Sarthak Times",
+      "textLength": 2416
+    },
+    {
+      "mode": "roast",
+      "status": 200,
+      "title": "THE ROAST OF SARTHAK AGRAWAL",
+      "textLength": 3590
+    }
+  ],
+  "phoneOverflow": false,
+  "unavailable": 1,
+  "websiteLinks": [
+    {
+      "text": "Post 01Why I am building KarteMay 2026Notes on replacing link-in-bio pages with personal sites, chat, and shareable profile modes.Visit website->",
+      "href": "https://sarthakagrawal.com/"
+    },
+    {
+      "text": "Post 02Product lessons from shipping AI profilesApr 2026How memory, links, projects, and public context can compound into a better personal website.Visit website->",
+      "href": "https://sarthakagrawal.com/"
+    },
+    {
+      "text": "Post 03The personal website should talk backApr 2026A short argument for profiles that answer questions instead of only listing links.Visit website->",
+      "href": "https://sarthakagrawal.com/"
+    }
+  ],
+  "challengeFrames": [
+    {
+      "checkboxes": 0
+    },
+    {
+      "checkboxes": 0
+    }
+  ],
+  "inputEnabled": true,
+  "sendEnabled": false,
+  "tokensPresent": [false, false],
+  "source": "e7072fc6171dc4fa926cac1ee846068b4243b370",
+  "deploymentRun": 34129473645,
+  "version": "8f4a28c3-db91-40d2-9749-58b0404fa1ab",
+  "rollback": "51cc9395-19ce-4992-9ee0-2317cca88840",
+  "entry": "https://karte.cc/sarthak",
+  "syntheticEmail": "karte-release-20260907@example.invalid",
+  "syntheticConversationCountBefore": 0,
+  "syntheticConversationCountAfter": 0,
+  "chatQualification": "blocked: after one normal click on the visible real Turnstile checkbox, UI reported Verification failed to load. Refresh and try again. No token, Send disabled, no chat POSTs.",
+  "cleanup": "No conversation/message records created. Browser contexts closed. No D1 mutations or outbound contact messages.",
+  "challengeAction": "one normal click at observed checkbox (50,654)"
+}

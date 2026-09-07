@@ -1,8 +1,8 @@
 # Deploy
 
 Production: Cloudflare Worker `linkchat` via `@opennextjs/cloudflare`, serving
-`https://karte.cc/`. CI auto-deploys on push to `main`
-(`.github/workflows/deploy.yml`).
+`https://karte.cc/`. Deployment is manual through
+`.github/workflows/deploy.yml`; pushes to `main` run validation only.
 
 ## Build pipeline (`cf:build`)
 
@@ -48,6 +48,14 @@ against the workers.dev origin.
 
 > The deploy workflow is **manual** (`workflow_dispatch`). Pushing to `main`
 > does not auto-deploy. Run it from the Actions UI when ready.
+
+## Rollback
+
+Record the current 100% version with `pnpm exec wrangler deployments list
+--name linkchat` before releasing. Restore that specific version with
+`pnpm exec wrangler rollback <version-id> --name linkchat`, then verify the
+ordinary custom-domain journey again. A Worker rollback does not undo stored
+application data; this deployment workflow does not apply D1 migrations.
 
 ## After deploy
 
