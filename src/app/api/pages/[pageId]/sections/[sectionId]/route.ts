@@ -6,7 +6,7 @@ import { pageSections } from '@/db/schema';
 import { loadOwnedPage, requireUser } from '@/lib/api-auth';
 import { isPageSectionType } from '@/lib/page-sections';
 import {
-  isValidUrl,
+  isCompletePublicUrl,
   MAX_SECTION_CONTENT_LENGTH,
   MAX_TITLE_LENGTH,
 } from '@/lib/validation';
@@ -93,9 +93,9 @@ export async function PUT(
     );
   }
 
-  if (buttonUrl && !isValidUrl(buttonUrl)) {
+  if (buttonUrl && !isCompletePublicUrl(buttonUrl)) {
     return NextResponse.json(
-      { error: 'Button URL must be a valid URL' },
+      { error: 'Button URL must be a complete HTTP or HTTPS URL' },
       { status: 400 },
     );
   }

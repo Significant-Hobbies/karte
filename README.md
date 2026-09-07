@@ -125,13 +125,13 @@ pnpm deploy:cf
 ```
 
 <!-- ACTIVE-AI-TASK-LOG:START -->
-## Active AI Task Log
+## Historical AI Task Log
 
-This section is maintained by the SaaS Maker Active-AI product/design loop so future agents do not reopen duplicate UI tasks.
+These May 2026 receipts are historical context, not a current acceptance checklist.
 
 - Business lane: P0 Can make money
 - Rule: do not create another broad "improve the UI" task unless the acceptance criteria differ materially from the tasks listed here.
-- Source of truth for task status: SaaS Maker task board. README entries are durable context only.
+- Current work is tracked in this repository’s GitHub Issues; the SaaS Maker task board is retired.
 
 | Task | Status | Priority | Last known note |
 | --- | --- | --- | --- |
@@ -143,3 +143,23 @@ This section is maintained by the SaaS Maker Active-AI product/design loop so fu
 | `8f82f522` linkchat: review and ship local homepage UI change | done | high | 2026-05-25 18:51:20 |
 | `04c40ddb` linkchat: homepage needs 3-second value + obvious CTA + mode demo | done | high | 2026-05-25 17:07:41 |
 <!-- ACTIVE-AI-TASK-LOG:END -->
+
+## Public profile qualification — 2026-09-07
+
+Read-only Chrome inspection of `/sarthak` returned HTTP 200 and showed the
+profile, projects, a complete primary calendar destination and an email link.
+The secondary booking URL was visibly truncated; three article cards pointed
+to a homepage. No booking, message, or production content update was performed.
+
+Public sections now keep incomplete HTTP(S) links noninteractive, show “Link
+unavailable” for a truncated CTA, and call homepage article destinations “Visit
+website.” Section create/update APIs reject incomplete button destinations.
+Nine local tests exercise actual section rendering and authenticated handlers
+with synthetic data and mocked database boundaries. These checks do not verify
+that any external destination accepts bookings or that live chat is grounded.
+
+The repository had zero open issues and PRs at this audit. Historical completed
+rows above were retained without reopening or re-certifying them. Remaining
+owner content correction, authorized deployment, fresh profile creation,
+protected live chat and domain qualification are consolidated in
+[issue #82](https://github.com/Significant-Hobbies/karte/issues/82).

@@ -26,6 +26,21 @@ export function isValidUrl(url: string): boolean {
   }
 }
 
+/** Reject visibly truncated links without guessing their intended destination. */
+export function isCompletePublicUrl(url: string): boolean {
+  if (!isValidUrl(url)) return false;
+  try {
+    return !/(?:\.{3}|…)(?:$|[/?#&])/u.test(decodeURIComponent(url));
+  } catch {
+    return false;
+  }
+}
+
+export function publicArticleLinkLabel(url: string): string {
+  const parsed = new URL(url);
+  return parsed.pathname === '/' ? 'Visit website' : 'Read article';
+}
+
 export function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }

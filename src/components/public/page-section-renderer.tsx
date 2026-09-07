@@ -1,5 +1,6 @@
 import { ContactFormSection } from '@/components/public/contact-form-section';
 import { GlassCard } from '@/components/public/glass-card';
+import { isCompletePublicUrl, publicArticleLinkLabel } from '@/lib/validation';
 
 type Section = {
   id: string;
@@ -43,7 +44,9 @@ export function PageSectionRenderer({
         const [label, url] = line.split('|').map((part) => part.trim());
         return { label, url };
       })
-      .filter((item) => item.label && item.url);
+      .filter(
+        (item) => item.label && item.url && isCompletePublicUrl(item.url),
+      );
 
     return (
       <GlassCard className="rounded-3xl p-6 sm:p-8">
@@ -96,9 +99,7 @@ export function PageSectionRenderer({
 
         <div className="divide-y divide-white/10">
           {posts.map((post, index) => {
-            const isLinked =
-              post.url?.startsWith('http://') ||
-              post.url?.startsWith('https://');
+            const isLinked = post.url && isCompletePublicUrl(post.url);
             const className =
               'group block p-6 transition hover:bg-white/[0.045] sm:p-8';
             const body = (
@@ -128,7 +129,7 @@ export function PageSectionRenderer({
                     className="mt-5 text-sm font-semibold"
                     style={{ color: accentColor }}
                   >
-                    Read article -&gt;
+                    {publicArticleLinkLabel(post.url)} -&gt;
                   </p>
                 )}
               </>
@@ -282,19 +283,24 @@ export function PageSectionRenderer({
             {section.content}
           </p>
         )}
-        {section.buttonLabel && section.buttonUrl && (
-          <a
-            href={section.buttonUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-track-type="section_cta"
-            data-track-id={section.id}
-            data-track-label={section.title}
-            className="mt-6 inline-flex items-center rounded-full px-5 py-2.5 text-sm font-medium text-gray-950 transition hover:opacity-90"
-            style={{ backgroundColor: accentColor }}
-          >
-            {section.buttonLabel}
-          </a>
+        {section.buttonLabel &&
+          section.buttonUrl &&
+          isCompletePublicUrl(section.buttonUrl) && (
+            <a
+              href={section.buttonUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-track-type="section_cta"
+              data-track-id={section.id}
+              data-track-label={section.title}
+              className="mt-6 inline-flex items-center rounded-full px-5 py-2.5 text-sm font-medium text-gray-950 transition hover:opacity-90"
+              style={{ backgroundColor: accentColor }}
+            >
+              {section.buttonLabel}
+            </a>
+          )}
+        {section.buttonUrl && !isCompletePublicUrl(section.buttonUrl) && (
+          <p className="mt-6 text-sm text-white/60">Link unavailable</p>
         )}
       </GlassCard>
     );

@@ -85,3 +85,16 @@ Open work is tracked only in
 [GitHub Issues](https://github.com/Significant-Hobbies/karte/issues).
 An open issue is a to-do, a linked pull request is in progress, and merge plus
 issue closure makes the work done.
+
+
+### 2026-09-07 public-link qualification
+
+Read-only `/sarthak` Chrome inspection reproduced a truncated secondary booking
+link and homepage-only article destinations. Local section rendering now hides
+incomplete destinations and distinguishes website links; section POST/PUT
+reject truncated button URLs before database writes. Nine focused tests cover
+these boundaries. Production content, deployment, fresh onboarding, protected
+live chat and domain qualification remain pending in
+[#82](https://github.com/Significant-Hobbies/karte/issues/82). No contact or
+booking action was sent. This is a bounded link repair, not live shareability
+or company-adoption qualification.
