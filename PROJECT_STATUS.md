@@ -140,5 +140,7 @@ shortcut: product questions containing "what does ... do" received the owner's
 bio. The shortcut now matches only complete owner-introduction questions;
 thirteen tests preserve product and multi-part questions for retrieval. Project
 description and list shortcuts likewise require a complete lookup question,
-rather than matching a product name anywhere in the query. Live
+rather than matching a product name anywhere in the query. New questions no
+longer reuse indefinitely cached browser answers or skip verification through
+that cache; saved conversation history remains available. Live
 answer qualification remains in #82 until this repair is deployed and verified.

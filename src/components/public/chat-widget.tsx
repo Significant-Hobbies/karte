@@ -379,12 +379,7 @@ export function ChatWidget({
       if (!query || loading) return;
       if (!visitorEmail) return; // Hard guard — gate UI should prevent this path.
 
-      const cacheKey = `karte:chat:${slug}:${query}`;
-      const cached =
-        typeof window !== 'undefined'
-          ? window.localStorage.getItem(cacheKey)
-          : null;
-      if (!cached && !turnstileToken) {
+      if (!turnstileToken) {
         setMessages((prev) => [
           ...prev,
           {
@@ -396,14 +391,6 @@ export function ChatWidget({
       }
       setInput('');
       setMessages((prev) => [...prev, { role: 'user', content: query }]);
-
-      if (cached) {
-        setMessages((prev) => [
-          ...prev,
-          { role: 'assistant', content: cached },
-        ]);
-        return;
-      }
 
       const verificationToken = turnstileToken as string;
       setLoading(true);
@@ -494,9 +481,6 @@ export function ChatWidget({
 
         const finalText = parser.text;
         if (finalText) {
-          if (typeof window !== 'undefined') {
-            window.localStorage.setItem(cacheKey, finalText);
-          }
           void saveMessage(convId, 'assistant', finalText);
         } else {
           setMessages((prev) => {
