@@ -21,17 +21,52 @@ interface Message {
 export function ChatList({ pageId }: { pageId: string }) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [listError, setListError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [messagesMap, setMessagesMap] = useState<Record<string, Message[]>>({});
   const [loadingMessages, setLoadingMessages] = useState<string | null>(null);
+  const [messageErrors, setMessageErrors] = useState<Record<string, boolean>>(
+    {},
+  );
 
   useEffect(() => {
+    let active = true;
+    setLoading(true);
+    setListError(false);
     fetch(`/api/pages/${pageId}/conversations`)
-      .then((res) => res.json())
-      .then((data) => setConversations(data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [pageId]);
+      .then(async (res) => {
+        if (!res.ok) throw new Error('Unable to load conversations');
+        const data = await res.json();
+        if (!Array.isArray(data)) throw new Error('Invalid conversations');
+        if (active) setConversations(data);
+      })
+      .catch(() => {
+        if (active) setListError(true);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [pageId, retryCount]);
+
+  async function loadMessages(convId: string) {
+    setLoadingMessages(convId);
+    setMessageErrors((prev) => ({ ...prev, [convId]: false }));
+    try {
+      const res = await fetch(`/api/pages/${pageId}/conversations/${convId}`);
+      if (!res.ok) throw new Error('Unable to load messages');
+      const msgs = await res.json();
+      if (!Array.isArray(msgs)) throw new Error('Invalid messages');
+      setMessagesMap((prev) => ({ ...prev, [convId]: msgs }));
+    } catch {
+      setMessageErrors((prev) => ({ ...prev, [convId]: true }));
+    } finally {
+      setLoadingMessages((current) => (current === convId ? null : current));
+    }
+  }
 
   async function toggleConversation(convId: string) {
     if (expandedId === convId) {
@@ -42,16 +77,7 @@ export function ChatList({ pageId }: { pageId: string }) {
     setExpandedId(convId);
 
     if (!messagesMap[convId]) {
-      setLoadingMessages(convId);
-      try {
-        const res = await fetch(`/api/pages/${pageId}/conversations/${convId}`);
-        const msgs = await res.json();
-        setMessagesMap((prev) => ({ ...prev, [convId]: msgs }));
-      } catch {
-        // silently fail
-      } finally {
-        setLoadingMessages(null);
-      }
+      await loadMessages(convId);
     }
   }
 
@@ -59,6 +85,23 @@ export function ChatList({ pageId }: { pageId: string }) {
     return (
       <div className="rounded-2xl bg-white/[0.02] p-8 text-center">
         <p className="text-karte-text-3">Loading conversations...</p>
+      </div>
+    );
+  }
+
+  if (listError) {
+    return (
+      <div className="rounded-2xl bg-white/[0.02] p-8 text-center" role="alert">
+        <p className="text-karte-text-3">
+          Could not load conversations. Please try again.
+        </p>
+        <button
+          type="button"
+          className="mt-3 text-sm text-karte-accent underline"
+          onClick={() => setRetryCount((count) => count + 1)}
+        >
+          Retry conversations
+        </button>
       </div>
     );
   }
@@ -118,6 +161,17 @@ export function ChatList({ pageId }: { pageId: string }) {
             <div className="max-h-96 space-y-3 overflow-y-auto border-t border-karte-border-strong px-4 py-4 sm:px-5">
               {loadingMessages === convo.id ? (
                 <p className="text-xs text-karte-text-4">Loading messages...</p>
+              ) : messageErrors[convo.id] ? (
+                <div role="alert" className="text-xs text-karte-text-3">
+                  <p>Could not load messages. Please try again.</p>
+                  <button
+                    type="button"
+                    className="mt-2 text-karte-accent underline"
+                    onClick={() => void loadMessages(convo.id)}
+                  >
+                    Retry messages
+                  </button>
+                </div>
               ) : (
                 (messagesMap[convo.id] || []).map((msg) => (
                   <div
@@ -136,7 +190,8 @@ export function ChatList({ pageId }: { pageId: string }) {
                   </div>
                 ))
               )}
-              {!loadingMessages &&
+              {loadingMessages !== convo.id &&
+                !messageErrors[convo.id] &&
                 (messagesMap[convo.id] || []).length === 0 && (
                   <p className="text-xs text-karte-text-4">
                     No messages in this conversation.

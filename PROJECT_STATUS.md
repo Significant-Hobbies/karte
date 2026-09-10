@@ -1,6 +1,6 @@
 # Karte — PROJECT STATUS
 
-Last updated: 2026-09-01. Deeper historical detail lives at
+Last updated: 2026-09-10. Deeper historical detail lives at
 [`docs/current/project-status.md`](docs/current/project-status.md).
 
 ## Why / What
@@ -108,3 +108,15 @@ conversation or question; #82 remains open. See the
 [release receipt](docs/knowledge/audits/2026-09-07-release/README.md) for exact
 version, rollback, cleanup and qualification limits. No account, migration or
 production content correction was performed.
+
+### 2026-09-10 owner chat reliability
+
+Live owner login, conversation listing and persisted message rendering were
+verified without creating visitor records. The chat list now distinguishes
+failed requests from empty history and offers retries for both list and message
+reads. Four focused tests cover HTTP errors, malformed payloads and recovery.
+The mobile sidebar header no longer extends beyond the viewport through negative
+margins outside the content container. Next.js 16.3.3, Astro 7.2.8 and a Sharp
+0.35.4 build-tool override replace versions flagged by the dependency gate.
+Deployment and a fresh protected visitor answer remain separate acceptance
+steps in [#82](https://github.com/Significant-Hobbies/karte/issues/82).

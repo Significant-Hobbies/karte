@@ -50,7 +50,7 @@
     "drizzle-orm": "0.45.2",
     "html-to-image": "1.11.13",
     "motion": "^12.42.2",
-    "next": "16.2.12",
+    "next": "16.3.3",
     "novel": "1.0.2",
     "posthog-js": "^1.407.3",
     "react": "19.2.8",
@@ -85,7 +85,8 @@
   "packageManager": "pnpm@10.33.2",
   "pnpm": {
     "overrides": {
-      "nanoid@<3.3.18": ">=3.3.18"
+      "nanoid@<3.3.18": ">=3.3.18",
+      "sharp@0.35.2": "0.35.4"
     }
   }
 }

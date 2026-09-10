@@ -183,7 +183,7 @@ export function Sidebar({ slug }: { slug?: string }) {
 
   return (
     <>
-      <div className="sticky top-0 z-40 -mx-5 mb-6 border-b border-karte-border bg-karte-bg/85 px-5 py-3 backdrop-blur-xl sm:-mx-8 sm:px-8 lg:hidden">
+      <div className="sticky top-0 z-40 mb-6 border-b border-karte-border bg-karte-bg/85 px-5 py-3 backdrop-blur-xl sm:px-8 lg:hidden">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-karte-text-4">
