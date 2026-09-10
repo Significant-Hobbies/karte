@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import { authClient } from '@/lib/auth-client';
+
 type NavItem = {
   label: string;
   href: string;
@@ -64,6 +66,22 @@ const allNavItems: NavItem[] = navGroups.flatMap((g) => g.items);
 export function Sidebar({ slug }: { slug?: string }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+  const [signOutError, setSignOutError] = useState(false);
+
+  async function signOut() {
+    setSigningOut(true);
+    setSignOutError(false);
+    try {
+      const { error } = await authClient.signOut();
+      if (error) throw error;
+      // Discard the client router's authenticated dashboard cache.
+      window.location.replace('/login');
+    } catch {
+      setSignOutError(true);
+      setSigningOut(false);
+    }
+  }
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
@@ -132,6 +150,21 @@ export function Sidebar({ slug }: { slug?: string }) {
             })}
           </div>
         ))}
+        <div className="border-t border-karte-border pt-3">
+          <button
+            type="button"
+            onClick={() => void signOut()}
+            disabled={signingOut}
+            className="w-full rounded-lg px-3 py-2 text-left text-sm text-karte-text-3 transition hover:bg-white/[0.03] hover:text-karte-text disabled:opacity-50"
+          >
+            {signingOut ? 'Signing out…' : 'Sign out'}
+          </button>
+          {signOutError && (
+            <p role="alert" className="px-3 py-2 text-xs text-red-400">
+              Could not sign out. Please try again.
+            </p>
+          )}
+        </div>
       </nav>
     );
   }

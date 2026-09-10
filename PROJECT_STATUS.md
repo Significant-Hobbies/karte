@@ -153,3 +153,6 @@ Source `2020a85` shipped in run `34478940480`; the original multi-part visitor
 question then returned a substantive generated answer after normal Turnstile
 verification. The mobile conversation header also now separates its title and
 close control from wrapping actions, preventing clipping after a room exists.
+Owner navigation now provides sign-out on desktop and mobile, including a
+retryable error state and a full navigation that discards the authenticated
+client router cache. Logged-out acceptance is tracked in #82.
