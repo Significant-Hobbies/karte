@@ -144,3 +144,8 @@ rather than matching a product name anywhere in the query. New questions no
 longer reuse indefinitely cached browser answers or skip verification through
 that cache; saved conversation history remains available. Live
 answer qualification remains in #82 until this repair is deployed and verified.
+
+The fresh generation path also exposed a deprecated Workers AI default model.
+The code default now selects `@cf/meta/llama-3.1-8b-instruct-fast`; Cloudflare's
+[deprecation notice](https://developers.cloudflare.com/changelog/post/2026-05-08-planned-model-deprecations/)
+lists this variant as active. No secret or deployment binding was changed.

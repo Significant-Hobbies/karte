@@ -7,7 +7,9 @@ type WorkersAiBinding = Extract<
   WorkersAISettings,
   { binding: unknown }
 >['binding'];
-const DEFAULT_WORKERS_AI_MODEL = '@cf/meta/llama-3.1-8b-instruct';
+// The non-fast variant was deprecated on 2026-05-30. This supported variant
+// preserves the small-model, low-latency profile-chat path.
+const DEFAULT_WORKERS_AI_MODEL = '@cf/meta/llama-3.1-8b-instruct-fast';
 const SYNCHRONOUS_CLOUDFLARE_CONTEXT = { async: false } as const;
 
 export type AiConfig = {
