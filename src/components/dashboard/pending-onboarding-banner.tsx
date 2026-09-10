@@ -18,6 +18,7 @@ interface OnboardingProject {
   imageUrl?: string;
 }
 interface OnboardingState {
+  pageId?: string;
   displayName?: string;
   bio?: string;
   slug?: string;
@@ -63,6 +64,51 @@ function clearPending() {
   }
 }
 
+function savePending(state: OnboardingState) {
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ state }));
+}
+
+async function importItems<T extends { title: string; url: string }>(
+  endpoint: string,
+  items: T[],
+  checkpoint: (remaining: T[]) => void,
+) {
+  if (!items.length) return;
+  // Reconcile before retrying: a previous request may have committed even
+  // when the browser never received its response.
+  const response = await fetch(endpoint);
+  const existing: unknown = await response.json();
+  if (!response.ok || !Array.isArray(existing)) {
+    throw new Error(
+      'Could not check saved items. Your remaining draft is kept.',
+    );
+  }
+  const remaining = [...items];
+  for (const item of items) {
+    const saved = existing.some((candidate) =>
+      Object.entries(item).every(
+        ([key, value]) =>
+          (typeof value === 'string' ? value.trim() : (value ?? '')) ===
+          (candidate[key] ?? ''),
+      ),
+    );
+    if (!saved) {
+      try {
+        const result = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item),
+        });
+        if (!result.ok) continue;
+      } catch {
+        continue;
+      }
+    }
+    remaining.splice(remaining.indexOf(item), 1);
+    checkpoint([...remaining]);
+  }
+}
+
 /**
  * Picks up the OnboardingChat handoff and offers a single click to
  * create the page on Karte. Renders only when `?onboarded=1` is on
@@ -91,74 +137,75 @@ export function PendingOnboardingBanner() {
       const displayName = pending.displayName?.trim() || 'Your name';
       const slug = (pending.slug || slugifyName(displayName)).trim();
 
-      const pageRes = await fetch('/api/pages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          slug,
-          displayName,
-          bio: pending.bio ?? null,
-          location: pending.location ?? null,
-          calendarUrl: pending.calendarUrl ?? null,
-          newsletterUrl: pending.newsletterUrl ?? null,
-          tipUrl: pending.tipUrl ?? null,
-          videoUrl: pending.videoUrl ?? null,
-        }),
-      });
+      let next = { ...pending };
+      // Check storage before making changes, so retry state is durable.
+      savePending(next);
+      const pageRes = next.pageId
+        ? null
+        : await fetch('/api/pages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              slug,
+              displayName,
+              bio: pending.bio ?? null,
+              location: pending.location ?? null,
+              calendarUrl: pending.calendarUrl ?? null,
+              newsletterUrl: pending.newsletterUrl ?? null,
+              tipUrl: pending.tipUrl ?? null,
+              videoUrl: pending.videoUrl ?? null,
+            }),
+          });
 
-      const pageData = (await pageRes.json().catch(() => ({}))) as {
+      const pageData = (
+        pageRes ? await pageRes.json().catch(() => ({})) : { id: next.pageId }
+      ) as {
         id?: string;
         error?: string;
       };
 
-      if (!pageRes.ok || !pageData.id) {
+      if ((pageRes && !pageRes.ok) || !pageData.id) {
         throw new Error(
-          pageData.error || `Page creation failed (${pageRes.status})`,
+          pageData.error || `Page creation failed (${pageRes?.status})`,
         );
       }
 
       const pageId = pageData.id;
-      const addedCounts = { links: 0, projects: 0 };
+      next = { ...next, pageId };
+      setPending(next);
+      savePending(next);
+      const addedCounts = {
+        links: pending.links?.length ?? 0,
+        projects: pending.projects?.length ?? 0,
+      };
 
       // Add links one at a time. The endpoint sorts by createdAt order
       // we POST, so iterating preserves user intent.
-      if (pending.links?.length) {
-        for (const link of pending.links) {
-          try {
-            const linkRes = await fetch(`/api/pages/${pageId}/links`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                title: link.title,
-                url: link.url,
-                body: link.body ?? null,
-              }),
-            });
-            if (linkRes.ok) addedCounts.links++;
-          } catch {
-            // Skip individual failures — finish what we can.
-          }
-        }
-      }
-
-      if (pending.projects?.length) {
-        for (const project of pending.projects) {
-          try {
-            const projRes = await fetch(`/api/pages/${pageId}/projects`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                title: project.title,
-                url: project.url,
-                description: project.description,
-                imageUrl: project.imageUrl ?? null,
-              }),
-            });
-            if (projRes.ok) addedCounts.projects++;
-          } catch {
-            // skip
-          }
-        }
+      await importItems(
+        `/api/pages/${pageId}/links`,
+        next.links ?? [],
+        (links) => {
+          next = { ...next, links };
+          setPending(next);
+          savePending(next);
+        },
+      );
+      await importItems(
+        `/api/pages/${pageId}/projects`,
+        next.projects ?? [],
+        (projects) => {
+          next = { ...next, projects };
+          setPending(next);
+          savePending(next);
+        },
+      );
+      router.refresh();
+      const remaining =
+        (next.links?.length ?? 0) + (next.projects?.length ?? 0);
+      if (remaining) {
+        throw new Error(
+          `Your draft page is saved. ${remaining} item${remaining === 1 ? '' : 's'} could not be imported. Retry the remaining items; already saved items will be kept.`,
+        );
       }
 
       setStatus('success');
@@ -175,7 +222,6 @@ export function PendingOnboardingBanner() {
         // ignore
       }
       clearPending();
-      router.refresh();
     } catch (err) {
       setStatus('error');
       setMessage(
@@ -206,7 +252,9 @@ export function PendingOnboardingBanner() {
             <strong className="font-semibold text-karte-text">
               {pending.displayName ?? 'your draft'}
             </strong>{' '}
-            ready to create as a draft. Review it before publishing.
+            {pending.pageId
+              ? 'saved as a draft. Retry any remaining imports before publishing.'
+              : 'ready to create as a draft. Review it before publishing.'}
           </p>
           {message ? (
             <p
@@ -217,6 +265,31 @@ export function PendingOnboardingBanner() {
               {message}
             </p>
           ) : null}
+          {status === 'error' && pending.pageId ? (
+            <details className="mt-3 text-xs text-karte-text-3">
+              <summary className="cursor-pointer">
+                Remaining draft items
+              </summary>
+              <ul className="mt-2 space-y-2 break-words">
+                {[...(pending.links ?? []), ...(pending.projects ?? [])].map(
+                  (item, index) => (
+                    <li key={`${item.url}-${index}`}>
+                      <strong>{item.title}</strong>: {item.url}
+                      {'description' in item ? (
+                        <p>{item.description}</p>
+                      ) : item.body ? (
+                        <p>{item.body}</p>
+                      ) : null}
+                    </li>
+                  ),
+                )}
+              </ul>
+              <p className="mt-2">
+                You can also copy these into the editor below. Discarding the
+                remaining draft does not remove saved items.
+              </p>
+            </details>
+          ) : null}
         </div>
 
         {status !== 'success' ? (
@@ -224,9 +297,10 @@ export function PendingOnboardingBanner() {
             <button
               type="button"
               onClick={handleDismiss}
+              disabled={status === 'creating'}
               className="rounded-full px-4 py-2 text-sm text-karte-text-3 transition hover:text-karte-text"
             >
-              Dismiss
+              {pending.pageId ? 'Discard remaining draft' : 'Dismiss'}
             </button>
             <button
               type="button"
@@ -234,7 +308,11 @@ export function PendingOnboardingBanner() {
               disabled={status === 'creating'}
               className="inline-flex items-center justify-center rounded-full bg-karte-accent px-5 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-karte-accent-soft disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {status === 'creating' ? 'Creating…' : 'Create my page'}
+              {status === 'creating'
+                ? 'Saving…'
+                : pending.pageId
+                  ? 'Retry remaining items'
+                  : 'Create my page'}
             </button>
           </div>
         ) : (

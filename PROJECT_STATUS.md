@@ -165,5 +165,14 @@ Previously it claimed the page was live while leaving the creation form stale.
 Five regression tests cover the editor handoff, retry after a slug conflict,
 and actual SQLite persistence and ownership using the repository migrations.
 These isolated checks create no production records. Production first-time
-signup, partial link/project import recovery and custom-domain acceptance
+signup and custom-domain acceptance
 remain open in [#82](https://github.com/Significant-Hobbies/karte/issues/82).
+
+Partial imports now retain the page ID and remaining items in browser storage,
+checkpoint each successful item, and expose a retry after reload. Before retrying,
+the importer reads owned saved items and reconciles matching content, including
+requests whose successful response was lost. Failed content remains visible for
+manual recovery; storage failure stops new writes. Component tests cover partial
+HTTP failures, reload/retry, lost item responses, and unavailable browser storage.
+This does not yet qualify production signup or interrupted page creation before
+the browser receives a page ID.
