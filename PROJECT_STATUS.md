@@ -128,5 +128,15 @@ confirmation and cancellation. Failed requests preserve the conversation and
 show an error. The authenticated API scopes deletion to both the owned page
 and selected conversation; existing message foreign keys cascade without a
 schema migration. Authorization and UI recovery tests cover these boundaries.
-Live release and fresh-chat cleanup qualification are tracked in
-[#83](https://github.com/Significant-Hobbies/karte/issues/83).
+Source `8f2f389` shipped in deployment run `34476560806`. A fresh browser test
+conversation was removed through the confirmed owner control; production
+counts returned to the original 20 conversations and 40 messages. No existing
+conversation was deleted. [#83](https://github.com/Significant-Hobbies/karte/issues/83)
+is complete. A location edit also survived reload and reached the public page
+after its cache window; the original profile fields were restored.
+
+Fresh visitor chat passed Turnstile but exposed an overbroad introduction
+shortcut: product questions containing "what does ... do" received the owner's
+bio. The shortcut now matches only complete owner-introduction questions;
+eleven tests preserve product and multi-part questions for retrieval. Live
+answer qualification remains in #82 until this repair is deployed and verified.

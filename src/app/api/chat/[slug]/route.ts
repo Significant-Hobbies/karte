@@ -6,6 +6,7 @@ import { generate, getDefaultAiConfig, resolveAiConfig } from '@/lib/ai-client';
 import { CHAT_RESPONSE_ENVELOPE_PROMPT } from '@/lib/ai-prompts';
 import { resolvePublicProfileSlug } from '@/lib/demo-profiles';
 import { search } from '@/lib/knowledgebase';
+import { isProfileIntroQuery } from '@/lib/profile-intro';
 import { buildProfileMemory } from '@/lib/profile-memory';
 import { rateLimit } from '@/lib/rate-limit';
 import { verifyTurnstile } from '@/lib/turnstile';
@@ -345,20 +346,7 @@ function answerFromLocalProfile(
   query: string,
   page: typeof pages.$inferSelect,
 ): string | null {
-  const normalizedQuery = query.toLowerCase();
-  const firstName = page.displayName.split(/\s+/)[0]?.toLowerCase() ?? '';
-  const asksIntro =
-    /\bwhat\s+is\s+(this\s+)?profile\s+about\b/.test(normalizedQuery) ||
-    /\bwhat\s+(does|do)\s+.+\s+do\b/.test(normalizedQuery) ||
-    /\bwho\s+(is|are)\s+/.test(normalizedQuery) ||
-    /\btell me about\s+(this profile|this person|him|her|them)\b/.test(
-      normalizedQuery,
-    ) ||
-    (firstName
-      ? new RegExp(`\\btell me about\\s+${firstName}\\b`).test(normalizedQuery)
-      : false);
-
-  if (!asksIntro || !page.bio) return null;
+  if (!isProfileIntroQuery(query, page.displayName) || !page.bio) return null;
 
   const bio = page.bio.replace(/\s+/g, ' ').trim();
   const sentence = bio
