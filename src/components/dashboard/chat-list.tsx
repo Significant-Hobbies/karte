@@ -29,6 +29,37 @@ export function ChatList({ pageId }: { pageId: string }) {
   const [messageErrors, setMessageErrors] = useState<Record<string, boolean>>(
     {},
   );
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteErrorId, setDeleteErrorId] = useState<string | null>(null);
+
+  async function deleteConversation(convId: string) {
+    setDeletingId(convId);
+    setDeleteErrorId(null);
+    try {
+      const response = await fetch(
+        `/api/pages/${pageId}/conversations/${convId}`,
+        {
+          method: 'DELETE',
+        },
+      );
+      if (!response.ok) throw new Error('Unable to delete conversation');
+      setConversations((current) =>
+        current.filter((item) => item.id !== convId),
+      );
+      setMessagesMap((current) => {
+        const next = { ...current };
+        delete next[convId];
+        return next;
+      });
+      setExpandedId((current) => (current === convId ? null : current));
+      setConfirmDeleteId(null);
+    } catch {
+      setDeleteErrorId(convId);
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   useEffect(() => {
     let active = true;
@@ -155,6 +186,54 @@ export function ChatList({ pageId }: { pageId: string }) {
               {expandedId === convo.id ? '\u25B2' : '\u25BC'}
             </span>
           </button>
+
+          <div className="px-4 pb-3 text-xs sm:px-5">
+            {confirmDeleteId === convo.id ? (
+              <div className="space-y-2">
+                <p>
+                  Permanently delete this conversation and all its messages?
+                </p>
+                <div className="flex gap-4">
+                  <button
+                    type="button"
+                    disabled={deletingId !== null}
+                    className="text-red-400 underline disabled:opacity-50"
+                    onClick={() => void deleteConversation(convo.id)}
+                  >
+                    {deletingId === convo.id ? 'Deleting…' : 'Confirm delete'}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={deletingId !== null}
+                    className="text-karte-text-3 underline"
+                    onClick={() => {
+                      setConfirmDeleteId(null);
+                      setDeleteErrorId(null);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+                {deleteErrorId === convo.id && (
+                  <p role="alert">
+                    Could not delete the conversation. Please try again.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <button
+                type="button"
+                disabled={deletingId !== null}
+                className="text-karte-text-4 underline"
+                onClick={() => {
+                  setConfirmDeleteId(convo.id);
+                  setDeleteErrorId(null);
+                }}
+              >
+                Delete conversation
+              </button>
+            )}
+          </div>
 
           {/* Expanded messages */}
           {expandedId === convo.id && (

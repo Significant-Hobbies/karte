@@ -120,3 +120,13 @@ margins outside the content container. Next.js 16.3.3, Astro 7.2.8 and a Sharp
 0.35.4 build-tool override replace versions flagged by the dependency gate.
 Deployment and a fresh protected visitor answer remain separate acceptance
 steps in [#82](https://github.com/Significant-Hobbies/karte/issues/82).
+
+### 2026-09-10 owner conversation cleanup
+
+The owner chat list now offers single-conversation deletion with explicit
+confirmation and cancellation. Failed requests preserve the conversation and
+show an error. The authenticated API scopes deletion to both the owned page
+and selected conversation; existing message foreign keys cascade without a
+schema migration. Authorization and UI recovery tests cover these boundaries.
+Live release and fresh-chat cleanup qualification are tracked in
+[#83](https://github.com/Significant-Hobbies/karte/issues/83).

@@ -52,6 +52,53 @@ async function loadList(response) {
 }
 
 describe('owner chat request failures', () => {
+  it('requires confirmation, cancels without a write, and preserves history on failure', async () => {
+    await loadList(
+      Response.json([
+        {
+          id: 'selected',
+          createdAt: '2026-09-10',
+          messageCount: 1,
+          firstMessage: 'Selected chat',
+        },
+        {
+          id: 'keep',
+          createdAt: '2026-09-10',
+          messageCount: 1,
+          firstMessage: 'Keep this chat',
+        },
+      ]),
+    );
+    const click = (label) =>
+      buttons(render())
+        .find((button) => button.props.children === label)
+        .props.onClick();
+    const initialRequests = fetch.mock.calls.length;
+    click('Delete conversation');
+    expect(renderToStaticMarkup(render())).toContain('Permanently delete');
+    expect(fetch.mock.calls.length).toBe(initialRequests);
+    click('Cancel');
+    expect(fetch.mock.calls.length).toBe(initialRequests);
+    expect(renderToStaticMarkup(render())).not.toContain('Confirm delete');
+    click('Delete conversation');
+    fetch.mockResolvedValueOnce(new Response('{}', { status: 500 }));
+    click('Confirm delete');
+    await vi.waitFor(() =>
+      expect(renderToStaticMarkup(render())).toContain('Could not delete'),
+    );
+    expect(renderToStaticMarkup(render())).toContain('Selected chat');
+    fetch.mockResolvedValueOnce(new Response(null, { status: 204 }));
+    click('Confirm delete');
+    await vi.waitFor(() =>
+      expect(renderToStaticMarkup(render())).not.toContain('Selected chat'),
+    );
+    expect(renderToStaticMarkup(render())).toContain('Keep this chat');
+    expect(fetch).toHaveBeenLastCalledWith(
+      '/api/pages/owned-page/conversations/selected',
+      { method: 'DELETE' },
+    );
+  });
+
   it.each([401, 500])(
     'shows retry instead of empty history for HTTP %s',
     async (status) => {
