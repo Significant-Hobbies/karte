@@ -6,7 +6,11 @@ import { generate, getDefaultAiConfig, resolveAiConfig } from '@/lib/ai-client';
 import { CHAT_RESPONSE_ENVELOPE_PROMPT } from '@/lib/ai-prompts';
 import { resolvePublicProfileSlug } from '@/lib/demo-profiles';
 import { search } from '@/lib/knowledgebase';
-import { isProfileIntroQuery } from '@/lib/profile-intro';
+import {
+  isProfileIntroQuery,
+  isProjectListQuery,
+  isProjectOverviewQuery,
+} from '@/lib/profile-intro';
 import { buildProfileMemory } from '@/lib/profile-memory';
 import { rateLimit } from '@/lib/rate-limit';
 import { verifyTurnstile } from '@/lib/turnstile';
@@ -369,7 +373,6 @@ async function answerFromStoredProjects(
   pageId: string,
   pageName: string,
 ): Promise<string | null> {
-  const normalizedQuery = query.toLowerCase().replace(/\s+/g, ' ').trim();
   const storedProjects = await db
     .select({
       title: projects.title,
@@ -385,20 +388,16 @@ async function answerFromStoredProjects(
   if (visibleProjects.length === 0) return null;
 
   const specificProject = visibleProjects.find((project) =>
-    project.title
-      .toLowerCase()
-      .split(/\s*(?:\/|\||—|\s-\s)\s*/)
-      .some((alias) => alias.length >= 3 && normalizedQuery.includes(alias)),
+    isProjectOverviewQuery(
+      query,
+      project.title.split(/\s*(?:\/|\||—|\s-\s)\s*/),
+    ),
   );
   if (specificProject?.description) {
     return `${specificProject.title}: ${specificProject.description}`;
   }
 
-  const asksAboutProjects =
-    /\b(projects?|products?|building|working on|work on)\b/.test(
-      normalizedQuery,
-    );
-  if (!asksAboutProjects) return null;
+  if (!isProjectListQuery(query, pageName)) return null;
 
   const names = visibleProjects
     .map((project) => project.title.trim())

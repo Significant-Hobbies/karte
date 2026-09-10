@@ -138,5 +138,7 @@ after its cache window; the original profile fields were restored.
 Fresh visitor chat passed Turnstile but exposed an overbroad introduction
 shortcut: product questions containing "what does ... do" received the owner's
 bio. The shortcut now matches only complete owner-introduction questions;
-eleven tests preserve product and multi-part questions for retrieval. Live
+thirteen tests preserve product and multi-part questions for retrieval. Project
+description and list shortcuts likewise require a complete lookup question,
+rather than matching a product name anywhere in the query. Live
 answer qualification remains in #82 until this repair is deployed and verified.

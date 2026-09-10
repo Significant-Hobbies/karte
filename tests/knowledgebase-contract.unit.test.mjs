@@ -80,7 +80,7 @@ describe('knowledgebase RAG integration contract', () => {
     );
     assert.match(
       chatRoute,
-      /\.split\([^)]+\)[\s\S]*normalizedQuery\.includes\(alias\)/,
+      /isProjectOverviewQuery\(\s*query,\s*project\.title\.split\(/,
     );
     assert.match(
       profileMemory,
