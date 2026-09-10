@@ -174,5 +174,9 @@ the importer reads owned saved items and reconciles matching content, including
 requests whose successful response was lost. Failed content remains visible for
 manual recovery; storage failure stops new writes. Component tests cover partial
 HTTP failures, reload/retry, lost item responses, and unavailable browser storage.
-This does not yet qualify production signup or interrupted page creation before
-the browser receives a page ID.
+Interrupted creation also persists a baseline of owned page IDs before the
+write. After a lost response and reload, the importer recovers a matching newly
+created page without repeating the write; it never adopts a page in that
+baseline. Failed ownership reads preserve the draft and stop creation. Three
+additional tests cover recovery, pre-existing-page protection and failed reads.
+Production signup remains a separate acceptance step in #82.

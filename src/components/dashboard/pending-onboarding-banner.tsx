@@ -19,6 +19,7 @@ interface OnboardingProject {
 }
 interface OnboardingState {
   pageId?: string;
+  pagesBeforeCreation?: string[];
   displayName?: string;
   bio?: string;
   slug?: string;
@@ -140,6 +141,34 @@ export function PendingOnboardingBanner() {
       let next = { ...pending };
       // Check storage before making changes, so retry state is durable.
       savePending(next);
+      if (!next.pageId) {
+        const response = await fetch('/api/pages');
+        const ownedPages: unknown = await response.json();
+        if (!response.ok || !Array.isArray(ownedPages)) {
+          throw new Error(
+            'Could not check your saved pages. Your draft is kept; try again.',
+          );
+        }
+        if (next.pagesBeforeCreation) {
+          const recovered = ownedPages.find(
+            (page) =>
+              page.slug === slug &&
+              page.displayName === displayName &&
+              typeof page.id === 'string' &&
+              !next.pagesBeforeCreation?.includes(page.id),
+          );
+          if (recovered) next = { ...next, pageId: recovered.id };
+        } else {
+          next = {
+            ...next,
+            pagesBeforeCreation: ownedPages.map((page) => page.id),
+          };
+        }
+        // Persist the pre-write baseline so reload can distinguish a newly
+        // committed page from an unrelated profile that already existed.
+        savePending(next);
+        setPending(next);
+      }
       const pageRes = next.pageId
         ? null
         : await fetch('/api/pages', {

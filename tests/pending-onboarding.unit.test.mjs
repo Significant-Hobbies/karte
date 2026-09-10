@@ -86,6 +86,7 @@ it('retains failed items across reload and retries without recreating the page o
   reload();
   const fetch = vi
     .fn()
+    .mockResolvedValueOnce(Response.json([]))
     .mockResolvedValueOnce(Response.json({ id: 'new-page' }, { status: 201 }))
     .mockResolvedValueOnce(Response.json([]))
     .mockResolvedValueOnce(Response.json({ id: 'good' }, { status: 201 }))
@@ -164,12 +165,86 @@ it('stops before writes when durable draft storage is unavailable', async () => 
   expect(renderToStaticMarkup(render())).toContain('Storage full');
   expect(state.removeItem).not.toHaveBeenCalled();
 });
+
+it('recovers a newly saved page after its creation response is lost and the browser reloads', async () => {
+  const fetch = vi
+    .fn()
+    .mockResolvedValueOnce(Response.json([]))
+    .mockRejectedValueOnce(new Error('Creation response lost'));
+  vi.stubGlobal('fetch', fetch);
+  await buttons(render())
+    .find((b) => b.props.children === 'Create my page')
+    .props.onClick();
+  expect(JSON.parse(state.stored).state.pagesBeforeCreation).toEqual([]);
+  expect(state.removeItem).not.toHaveBeenCalled();
+  reload();
+  fetch.mockClear();
+  fetch.mockResolvedValueOnce(
+    Response.json([
+      { id: 'recovered', slug: 'first-profile', displayName: 'New Owner' },
+    ]),
+  );
+  await buttons(render())
+    .find((b) => b.props.children === 'Create my page')
+    .props.onClick();
+  expect(fetch).toHaveBeenCalledExactlyOnceWith('/api/pages');
+  expect(state.removeItem).toHaveBeenCalledOnce();
+  expect(state.refresh).toHaveBeenCalledOnce();
+});
+
+it('does not adopt a pre-existing owned page after a failed creation request', async () => {
+  const existing = {
+    id: 'original',
+    slug: 'first-profile',
+    displayName: 'New Owner',
+  };
+  const fetch = vi
+    .fn()
+    .mockResolvedValueOnce(Response.json([existing]))
+    .mockRejectedValueOnce(new Error('Connection lost'));
+  vi.stubGlobal('fetch', fetch);
+  await buttons(render())
+    .find((b) => b.props.children === 'Create my page')
+    .props.onClick();
+  reload();
+  fetch.mockClear();
+  fetch
+    .mockResolvedValueOnce(Response.json([existing]))
+    .mockResolvedValueOnce(
+      Response.json({ error: 'Slug is already taken' }, { status: 409 }),
+    );
+  await buttons(render())
+    .find((b) => b.props.children === 'Create my page')
+    .props.onClick();
+  expect(fetch).toHaveBeenCalledTimes(2);
+  expect(JSON.parse(state.stored).state.pageId).toBeUndefined();
+  expect(state.removeItem).not.toHaveBeenCalled();
+  expect(renderToStaticMarkup(render())).toContain('Slug is already taken');
+});
+
+it('keeps the draft and makes no creation request if ownership lookup fails', async () => {
+  const fetch = vi
+    .fn()
+    .mockResolvedValueOnce(
+      Response.json({ error: 'Unauthorized' }, { status: 401 }),
+    );
+  vi.stubGlobal('fetch', fetch);
+  await buttons(render())
+    .find((b) => b.props.children === 'Create my page')
+    .props.onClick();
+  expect(fetch).toHaveBeenCalledExactlyOnceWith('/api/pages');
+  expect(state.removeItem).not.toHaveBeenCalled();
+  expect(renderToStaticMarkup(render())).toContain(
+    'Could not check your saved pages',
+  );
+});
 afterEach(() => vi.unstubAllGlobals());
 it('refreshes the editor after creating a draft without claiming it is public', async () => {
   vi.stubGlobal(
     'fetch',
     vi
       .fn()
+      .mockResolvedValueOnce(Response.json([]))
       .mockResolvedValue(
         Response.json({ id: 'new-page', published: false }, { status: 201 }),
       ),
@@ -189,6 +264,7 @@ it('retains the draft and allows retry when creation fails', async () => {
     'fetch',
     vi
       .fn()
+      .mockResolvedValueOnce(Response.json([]))
       .mockResolvedValue(
         Response.json({ error: 'Slug is already taken' }, { status: 409 }),
       ),
