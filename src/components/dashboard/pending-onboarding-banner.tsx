@@ -1,6 +1,6 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useEffect, useState } from 'react';
 
@@ -69,6 +69,7 @@ function clearPending() {
  * the URL and there's a valid payload in localStorage.
  */
 export function PendingOnboardingBanner() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const flag = searchParams.get('onboarded') === '1';
   const [pending, setPending] = useState<OnboardingState | null>(null);
@@ -162,7 +163,7 @@ export function PendingOnboardingBanner() {
 
       setStatus('success');
       setMessage(
-        `Page live at karte.cc/${slug}. Added ${addedCounts.links} link${addedCounts.links === 1 ? '' : 's'} and ${addedCounts.projects} project${addedCounts.projects === 1 ? '' : 's'}.`,
+        `Draft created for karte.cc/${slug}. Added ${addedCounts.links} link${addedCounts.links === 1 ? '' : 's'} and ${addedCounts.projects} project${addedCounts.projects === 1 ? '' : 's'}. Review your page below, turn on Published, and save when you are ready to share it.`,
       );
       try {
         posthog.capture('onboarding_funnel_completed', {
@@ -174,6 +175,7 @@ export function PendingOnboardingBanner() {
         // ignore
       }
       clearPending();
+      router.refresh();
     } catch (err) {
       setStatus('error');
       setMessage(
@@ -204,7 +206,7 @@ export function PendingOnboardingBanner() {
             <strong className="font-semibold text-karte-text">
               {pending.displayName ?? 'your draft'}
             </strong>{' '}
-            ready to publish. One click to create the page.
+            ready to create as a draft. Review it before publishing.
           </p>
           {message ? (
             <p

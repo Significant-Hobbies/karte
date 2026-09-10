@@ -156,3 +156,14 @@ close control from wrapping actions, preventing clipping after a room exists.
 Owner navigation now provides sign-out on desktop and mobile, including a
 retryable error state and a full navigation that discards the authenticated
 client router cache. Logged-out acceptance is tracked in #82.
+
+### 2026-09-10 first-time draft handoff
+
+Chat-assisted onboarding now describes the created page as an unpublished
+draft and refreshes the editor so the creator can review and publish it.
+Previously it claimed the page was live while leaving the creation form stale.
+Five regression tests cover the editor handoff, retry after a slug conflict,
+and actual SQLite persistence and ownership using the repository migrations.
+These isolated checks create no production records. Production first-time
+signup, partial link/project import recovery and custom-domain acceptance
+remain open in [#82](https://github.com/Significant-Hobbies/karte/issues/82).
