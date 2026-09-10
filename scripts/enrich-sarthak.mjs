@@ -50,10 +50,10 @@ const newProjects = [
   },
   {
     title: 'free-ai',
-    url: 'https://github.com/sass-maker/free-ai',
+    url: 'https://ai-gateway.sassmaker.com',
     imageUrl: logo('github.com'),
     description:
-      "OpenAI-compatible LLM gateway running on Cloudflare Workers. Routes to Cloudflare Workers AI, OpenRouter, or any chat-completions endpoint. Powers Karte's free tier.",
+      'An OpenAI-compatible free-tier model gateway with operator-provisioned project access.',
   },
   {
     title: 'Front.Page',
@@ -106,7 +106,7 @@ const newInfoBlocks = [
     type: 'faq',
     title: 'What is free-ai?',
     content:
-      "An OpenAI-compatible LLM gateway running on Cloudflare Workers. You point any OpenAI SDK at it and it routes to Cloudflare Workers AI, OpenRouter, or whatever chat-completions endpoint you configure. Powers Karte's free tier — that is how visitors get to chat with a profile without anyone paying for tokens.",
+      "Free AI is an OpenAI-compatible gateway that routes across supported free-tier providers with health-aware selection and bounded fallback. It is maintained for operator-provisioned internal use. The current API and access documentation are at https://ai-gateway.sassmaker.com. Karte's current managed public chat uses Cloudflare Workers AI directly; Free AI is a separate Fleet service.",
   },
   {
     type: 'faq',
@@ -130,7 +130,7 @@ const newInfoBlocks = [
     type: 'text',
     title: 'On building Karte',
     content:
-      'Karte is the main bet — a calling-card-style link-in-bio where every page is also an AI you can talk to (chat, encyclopedia, newspaper, roast). The angle: link-in-bio products are dead ends for people who get inbound; the page should answer in your voice before the question hits your inbox. Gold-foil aesthetic on warm-black; built on Cloudflare Workers + D1 + free-ai.',
+      "Karte is a calling-card-style public profile with chat, encyclopedia, newspaper and roast modes. It is maintained for personal use: the page helps visitors find context before contacting its owner. Its current product uses Next.js, Cloudflare Workers and D1; managed public chat uses Cloudflare Workers AI, with Knowledge Base available for indexed profile retrieval. CodeVetter is Sarthak's primary product focus.",
   },
 ];
 

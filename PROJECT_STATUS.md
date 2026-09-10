@@ -1,6 +1,6 @@
 # Karte — PROJECT STATUS
 
-Last updated: 2026-09-10. Deeper historical detail lives at
+Last updated: 2026-09-11. Deeper historical detail lives at
 [`docs/current/project-status.md`](docs/current/project-status.md).
 
 ## Why / What
@@ -180,3 +180,21 @@ created page without repeating the write; it never adopts a page in that
 baseline. Failed ownership reads preserve the draft and stop creation. Three
 additional tests cover recovery, pre-existing-page protection and failed reads.
 Production signup remains a separate acceptance step in #82.
+
+### 2026-09-11 published profile content cleanup
+
+The live `/sarthak` profile now uses current catalog descriptions and canonical
+links for its active project cards. Three placeholder article destinations, two
+duplicate AI Revamp sections, and the duplicate Profile Memory project card are
+hidden with their source records retained. The secondary booking action uses
+the same complete Google Calendar link as the primary action. Four current
+profile-memory blocks distinguish CodeVetter focus, Karte personal maintenance,
+and direct Workers AI chat from the separate internal Free AI gateway. The
+enrichment seed now preserves that current provider distinction.
+
+Fresh D1 readback verified all 15 guarded updates and unchanged observed row
+counts and unrelated fields. Existing career history and dated timeline entries
+remain intact; historical entries and cached generated pages were not rewritten.
+No conversation, account, or lead was created or deleted. Browser verification
+confirms the new links and hidden duplicate sections. First-time creator and
+custom-domain acceptance remain in [#82](https://github.com/Significant-Hobbies/karte/issues/82).
