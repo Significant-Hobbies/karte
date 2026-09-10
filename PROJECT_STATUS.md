@@ -149,3 +149,7 @@ The fresh generation path also exposed a deprecated Workers AI default model.
 The code default now selects `@cf/meta/llama-3.1-8b-instruct-fast`; Cloudflare's
 [deprecation notice](https://developers.cloudflare.com/changelog/post/2026-05-08-planned-model-deprecations/)
 lists this variant as active. No secret or deployment binding was changed.
+Source `2020a85` shipped in run `34478940480`; the original multi-part visitor
+question then returned a substantive generated answer after normal Turnstile
+verification. The mobile conversation header also now separates its title and
+close control from wrapping actions, preventing clipping after a room exists.

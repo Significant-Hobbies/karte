@@ -660,9 +660,21 @@ export function ChatWidget({
           className={`fixed bottom-20 ${panelPositionClass} ${panelHeightClass} z-50 flex w-auto flex-col overflow-hidden rounded-2xl border border-karte-border-strong bg-karte-surface/95 backdrop-blur-xl transition-[height,width,transform] duration-200 ease-[var(--karte-ease)] sm:bottom-24 ${expanded ? 'sm:bottom-6' : ''}`}
         >
           <div className="border-b border-karte-border-strong px-4 py-3">
-            <div className="flex items-center justify-between gap-3">
-              <h3 className="text-sm font-semibold text-karte-text">{title}</h3>
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-2">
+              <div className="flex min-w-0 items-center justify-between gap-2">
+                <h3 className="min-w-0 text-sm font-semibold text-karte-text">
+                  {title}
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white/40 transition hover:bg-white/10 hover:text-karte-text"
+                  aria-label="Close chat"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
                 {!!initialRoomId && (
                   <span className="rounded-full border border-karte-border-strong bg-white/5 px-2.5 py-1 text-[11px] font-medium text-white/50">
                     Invited via link
@@ -763,14 +775,6 @@ export function ChatWidget({
                       <path d="M3 21l7-7" />
                     </svg>
                   )}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  className="ml-1 flex h-6 w-6 items-center justify-center rounded-full text-white/40 transition hover:bg-white/10 hover:text-karte-text"
-                  aria-label="Close chat"
-                >
-                  ✕
                 </button>
               </div>
             </div>
