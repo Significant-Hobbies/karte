@@ -85,7 +85,7 @@ test('serves the AI link-in-bio Astro asset before the profile catch-all', () =>
     new URL('../worker.mjs', import.meta.url),
     'utf8',
   );
-  for (const setName of ['CACHEABLE_EXACT', 'ASTRO_ASSET_PATHS']) {
+  for (const setName of ['ASTRO_ASSET_PATHS']) {
     const block = worker.match(
       new RegExp(`const ${setName} = new Set\\(\\[([\\s\\S]*?)\\]\\);`),
     );

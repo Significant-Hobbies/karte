@@ -20,6 +20,7 @@ const RESERVED_FIRST_SEGMENTS = new Set([
   'dashboard',
   'login',
   'create',
+  'welcome',
   'about',
   'privacy',
   'terms',

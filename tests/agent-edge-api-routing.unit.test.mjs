@@ -18,7 +18,7 @@
 import { readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import worker from '../worker.mjs';
 import { openNextStub } from './fixtures/open-next-worker-stub.mjs';
@@ -73,6 +73,33 @@ function request(path, { method = 'GET', headers = {} } = {}) {
 beforeEach(() => {
   openNextStub.reset();
 });
+afterEach(() => vi.unstubAllGlobals());
+
+it.each(['/create', '/login', '/welcome', '/about', '/privacy', '/terms'])(
+  'serves current Next.js HTML and cache policy for %s instead of a prior release',
+  async (path) => {
+    const match = vi
+      .fn()
+      .mockResolvedValue(
+        new Response('<script src="/removed-chunk.js"></script>'),
+      );
+    const put = vi.fn();
+    vi.stubGlobal('caches', { default: { match, put } });
+    openNextStub.handler = () =>
+      new Response('current release', {
+        headers: {
+          'content-type': 'text/html',
+          'cache-control': 'private, no-store',
+        },
+      });
+    const response = await request(path);
+    expect(await response.text()).toBe('current release');
+    expect(response.headers.get('cache-control')).toBe('private, no-store');
+    expect(openNextStub.calls).toEqual([path]);
+    expect(match).not.toHaveBeenCalled();
+    expect(put).not.toHaveBeenCalled();
+  },
+);
 
 describe('edge does not shadow Next.js API routes', () => {
   it('found the route handlers to guard', () => {
@@ -176,6 +203,29 @@ describe('unknown API paths still answer with the JSON 404 envelope', () => {
 });
 
 describe('edge-owned surfaces still work', () => {
+  it('serves the Astro guide asset without consulting the old document cache', async () => {
+    const match = vi.fn();
+    vi.stubGlobal('caches', { default: { match } });
+    const response = await worker.fetch(
+      new Request('https://karte.cc/ai-link-in-bio', {
+        headers: { host: 'karte.cc' },
+      }),
+      {
+        ...env,
+        ASSETS: {
+          fetch: async () =>
+            new Response('current Astro guide', {
+              headers: { 'content-type': 'text/html' },
+            }),
+        },
+      },
+      ctx,
+    );
+    expect(await response.text()).toBe('current Astro guide');
+    expect(response.headers.get('x-edge-cache')).toBe('ASSET');
+    expect(openNextStub.calls).toEqual([]);
+    expect(match).not.toHaveBeenCalled();
+  });
   it('serves the agent catalog at /api/ai without touching Next.js', async () => {
     const response = await request('/api/ai');
 

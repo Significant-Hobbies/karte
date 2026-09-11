@@ -12,6 +12,13 @@ the previous source and pass with the fix; the full local quality gate passes
 210 tests. Production qualification remains in issue #82 until deployment and
 browser verification. No account, page, or production data was created.
 
+The first live check exposed a separate release-cache defect: `/create` served
+old HTML referencing a deleted JavaScript chunk, preventing hydration. The edge
+wrapper now leaves Next.js documents to OpenNext instead of reusing URL-only
+HTML cache entries across releases. `/welcome` is also reserved as an app route,
+so its private response cannot receive public profile cache headers. Six route
+regressions verify current HTML and the framework's private cache policy.
+
 ## Why / What
 
 Keep Karte available for direct personal use as a public inbound assistant:

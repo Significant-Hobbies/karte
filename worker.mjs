@@ -1,15 +1,6 @@
-// worker.mjs — custom Worker entry that wraps OpenNext with edge cache.
-//
-// The OpenNext-generated worker (`./.open-next/worker.js`) is imported as
-// the inner handler. For GET / requests we consult `caches.default` first
-// and only fall through to the Next handler on a miss — eliminating the
-// Worker cold-start path entirely for warm-cache hits on the homepage.
-//
-// Cache headers are explicit so CF Edge actually treats the response as
-// cacheable (s-maxage-only was getting marked DYNAMIC at the zone level;
-// using caches.default sidesteps the zone-level Cache Rules requirement).
-//
-// All non-GET, non-`/` requests pass straight through to OpenNext.
+// Worker entry for agent routes, generated Astro assets, and OpenNext.
+// Next.js documents retain the framework's cache and session behavior. Only
+// generated Astro paths use the custom document-cache fallback below.
 
 import openNext, {
   BucketCachePurge as OpenNextBucketCachePurge,
@@ -36,19 +27,9 @@ export class DOShardedTagCache extends OpenNextDOShardedTagCache {}
 // concrete class here so workerd can detect it from the configured entrypoint.
 export class RateLimiterDO extends RateLimiterDurableObject {}
 
-// Landing + static marketing only. Dynamic /{slug} profiles stay uncached here.
-const CACHEABLE_EXACT = new Set([
-  '/',
-  '/about',
-  '/ai-link-in-bio',
-  '/changelog',
-  '/create',
-  '/faq',
-  '/welcome',
-  '/login',
-  '/privacy',
-  '/terms',
-]);
+// Only generated Astro assets use this wrapper's document cache. Next.js
+// documents must retain OpenNext's cache policy: a URL-only edge entry can
+// outlive a release and point at deleted chunks, or skip session-aware logic.
 const ASTRO_ASSET_PATHS = new Set([
   '/',
   '/ai-link-in-bio',
@@ -56,7 +37,7 @@ const ASTRO_ASSET_PATHS = new Set([
   '/faq',
 ]);
 function isCacheableDocumentPath(pathname) {
-  return CACHEABLE_EXACT.has(pathname);
+  return ASTRO_ASSET_PATHS.has(pathname);
 }
 export default {
   fetch: withTiming(async function fetch(request, env, ctx) {
