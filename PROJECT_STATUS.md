@@ -3,6 +3,15 @@
 Last updated: 2026-09-11. Deeper historical detail lives at
 [`docs/current/project-status.md`](docs/current/project-status.md).
 
+### 2026-09-12 creator draft handoff
+
+Chat onboarding and link import now stop before login when browser storage
+cannot save the draft. The current draft stays visible with a recovery message;
+retry saves the same content before navigation. Both regressions fail against
+the previous source and pass with the fix; the full local quality gate passes
+210 tests. Production qualification remains in issue #82 until deployment and
+browser verification. No account, page, or production data was created.
+
 ## Why / What
 
 Keep Karte available for direct personal use as a public inbound assistant:

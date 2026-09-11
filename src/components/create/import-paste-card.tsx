@@ -149,7 +149,10 @@ export function ImportPasteCard() {
         JSON.stringify(payload),
       );
     } catch {
-      // localStorage may be blocked; the funnel still works without carry-over.
+      setErrorMessage(
+        'Your imported links could not be saved in this browser. Enable site storage or free some space, then try claiming again. Keep this page open to preserve your links.',
+      );
+      return;
     }
 
     try {

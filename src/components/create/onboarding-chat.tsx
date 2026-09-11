@@ -159,7 +159,10 @@ export function OnboardingChat() {
         JSON.stringify({ state, capturedAt: new Date().toISOString() }),
       );
     } catch {
-      // localStorage may be blocked — the funnel still works.
+      setError(
+        'Your draft could not be saved in this browser. Enable site storage or free some space, then try claiming again. Keep this page open to preserve your draft.',
+      );
+      return;
     }
     try {
       posthog.capture('onboarding_funnel_signup_clicked', {
