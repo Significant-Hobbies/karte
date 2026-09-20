@@ -9,6 +9,7 @@ import {
   type RoastContent,
 } from '@/lib/generated-page-types';
 import { AI_LINK_IN_BIO_MARKDOWN } from '../../content-pages/ai-link-in-bio.mjs';
+import { ARTICLE_MARKDOWN, ARTICLES } from '../../content-pages/articles.mjs';
 import {
   parsePublicHtmlPath,
   SITE_ORIGIN,
@@ -30,6 +31,19 @@ export async function renderPublicRouteMarkdown(
       source,
       route.description,
       route.markdown.map((paragraph: string) => plain(paragraph)),
+    );
+  }
+
+  if (parsed.kind === 'article') {
+    const body = ARTICLE_MARKDOWN[parsed.slug];
+    if (!body) return null;
+    const meta = ARTICLES.find((article) => article.slug === parsed.slug);
+    return document(
+      meta?.title ?? parsed.slug,
+      source,
+      meta?.description ?? '',
+      [body],
+      false,
     );
   }
 

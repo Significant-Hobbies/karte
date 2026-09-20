@@ -8,6 +8,15 @@
     "rate-limiter-do.mjs",
     "timing.mjs"
   ],
+  "workspaces": {
+    "landing-astro": {
+      "entry": [
+        "src/layouts/Article.astro",
+        "src/pages/**/*.{astro,ts}",
+        "scripts/*.mjs"
+      ]
+    }
+  },
   "project": ["**/*.{ts,tsx,js,jsx,mjs,cjs,mts}"],
   "ignore": [
     "**/dist/**",

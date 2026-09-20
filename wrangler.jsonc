@@ -24,7 +24,14 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
-    "run_worker_first": ["/", "/ai-link-in-bio", "/changelog", "/faq"]
+    "run_worker_first": [
+      "/",
+      "/ai-link-in-bio",
+      "/articles",
+      "/changelog",
+      "/faq",
+      "/articles/*"
+    ]
   },
   "observability": {
     "enabled": true,

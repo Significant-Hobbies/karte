@@ -2361,3 +2361,125 @@ html:has(.onyx-deck) body::-webkit-scrollbar { display: none; }
     padding-right: 20px;
   }
 }
+
+/* Article pages (markdown bodies rendered by layouts/Article.astro) */
+.article-shell {
+  box-sizing: border-box;
+  width: min(100% - 40px, 720px);
+  margin: 0 auto;
+  padding: clamp(40px, 8vw, 96px) 0;
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+.article-header {
+  border-bottom: 1px solid rgba(196, 164, 107, 0.2);
+  padding-bottom: 36px;
+}
+
+.article-header h1 {
+  margin: 8px 0 0;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.article-description {
+  max-width: 62ch;
+  margin: 20px 0 0;
+  color: #b8ad96;
+  line-height: 1.7;
+}
+
+.article-meta {
+  margin: 18px 0 0;
+  color: #8f8168;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.article-body {
+  padding: 36px 0 48px;
+  color: #d8cdb6;
+  font-size: 1.02rem;
+  line-height: 1.8;
+}
+
+.article-body h2 {
+  margin: 48px 0 0;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 1.7rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #f4ebd4;
+}
+
+.article-body h3 {
+  margin: 32px 0 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f4ebd4;
+}
+
+.article-body p,
+.article-body ul,
+.article-body ol {
+  margin: 16px 0 0;
+}
+
+.article-body ul,
+.article-body ol {
+  padding-left: 22px;
+}
+
+.article-body li {
+  margin-top: 8px;
+}
+
+.article-body a {
+  color: #d7b97e;
+  text-underline-offset: 3px;
+}
+
+.article-body code {
+  padding: 2px 6px;
+  border: 1px solid rgba(196, 164, 107, 0.25);
+  border-radius: 5px;
+  background: rgba(196, 164, 107, 0.08);
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  font-size: 0.85em;
+}
+
+.article-body strong {
+  color: #f4ebd4;
+  font-weight: 650;
+}
+
+.article-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  border-top: 1px solid rgba(196, 164, 107, 0.2);
+  padding-top: 24px;
+}
+
+.article-nav a {
+  color: #d7b97e;
+  font-size: 0.9rem;
+  text-underline-offset: 4px;
+}
+
+.article-list-description {
+  max-width: 70ch;
+  margin: 14px 0 0;
+  color: #b8ad96;
+  line-height: 1.7;
+}
+
+.article-list-meta {
+  margin: 10px 0 0;
+  color: #8f8168;
+  font-size: 0.78rem;
+}

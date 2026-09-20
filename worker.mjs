@@ -33,11 +33,14 @@ export class RateLimiterDO extends RateLimiterDurableObject {}
 const ASTRO_ASSET_PATHS = new Set([
   '/',
   '/ai-link-in-bio',
+  '/articles',
   '/changelog',
   '/faq',
 ]);
+// Generated Astro article pages overlay as articles/<slug>.html; cover the
+// whole section so the Next catch-all never sees it as a profile slug.
 function isCacheableDocumentPath(pathname) {
-  return ASTRO_ASSET_PATHS.has(pathname);
+  return ASTRO_ASSET_PATHS.has(pathname) || pathname.startsWith('/articles/');
 }
 export default {
   fetch: withTiming(async function fetch(request, env, ctx) {

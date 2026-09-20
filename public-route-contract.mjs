@@ -61,6 +61,20 @@ export const STATIC_PUBLIC_ROUTES = Object.freeze([
     ],
   },
   {
+    path: '/articles',
+    title: 'Articles — Karte',
+    description:
+      'Essays on public profiles, contextual inbound, and the requirements behind interactive profile pages.',
+    changeFrequency: 'weekly',
+    priority: 0.7,
+    owner: 'astro',
+    markdown: [
+      'Karte publishes long-form articles on public profiles, accessibility, and contextual inbound under /articles.',
+      'Each article renders as HTML for people and exposes a `.md` alternate through the same public-route markdown pipeline as the other static pages.',
+      'Articles are generated from marketing drafts by landing-astro/scripts/sync-articles.mjs and indexed by the site sitemap and agent catalog.',
+    ],
+  },
+  {
     path: '/changelog',
     title: 'Changelog — Karte',
     description:
@@ -157,6 +171,7 @@ const RESERVED_FIRST_SEGMENTS = new Set([
   '.well-known',
   '_next',
   'api',
+  'articles',
   'dashboard',
   'login',
   'welcome',
@@ -198,6 +213,15 @@ export function parsePublicHtmlPath(pathname) {
   const segments = path.split('/').filter(Boolean);
   if (segments.length < 1 || segments.length > 2) return null;
   const [slug, modeSegment] = segments;
+  // Published articles live at /articles/<slug> — an owned two-segment shape
+  // that must win before the reserved check rejects the 'articles' segment.
+  if (
+    slug === 'articles' &&
+    modeSegment &&
+    /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(modeSegment)
+  ) {
+    return { kind: 'article', path, slug: modeSegment };
+  }
   if (
     !slug ||
     RESERVED_FIRST_SEGMENTS.has(slug) ||
