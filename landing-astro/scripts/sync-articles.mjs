@@ -13,6 +13,7 @@
 // and working sections (Outline, Internal-Link Suggestions, Source Notes)
 // that must never be published.
 
+import { execSync } from 'node:child_process';
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 
@@ -151,6 +152,12 @@ export const ARTICLES = Object.freeze(${JSON.stringify(metadata, null, 2)});
 export const ARTICLE_MARKDOWN = Object.freeze(JSON.parse(${JSON.stringify(JSON.stringify(bodies))}));
 `;
 writeFileSync(modulePath, moduleSource);
+// JSON.stringify emits double-quoted output; keep the generated file
+// biome-clean so lint stays green without a manual format pass.
+execSync(`pnpm exec biome format --write ${modulePath}`, {
+  cwd: new URL('../../', import.meta.url).pathname,
+  stdio: 'inherit',
+});
 
 console.info(
   `Synced ${articles.length} article(s) into landing-astro/src/pages/articles/ + content-pages/articles.mjs`,
