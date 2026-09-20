@@ -1,6 +1,6 @@
 ---
 interface Props {
-  current?: 'home' | 'guide' | 'faq' | 'changelog';
+  current?: 'home' | 'guide' | 'faq' | 'changelog' | 'articles';
 }
 
 const { current = 'home' } = Astro.props;
@@ -14,6 +14,7 @@ const { current = 'home' } = Astro.props;
   <nav aria-label="Primary navigation">
     <a href="/ai-link-in-bio" aria-current={current === 'guide' ? 'page' : undefined}>How it works</a>
     <a href="/faq" aria-current={current === 'faq' ? 'page' : undefined}>FAQ</a>
+    <a href="/articles" aria-current={current === 'articles' ? 'page' : undefined}>Articles</a>
     <a href="/changelog" aria-current={current === 'changelog' ? 'page' : undefined}>Changelog</a>
     <a class="karte-header-action" href="/create">Create a page</a>
   </nav>

@@ -17,6 +17,7 @@ const PUBLIC_PASSTHROUGH_PREFIXES = [
 const RESERVED_FIRST_SEGMENTS = new Set([
   'api',
   '_next',
+  'articles',
   'dashboard',
   'login',
   'create',

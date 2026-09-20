@@ -23,11 +23,18 @@ const STATIC_PATHS = [
   '/create',
   '/ai-link-in-bio',
   '/faq',
+  '/articles',
   '/changelog',
   '/privacy',
   '/terms',
 ];
-const ASTRO_CONTENT_PATHS = ['/', '/ai-link-in-bio', '/changelog', '/faq'];
+const ASTRO_CONTENT_PATHS = [
+  '/',
+  '/ai-link-in-bio',
+  '/articles',
+  '/changelog',
+  '/faq',
+];
 
 function quotedValues(source, pattern, label) {
   const block = source.match(pattern);
@@ -35,7 +42,7 @@ function quotedValues(source, pattern, label) {
   return [...block[1].matchAll(/['"]([^'"]+)['"]/g)].map((match) => match[1]);
 }
 
-test('defines one canonical inventory of eight static public HTML routes', () => {
+test('defines one canonical inventory of nine static public HTML routes', () => {
   assert.deepEqual(
     STATIC_PUBLIC_ROUTES.map((route) => route.path),
     STATIC_PATHS,
@@ -115,7 +122,7 @@ test('routes every Astro content path through the Worker before Static Assets', 
   );
 
   assert.deepEqual(workerPaths, ASTRO_CONTENT_PATHS);
-  assert.deepEqual(workerFirstPaths, ASTRO_CONTENT_PATHS);
+  assert.deepEqual(workerFirstPaths, [...ASTRO_CONTENT_PATHS, '/articles/*']);
 });
 
 test('does not precompress Astro assets before Cloudflare content negotiation', () => {
@@ -171,6 +178,15 @@ test('keeps private and non-HTML routes outside the public document parser', () 
   assert.equal(parsePublicHtmlPath('/sarthak/encyclopedia')?.kind, 'mode');
 });
 
+test('routes published articles before the reserved-segment check', () => {
+  const parsed = parsePublicHtmlPath('/articles/some-slug');
+  assert.equal(parsed?.kind, 'article');
+  assert.equal(parsed?.slug, 'some-slug');
+  assert.equal(parsePublicHtmlPath('/articles')?.kind, 'static');
+  assert.equal(parsePublicHtmlPath('/articles/not valid'), null);
+  assert.equal(parsePublicHtmlPath('/articles/nested/deep/path'), null);
+});
+
 test('maps each public HTML route to a stable Markdown alternate', () => {
   for (const path of STATIC_PATHS) {
     const markdown = markdownPathFor(path);
@@ -195,7 +211,16 @@ test('serves explicit Markdown and content negotiation with clear unavailable re
     new Request('https://karte.cc/missing.md'),
     async () => null,
   );
+  const article = await handlePublicRouteMarkdown(
+    new Request('https://karte.cc/articles/some-slug.md'),
+    load,
+  );
 
+  assert.equal(article.status, 200);
+  assert.equal(
+    article.headers.get('content-location'),
+    '/articles/some-slug.md',
+  );
   assert.equal(explicit.status, 200);
   assert.equal(explicit.headers.get('content-location'), '/faq.md');
   assert.equal(negotiated.status, 200);
@@ -214,7 +239,7 @@ test('keeps robots and the agent catalog on the current origin', async () => {
   );
   const catalog = await response.json();
   assert.equal(catalog.url, 'https://preview.example');
-  assert.equal(catalog.surfaces.length, 8);
+  assert.equal(catalog.surfaces.length, 9);
   assert.ok(
     catalog.surfaces.every((surface) =>
       surface.md.startsWith('https://preview.example/'),

@@ -3,6 +3,7 @@ import type { MetadataRoute } from 'next';
 
 import { db } from '@/db';
 import { generatedPages, pages } from '@/db/schema';
+import { ARTICLES } from '../../content-pages/articles.mjs';
 import {
   buildPublicProfilePaths,
   PROFILE_MODES,
@@ -27,6 +28,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: route.priority,
     }),
   );
+
+  const articleRoutes: MetadataRoute.Sitemap = ARTICLES.map((article) => ({
+    url: `${SITE_ORIGIN}/articles/${article.slug}`,
+    lastModified: new Date(`${article.date}T00:00:00`),
+    changeFrequency: 'monthly',
+    priority: 0.6,
+  }));
 
   let profileRoutes: MetadataRoute.Sitemap = [];
   try {
@@ -98,5 +106,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     /* D1 offline at build — static-only fallback */
   }
 
-  return [...staticRoutes, ...profileRoutes];
+  return [...staticRoutes, ...articleRoutes, ...profileRoutes];
 }

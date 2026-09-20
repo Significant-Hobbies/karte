@@ -1,0 +1,72 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import ProductFooter from '@/components/ProductFooter.astro';
+import SiteHeader from '@/components/SiteHeader.astro';
+
+interface ArticleFrontmatter {
+  title: string;
+  description: string;
+  date: string;
+  readingMinutes: number;
+}
+
+const articles = Object.entries(
+  import.meta.glob<{ frontmatter: ArticleFrontmatter }>('./*.md', {
+    eager: true,
+  }),
+)
+  .map(([file, mod]) => ({
+    href: `/articles/${file.replace(/^\.\//, '').replace(/\.md$/, '')}`,
+    title: mod.frontmatter.title,
+    description: mod.frontmatter.description,
+    date: mod.frontmatter.date,
+    readingMinutes: mod.frontmatter.readingMinutes,
+  }))
+  .sort(
+    (a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title),
+  );
+---
+
+<Layout
+  title="Articles — Karte"
+  description="Essays on public profiles, contextual inbound, and the requirements behind interactive profile pages."
+  canonicalPath="/articles"
+>
+  <main class="karte-page">
+    <SiteHeader current="articles" />
+    <section class="changelog-shell">
+      <header class="changelog-header">
+        <p class="changelog-kicker">Writing</p>
+        <h1>Articles</h1>
+        <p>
+          Essays on public profiles, contextual inbound, and the requirements
+          behind interactive profile pages.
+        </p>
+      </header>
+
+      <ol class="changelog-list">
+        {
+          articles.map((article) => (
+            <li>
+              <article class="changelog-entry">
+                <time datetime={article.date}>
+                  {new Date(`${article.date}T00:00:00`).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+                <h2>
+                  <a href={article.href}>{article.title}</a>
+                </h2>
+                <p class="article-list-description">{article.description}</p>
+                <p class="article-list-meta">{article.readingMinutes} min read</p>
+              </article>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+    <ProductFooter />
+  </main>
+</Layout>

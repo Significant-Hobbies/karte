@@ -1,0 +1,56 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import ProductFooter from '@/components/ProductFooter.astro';
+import SiteHeader from '@/components/SiteHeader.astro';
+
+const { frontmatter } = Astro.props;
+const {
+  title,
+  description,
+  date,
+  author = 'Sarthak Agrawal',
+  readingMinutes,
+} = frontmatter;
+
+const displayDate = date
+  ? new Date(`${date}T00:00:00`).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  : null;
+
+const meta = [
+  displayDate,
+  author ? `By ${author}` : null,
+  readingMinutes ? `${readingMinutes} min read` : null,
+].filter(Boolean);
+---
+
+<Layout
+  title={`${title} — Karte`}
+  description={description}
+  canonicalPath={Astro.url.pathname}
+>
+  <main class="karte-page">
+    <SiteHeader current="articles" />
+    <article class="article-shell">
+      <header class="article-header">
+        <p class="changelog-kicker">Karte article</p>
+        <h1>{title}</h1>
+        <p class="article-description">{description}</p>
+        {meta.length > 0 && <p class="article-meta">{meta.join(' · ')}</p>}
+      </header>
+
+      <div class="article-body">
+        <slot />
+      </div>
+
+      <nav class="article-nav" aria-label="Article links">
+        <a href="/articles">All articles →</a>
+        <a href="/faq">FAQ →</a>
+      </nav>
+    </article>
+    <ProductFooter />
+  </main>
+</Layout>
