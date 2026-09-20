@@ -28,8 +28,10 @@ const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const HEADING = /^#{1,4} /;
 const SKIP_HEADING = /^(outline|internal[- ]link\w*|source notes)\b/i;
 const INLINE_NOTE = /\*?\[Internal[- ]Link\s*Suggestions?:[^\]]*\]\*?/gi;
-const INLINE_NOTE_LINE = /^[ \t]*\*?[([]?\s*Internal[- ]Link\s*Suggestions?:.*[)\]*]?[ \t]*$/gim;
-const DRAFT_COMMENT = /<!--[\s\S]*?(?:source notes|do not publish)[\s\S]*?-->/gi;
+const INLINE_NOTE_LINE =
+  /^[ \t]*\*?[([]?\s*Internal[- ]Link\s*Suggestions?:.*[)\]*]?[ \t]*$/gim;
+const DRAFT_COMMENT =
+  /<!--[\s\S]*?(?:source notes|do not publish)[\s\S]*?-->/gi;
 const today = new Date().toISOString().slice(0, 10);
 const pagesDir = new URL('../src/pages/articles/', import.meta.url).pathname;
 const modulePath = new URL('../../content-pages/articles.mjs', import.meta.url)
