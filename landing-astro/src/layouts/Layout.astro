@@ -119,6 +119,15 @@ const markdownPath = canonicalPath === '/' ? '/index.md' : `${canonicalPath}.md`
       onload="window.clarity('set', 'project_id', 'karte')"
     ></script>
     <script is:inline src="/app-health-log.js" defer></script>
+    <script
+      is:inline
+      defer
+      src="https://health.sassmaker.com/tracker.js"
+      data-key="ahk_pub_479f6271328580806dd8b901f129ffd06726daf26cf537832bdbd943290744ff"
+      data-project="app-731a1d3c-2eff-4ee8-aa6f-eaef1daaa7bf"
+      data-identity="persistent"
+      data-endpoint="https://ingest.sassmaker.com/v1/browser"
+    ></script>
   </head>
   <body class="antialiased">
     <slot />
