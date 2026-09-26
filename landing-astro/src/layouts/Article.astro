@@ -30,7 +30,7 @@ const meta = [
 <Layout
   title={`${title} — Karte`}
   description={description}
-  canonicalPath={Astro.url.pathname}
+  canonicalPath={Astro.url.pathname.replace(/\.html$/, '')}
 >
   <main class="karte-page">
     <SiteHeader current="articles" />
