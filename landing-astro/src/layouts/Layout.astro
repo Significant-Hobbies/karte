@@ -73,16 +73,31 @@ const markdownPath = canonicalPath === '/' ? '/index.md' : `${canonicalPath}.md`
         without genuine review evidence, so the site describes itself. */}
     <script type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
-      '@type': 'WebSite',
-      name: 'Karte',
-      url: 'https://karte.cc',
-      description: product.description,
-      isAccessibleForFree: true,
-      creator: {
-        '@type': 'Person',
-        name: 'Sarthak Agrawal',
-        url: 'https://sarthakagrawal.dev',
-      },
+      '@graph': [
+        {
+          '@type': 'WebSite',
+          name: 'Karte',
+          alternateName: ['karte.cc'],
+          url: 'https://karte.cc',
+          description: product.description,
+          isAccessibleForFree: true,
+          creator: {
+            '@type': 'Person',
+            name: 'Sarthak Agrawal',
+            url: 'https://sarthakagrawal.dev',
+          },
+        },
+        {
+          '@type': 'Organization',
+          name: 'Karte',
+          url: 'https://karte.cc',
+          founder: {
+            '@type': 'Person',
+            name: 'Sarthak Agrawal',
+            url: 'https://sarthakagrawal.dev',
+          },
+        },
+      ],
     })} />
 
     {/* Wire the same CSS vars Next.js's next/font set up, so landing.css
