@@ -62,6 +62,35 @@
   document.addEventListener(
     'click',
     (e) => {
+      var cta = e.target?.closest
+        ? e.target.closest('[data-app-health-event]')
+        : null;
+      var eventName = cta?.getAttribute('data-app-health-event');
+      if (eventName && window.appHealth?.track) {
+        window.appHealth.track(eventName);
+        if (
+          cta.tagName === 'A' &&
+          e.button === 0 &&
+          !e.metaKey &&
+          !e.ctrlKey &&
+          !e.shiftKey &&
+          !e.altKey &&
+          cta.target !== '_blank' &&
+          !cta.hasAttribute('download')
+        ) {
+          e.preventDefault();
+          let navigated = false;
+          const navigate = () => {
+            if (navigated) return;
+            navigated = true;
+            location.assign(cta.href);
+          };
+          setTimeout(navigate, 800);
+          Promise.resolve(window.appHealth.flush?.())
+            .catch(() => {})
+            .finally(navigate);
+        }
+      }
       var t = e.target?.closest ? e.target.closest('[data-log]') : null;
       var name = t?.getAttribute('data-log');
       if (name)
