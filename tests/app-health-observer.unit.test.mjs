@@ -63,4 +63,24 @@ describe('App Health endpoint observer', () => {
     expect(send).toHaveBeenCalledTimes(1);
     expect(waitUntil).toHaveBeenCalledTimes(1);
   });
+
+  it('keeps nested paths under static roots out of telemetry', async () => {
+    const send = vi.fn().mockResolvedValue(new Response(null, { status: 202 }));
+    vi.stubGlobal('fetch', send);
+    const pending = [];
+    const ctx = { waitUntil: (promise) => pending.push(promise) };
+
+    observeRequest(
+      new Request('https://karte.cc/contact/private-email-address'),
+      new Response(null, { status: 200 }),
+      3,
+      { APP_HEALTH_INGEST_KEY: 'test-key' },
+      ctx,
+    );
+    await Promise.all(pending);
+
+    const body = send.mock.calls[0][1].body;
+    expect(JSON.parse(body).events[0].route).toBe('/contact');
+    expect(body).not.toContain('private-email-address');
+  });
 });

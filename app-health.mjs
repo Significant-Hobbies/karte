@@ -62,7 +62,7 @@ function routeFor(pathname) {
       const group = segments[1];
       return group && API_GROUPS.has(group) ? `/api/${group}` : '/api';
     }
-    return p.length <= 48 ? p : null;
+    return `/${first}`;
   }
   const suffix = segments.slice(1).join('/');
   if (['newspaper', 'roast', 'encyclopedia'].includes(suffix))
