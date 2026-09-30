@@ -6,6 +6,23 @@
 // the worker.
 
 const INGEST_ENDPOINT = 'https://ingest.sassmaker.com/v1/ingest';
+const API_GROUPS = new Set([
+  'agent-waitlist',
+  'ai',
+  'auth',
+  'chat',
+  'contact',
+  'demo-chat',
+  'email',
+  'import',
+  'onboarding',
+  'pages',
+  'settings',
+  'track',
+  'uploads',
+  'v1',
+  'welcome',
+]);
 
 // Karte's primary surface is /<slug>[/newspaper|/roast|/encyclopedia] — the
 // first path segment is dynamic. Known static roots pass through verbatim.
@@ -41,8 +58,11 @@ function routeFor(pathname) {
   if (segments.length === 0) return '/';
   const first = segments[0];
   if (STATIC_ROOTS.has(first)) {
-    if (first === 'api') return p.length <= 64 ? p : null;
-    return p.length <= 48 ? p : null;
+    if (first === 'api') {
+      const group = segments[1];
+      return group && API_GROUPS.has(group) ? `/api/${group}` : '/api';
+    }
+    return `/${first}`;
   }
   const suffix = segments.slice(1).join('/');
   if (['newspaper', 'roast', 'encyclopedia'].includes(suffix))
@@ -66,7 +86,7 @@ export function observeRequest(request, response, durationMs, env, ctx) {
     events: [
       {
         event_id: crypto.randomUUID(),
-        timestamp: new Date().toISOString(),
+        timestamp: Date.now(),
         method: request.method,
         route,
         status_code: response.status,
