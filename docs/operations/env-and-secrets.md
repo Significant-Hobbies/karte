@@ -38,6 +38,7 @@ gitignored except `.env.example`. Production secrets are set with
 - `RAG_SERVICE` → `knowledgebase` worker
 - `WORKER_SELF_REFERENCE` → self (ISR queue)
 - `RATE_LIMITER_DO`, `NEXT_CACHE_DO_QUEUE` → Durable Objects
+- `NEURON_BUDGET` → `free-ai-gateway` `NeuronBudgetDO`; direct Workers AI binding calls reserve from the shared 9,500-neuron daily cap before inference. Only exact model IDs with published pricing are admitted; configured endpoints and BYOK do not use this binding guard.
 - `vars`: `BETTER_AUTH_URL`, `NEXT_PUBLIC_APP_URL`, `EMAIL_FROM_ADDRESS`,
   `EMAIL_FROM_NAME`, `AGENT_AUTH_DAILY_EMAIL_CAP`, AI endpoint + model defaults.
 

@@ -187,6 +187,8 @@ export async function POST(req: Request) {
       system: fullSystem,
       messages: messages.map((m) => ({ role: m.role, content: m.content })),
       reasoningLevel: 'fast',
+      maxOutputTokens: 512,
+      timeoutMs: 30_000,
     });
   } catch (err) {
     console.error('onboarding-chat ai error', err);

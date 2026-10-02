@@ -94,6 +94,11 @@
       {
         "name": "RATE_LIMITER_DO",
         "class_name": "RateLimiterDO"
+      },
+      {
+        "name": "NEURON_BUDGET",
+        "class_name": "NeuronBudgetDO",
+        "script_name": "free-ai-gateway"
       }
     ]
   },
