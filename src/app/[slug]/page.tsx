@@ -141,21 +141,22 @@ function ProfileLoading() {
   );
 }
 
+type FullPageData = NonNullable<Awaited<ReturnType<typeof getFullPageData>>>;
+
 export default async function ProfilePage({ params }: Props) {
   const requestedSlug = (await params).slug;
   const slug = resolvePublicProfileSlug(requestedSlug);
+  const data = await getFullPageData(slug);
+  if (!data) notFound();
 
   return (
     <Suspense fallback={<ProfileLoading />}>
-      <ProfileContent slug={slug} />
+      <ProfileContent slug={slug} data={data} />
     </Suspense>
   );
 }
 
-async function ProfileContent({ slug }: { slug: string }) {
-  const data = await getFullPageData(slug);
-  if (!data) notFound();
-
+function ProfileContent({ slug, data }: { slug: string; data: FullPageData }) {
   const {
     page,
     links: pageLinks,
