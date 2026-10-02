@@ -6,7 +6,7 @@ Managed chat now uses the Fleet gateway with canonical `karte` attribution.
 Explicit profile BYOK retains precedence, production requires the gateway
 binding, and managed SDK retries are disabled. Privacy copy describes routed
 inference providers. The SDK contract tests and full local `pnpm quality` pass
-(266 tests); Cloudflare build and Wrangler preview dry-run confirm
+(266 tests); Cloudflare build and Wrangler production dry-run confirm
 `env.FREE_AI (free-ai-gateway#FleetGateway)`. Pending PR review and production
 release; no deployment was performed. Tracked
 in [Free AI issue #83](https://github.com/sass-maker/free-ai/issues/83).
