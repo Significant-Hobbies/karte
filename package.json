@@ -50,7 +50,7 @@
     "drizzle-orm": "0.45.2",
     "html-to-image": "1.11.13",
     "motion": "^12.42.2",
-    "next": "16.3.8",
+    "next": "16.3.6",
     "novel": "1.0.2",
     "posthog-js": "^1.407.3",
     "react": "19.2.8",
