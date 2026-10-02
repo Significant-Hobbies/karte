@@ -1,5 +1,16 @@
 # Karte — PROJECT STATUS
 
+## Free AI gateway source update — 2 October
+
+Managed chat now uses the Fleet gateway with canonical `karte` attribution.
+Explicit profile BYOK retains precedence, production requires the gateway
+binding, and managed SDK retries are disabled. Privacy copy describes routed
+inference providers. The SDK contract tests and full local `pnpm quality` pass
+(266 tests); Cloudflare build and Wrangler production dry-run confirm
+`env.FREE_AI (free-ai-gateway#FleetGateway)`. Pending PR review and production
+release; no deployment was performed. Tracked
+in [Free AI issue #83](https://github.com/sass-maker/free-ai/issues/83).
+
 Last updated: 2026-09-11. Deeper historical detail lives at
 [`docs/current/project-status.md`](docs/current/project-status.md).
 

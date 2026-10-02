@@ -95,10 +95,11 @@ export default function PrivacyPage() {
         <li>
           <strong className="text-karte-text">AI inference providers</strong> —
           chat queries, page content sources, and generation prompts are sent to
-          the AI gateway (default: a free-ai-gateway service routing to
-          Cloudflare Workers AI; optionally to a key the profile owner
-          configures). Providers may log requests for abuse prevention; we do
-          not share your data with them for training.
+          the AI gateway (default: a free-ai-gateway service that routes to
+          available inference providers; optionally to a key the profile owner
+          configures). The provider handling a request may vary with gateway
+          routing and BYOK settings. Providers may log requests for abuse
+          prevention; we do not share your data with them for training.
         </li>
       </ul>
 

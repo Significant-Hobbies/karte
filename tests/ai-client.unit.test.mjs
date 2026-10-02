@@ -9,25 +9,27 @@ function read(relativePath) {
   return readFileSync(join(root, relativePath), 'utf8');
 }
 
-describe('AI client direct-provider contract', () => {
-  it('requires explicit project-owned endpoint, key, and model', () => {
+describe('AI client managed gateway contract', () => {
+  it('uses the service binding with canonical attribution before Workers AI', () => {
     const source = read('src/lib/ai-client.ts');
 
+    assert.match(source, /FREE_AI/);
+    assert.match(source, /x-gateway-project-id': 'karte'/);
+    assert.match(source, /chatModel\('auto'\)/);
+    assert.match(source, /supportsStructuredOutputs: false/);
+    assert.match(source, /required in production/);
     assert.match(source, /LINKCHAT_DEFAULT_AI_ENDPOINT_URL/);
     assert.match(source, /LINKCHAT_DEFAULT_AI_API_KEY/);
     assert.match(source, /LINKCHAT_DEFAULT_AI_MODEL/);
     assert.match(source, /LINKCHAT_FAST_AI_MODEL/);
-    assert.doesNotMatch(source, /ai-gateway\.sassmaker\.com/);
-    assert.doesNotMatch(source, /x-gateway-project-id/);
     assert.doesNotMatch(source, /DEFAULT_FAST_AI_MODEL\s*=\s*'auto'/);
   });
 
-  it('uses the optional fast model without gateway-specific request fields', () => {
+  it('keeps fast model selection on non-gateway configured models', () => {
     const source = read('src/lib/ai-client.ts');
 
     assert.match(source, /reasoningLevel === 'fast'.*LINKCHAT_FAST_AI_MODEL/s);
     assert.match(source, /return config\.model/);
     assert.doesNotMatch(source, /reasoning_level/);
-    assert.doesNotMatch(source, /project_id/);
   });
 });

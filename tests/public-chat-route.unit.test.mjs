@@ -8,7 +8,6 @@ const boundary = vi.hoisted(() => ({
   verifyTurnstile: vi.fn(),
   rateLimit: vi.fn(),
   generate: vi.fn(),
-  getDefaultAiConfig: vi.fn(),
   resolveAiConfig: vi.fn(),
   buildProfileMemory: vi.fn(),
   search: vi.fn(),
@@ -27,7 +26,6 @@ vi.mock('@/lib/turnstile', () => ({
 vi.mock('@/lib/rate-limit', () => ({ rateLimit: boundary.rateLimit }));
 vi.mock('@/lib/ai-client', () => ({
   generate: boundary.generate,
-  getDefaultAiConfig: boundary.getDefaultAiConfig,
   resolveAiConfig: boundary.resolveAiConfig,
 }));
 vi.mock('@/lib/knowledgebase', () => ({ search: boundary.search }));
@@ -95,12 +93,11 @@ beforeEach(async () => {
   });
   boundary.rateLimit.mockResolvedValue({ ok: true, remaining: 19 });
   boundary.verifyTurnstile.mockResolvedValue(true);
-  boundary.getDefaultAiConfig.mockReturnValue({
+  boundary.resolveAiConfig.mockReturnValue({
     endpointUrl: 'https://ai.test/v1',
     apiKey: 'managed-key',
     model: 'model',
   });
-  boundary.resolveAiConfig.mockReturnValue(null);
   boundary.buildProfileMemory.mockResolvedValue({
     promptContext: 'Public memory: Test Owner builds Karte.',
   });
@@ -257,7 +254,7 @@ describe('public chat grounding', () => {
   });
 
   it('reports chat unavailable when no AI endpoint is configured', async () => {
-    boundary.getDefaultAiConfig.mockReturnValue(null);
+    boundary.resolveAiConfig.mockReturnValue(null);
 
     const response = await ask(
       'test-slug',

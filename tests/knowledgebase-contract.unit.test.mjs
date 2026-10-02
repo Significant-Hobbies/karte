@@ -91,16 +91,16 @@ describe('knowledgebase RAG integration contract', () => {
       /You said you're wearing a \$\{display\} t-shirt\./,
     );
     assert.match(chatRoute, /You told me:/);
-    assert.match(
-      chatRoute,
-      /const aiConfig = getDefaultAiConfig\(\) \?\? resolveAiConfig\(user\)/,
-    );
+    assert.match(chatRoute, /const aiConfig = resolveAiConfig\(user\)/);
     assert.match(chatRoute, /generate\(aiConfig/);
     assert.match(
       chatRoute,
       /Rich public chat completion failed; retrying compact prompt/,
     );
-    assert.doesNotMatch(chatRoute, /const aiConfig = resolveAiConfig\(user\)/);
+    assert.doesNotMatch(
+      chatRoute,
+      /getDefaultAiConfig\(\) \?\? resolveAiConfig/,
+    );
     assert.match(chatRoute, /const fallbackAiConfig = aiConfig/);
     assert.match(
       chatRoute,

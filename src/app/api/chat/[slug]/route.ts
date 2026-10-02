@@ -2,7 +2,7 @@ import { and, asc, desc, eq } from 'drizzle-orm';
 
 import { db, ensureProjectsTable } from '@/db';
 import { conversations, messages, pages, projects, users } from '@/db/schema';
-import { generate, getDefaultAiConfig, resolveAiConfig } from '@/lib/ai-client';
+import { generate, resolveAiConfig } from '@/lib/ai-client';
 import { CHAT_RESPONSE_ENVELOPE_PROMPT } from '@/lib/ai-prompts';
 import { resolvePublicProfileSlug } from '@/lib/demo-profiles';
 import { search } from '@/lib/knowledgebase';
@@ -183,11 +183,8 @@ export async function POST(
 
   const [user] = await db.select().from(users).where(eq(users.id, page.userId));
 
-  // Public chat is a managed Karte surface. Prefer the fleet provider so a
-  // stale profile-specific credential cannot add a failed network hop before
-  // every visitor response. Keep the custom config only as a compatibility
-  // fallback for self-hosted installs without a managed provider.
-  const aiConfig = getDefaultAiConfig() ?? resolveAiConfig(user);
+  // Explicit owner BYOK stays ahead of the managed Karte gateway.
+  const aiConfig = resolveAiConfig(user);
   if (!aiConfig) {
     return new Response(
       JSON.stringify({ error: 'Chat not configured — AI endpoint missing' }),

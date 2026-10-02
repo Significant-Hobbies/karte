@@ -114,6 +114,11 @@
   ],
   "services": [
     {
+      "binding": "FREE_AI",
+      "service": "free-ai-gateway",
+      "entrypoint": "FleetGateway"
+    },
+    {
       "binding": "RAG_SERVICE",
       "service": "knowledgebase"
     },
