@@ -2,18 +2,22 @@ import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { generateText, type LanguageModel } from 'ai';
 import { createWorkersAI, type WorkersAISettings } from 'workers-ai-provider';
+import {
+  type NeuronBudgetNamespace,
+  withSharedNeuronBudget,
+} from './workers-ai-budget';
 
 type WorkersAiBinding = Extract<
   WorkersAISettings,
   { binding: unknown }
 >['binding'];
-// The non-fast variant was deprecated on 2026-05-30. This supported variant
-// preserves the small-model, low-latency profile-chat path.
-const DEFAULT_WORKERS_AI_MODEL = '@cf/meta/llama-3.1-8b-instruct-fast';
+// Exact Workers AI pricing ID used by the shared neuron admission estimate.
+const DEFAULT_WORKERS_AI_MODEL = '@cf/meta/llama-3.1-8b-instruct-fp8-fast';
 const SYNCHRONOUS_CLOUDFLARE_CONTEXT = { async: false } as const;
 
 export type AiConfig = {
   binding?: WorkersAiBinding;
+  neuronBudget?: NeuronBudgetNamespace;
   endpointUrl?: string;
   apiKey?: string;
   model: string;
@@ -22,8 +26,17 @@ export type AiConfig = {
 export function getDefaultAiConfig(): AiConfig | null {
   try {
     const { env } = getCloudflareContext(SYNCHRONOUS_CLOUDFLARE_CONTEXT);
-    const binding = (env as { AI?: WorkersAiBinding }).AI;
-    if (binding) return { binding, model: DEFAULT_WORKERS_AI_MODEL };
+    const runtimeEnv = env as {
+      AI?: WorkersAiBinding;
+      NEURON_BUDGET?: NeuronBudgetNamespace;
+    };
+    if (runtimeEnv.AI) {
+      return {
+        binding: runtimeEnv.AI,
+        neuronBudget: runtimeEnv.NEURON_BUDGET,
+        model: DEFAULT_WORKERS_AI_MODEL,
+      };
+    }
   } catch {
     // Node tests and operator scripts fall through to explicit direct config.
   }
@@ -73,8 +86,10 @@ function getModel(
   reasoningLevel?: ReasoningLevel,
 ): LanguageModel {
   const model = modelForReasoning(config, reasoningLevel);
-  if (config.binding)
-    return createWorkersAI({ binding: config.binding })(model);
+  if (config.binding) {
+    const binding = withSharedNeuronBudget(config.binding, config.neuronBudget);
+    return createWorkersAI({ binding })(model);
+  }
   if (!config.endpointUrl || !config.apiKey) {
     throw new Error('Direct AI endpoint URL and API key are required');
   }
