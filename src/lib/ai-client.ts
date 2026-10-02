@@ -11,12 +11,15 @@ type WorkersAiBinding = Extract<
   WorkersAISettings,
   { binding: unknown }
 >['binding'];
+
+type FreeAiBinding = { fetch(request: Request): Promise<Response> };
 // Exact Workers AI pricing ID used by the shared neuron admission estimate.
 const DEFAULT_WORKERS_AI_MODEL = '@cf/meta/llama-3.1-8b-instruct-fp8-fast';
 const SYNCHRONOUS_CLOUDFLARE_CONTEXT = { async: false } as const;
 
 export type AiConfig = {
   binding?: WorkersAiBinding;
+  freeAi?: FreeAiBinding;
   neuronBudget?: NeuronBudgetNamespace;
   endpointUrl?: string;
   apiKey?: string;
@@ -24,21 +27,35 @@ export type AiConfig = {
 };
 
 export function getDefaultAiConfig(): AiConfig | null {
+  let runtimeEnv:
+    | {
+        AI?: WorkersAiBinding;
+        FREE_AI?: FreeAiBinding;
+        NEURON_BUDGET?: NeuronBudgetNamespace;
+        NODE_ENV?: string;
+      }
+    | undefined;
   try {
     const { env } = getCloudflareContext(SYNCHRONOUS_CLOUDFLARE_CONTEXT);
-    const runtimeEnv = env as {
-      AI?: WorkersAiBinding;
-      NEURON_BUDGET?: NeuronBudgetNamespace;
-    };
-    if (runtimeEnv.AI) {
-      return {
-        binding: runtimeEnv.AI,
-        neuronBudget: runtimeEnv.NEURON_BUDGET,
-        model: DEFAULT_WORKERS_AI_MODEL,
-      };
-    }
+    runtimeEnv = env as typeof runtimeEnv;
   } catch {
     // Node tests and operator scripts fall through to explicit direct config.
+  }
+
+  if (runtimeEnv?.FREE_AI) {
+    return { freeAi: runtimeEnv.FREE_AI, model: 'auto' };
+  }
+  if ((runtimeEnv?.NODE_ENV ?? process.env.NODE_ENV) === 'production') {
+    throw new Error(
+      'Free AI gateway service binding is required in production',
+    );
+  }
+  if (runtimeEnv?.AI) {
+    return {
+      binding: runtimeEnv.AI,
+      neuronBudget: runtimeEnv.NEURON_BUDGET,
+      model: DEFAULT_WORKERS_AI_MODEL,
+    };
   }
 
   const endpointUrl = process.env.LINKCHAT_DEFAULT_AI_ENDPOINT_URL;
@@ -51,6 +68,20 @@ export function getDefaultAiConfig(): AiConfig | null {
     apiKey,
     model,
   };
+}
+
+export function createFreeAiGatewayModel(
+  binding: FreeAiBinding,
+): LanguageModel {
+  const provider = createOpenAICompatible({
+    name: 'free-ai',
+    baseURL: 'https://fleet-gateway.internal/v1',
+    apiKey: 'service-binding',
+    headers: { 'x-gateway-project-id': 'karte' },
+    fetch: (input, init) => binding.fetch(new Request(input, init)),
+    supportsStructuredOutputs: false,
+  });
+  return provider.chatModel('auto');
 }
 
 export function resolveAiConfig(config?: {
@@ -86,6 +117,9 @@ function getModel(
   reasoningLevel?: ReasoningLevel,
 ): LanguageModel {
   const model = modelForReasoning(config, reasoningLevel);
+  if (config.freeAi) {
+    return createFreeAiGatewayModel(config.freeAi);
+  }
   if (config.binding) {
     const binding = withSharedNeuronBudget(config.binding, config.neuronBudget);
     return createWorkersAI({ binding })(model);

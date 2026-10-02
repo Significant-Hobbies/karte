@@ -114,6 +114,11 @@
   ],
   "services": [
     {
+      "binding": "FREE_AI",
+      "service": "free-ai-gateway",
+      "entrypoint": "FleetGateway"
+    },
+    {
       "binding": "RAG_SERVICE",
       "service": "knowledgebase"
     },
@@ -127,6 +132,16 @@
   "env": {
     "cache": {
       "routes": []
+    },
+    "preview": {
+      "name": "linkchat-preview",
+      "services": [
+        {
+          "binding": "FREE_AI",
+          "service": "free-ai-gateway",
+          "entrypoint": "FleetGateway"
+        }
+      ]
     }
   }
 }
