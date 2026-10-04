@@ -22,12 +22,6 @@ function sendToAnalytics(metric: VitalMetric) {
       id: metric.id,
       navigation_type: metric.navigationType,
     });
-  } else {
-    const body = JSON.stringify({
-      project: process.env.NEXT_PUBLIC_PROJECT_SLUG ?? 'karte',
-      ...metric,
-    });
-    navigator.sendBeacon('https://vitals.fleet.workers.dev/collect', body);
   }
 }
 
