@@ -52,6 +52,8 @@ const acceptedHigh = new Set([
   'GHSA-6g55-p6wh-862q',
   'GHSA-8hv8-536x-4wqp',
   'GHSA-c2c7-rcm5-vvqj',
+  // http-cache-semantics <=4.2.0 via dev tooling; no patched version exists. Re-review when upstream releases a fix.
+  'GHSA-ch52-4w7c-c8xp',
   'GHSA-f88m-g3jw-g9cj',
   'GHSA-mh99-v99m-4gvg',
   'GHSA-r28c-9q8g-f849',
