@@ -1,0 +1,15 @@
+{
+  "asset": "/footer-art/karte.webp",
+  "sha256": "82a259b668d1e6507173483dd10368d0304b6923099a8afeb1b5d2850ca134fb",
+  "bytes": 1423972,
+  "dimensions": {
+    "width": 2170,
+    "height": 725
+  },
+  "format": "image/webp",
+  "lossless": true,
+  "decodedPixelsMatchOriginal": true,
+  "originalSha256": "af684c325d9e5cd117622411529284e6964a3c553f35d8bcf86666f3c37a17e9",
+  "credit": "Original illustration for Karte",
+  "alt": "Karte: A creator-owned welcome alcove centers a portfolio folio and visitor-question envelope. A restrained gold doorway opens toward public work while a closed drawer keeps private notes separate."
+}

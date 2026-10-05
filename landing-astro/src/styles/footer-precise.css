@@ -1,0 +1,180 @@
+/* Karte's adapter styles keep the shared footer full-bleed while preserving
+   the product's Onyx, parchment, and gold language in the native slot. */
+fleet-footer-extension[data-fleet-footer-project="karte"] {
+  display: block;
+  width: 100vw;
+  max-width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  overflow: clip;
+  background: #090704;
+  color: #e8dfca;
+  font-family: var(--font-playfair), Georgia, serif;
+  --fleet-footer-signature-font: var(--font-playfair), Georgia, serif;
+  --fleet-footer-bg: #090704;
+  --fleet-footer-fg: #e8dfca;
+  --fleet-footer-muted: rgba(232, 223, 202, 0.58);
+  --fleet-footer-accent: #d7b97e;
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] > [slot="navigation"] {
+  container-type: inline-size;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-main,
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-bottom {
+  width: min(100% - 40px, 1240px);
+  margin-inline: auto;
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 28px;
+  padding-block: clamp(40px, 6vw, 76px) 28px;
+}
+
+@container (min-width: 640px) {
+  fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-main {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(28px, 5cqi, 64px);
+  }
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-state {
+  min-width: 0;
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-state h2 {
+  max-width: 15ch;
+  margin: 12px 0 16px;
+  color: #f4ebd4;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: clamp(30px, 4vw, 48px);
+  line-height: 1.08;
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-state > p:last-of-type {
+  max-width: 52ch;
+  margin: 0;
+  color: rgba(232, 223, 202, 0.68);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-disclosure {
+  margin-top: 20px;
+  border-top: 1px solid rgba(196, 164, 107, 0.28);
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-disclosure summary {
+  min-height: 44px;
+  padding-block: 12px;
+  color: #d7b97e;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-disclosure dl {
+  margin: 0;
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-disclosure dl > div {
+  display: grid;
+  grid-template-columns: minmax(82px, 0.3fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px dotted rgba(196, 164, 107, 0.25);
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-disclosure dt {
+  color: #d7b97e;
+  font: 500 11px/1.5 var(--fleet-footer-label-font, var(--fleet-footer-loaded-mono, ui-monospace, monospace));
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-disclosure dd {
+  margin: 0;
+  color: rgba(232, 223, 202, 0.66);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-content: start;
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-group {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-group :is(h2, h3) {
+  margin: 0 0 8px;
+  color: rgba(232, 223, 202, 0.48);
+  font: 400 11px/1.5 var(--fleet-footer-label-font, var(--fleet-footer-loaded-mono, ui-monospace, monospace));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-group a {
+  color: rgba(232, 223, 202, 0.84);
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-group a:hover {
+  color: #f4ebd4;
+  text-decoration: underline;
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-bottom {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 24px;
+  align-items: center;
+  padding-block: 20px 28px;
+  border-top: 1px solid rgba(196, 164, 107, 0.2);
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-bottom p {
+  justify-self: end;
+  max-width: 64ch;
+  margin: 0;
+  color: rgba(232, 223, 202, 0.46);
+  font-size: 11px;
+  line-height: 1.6;
+  text-align: right;
+}
+
+fleet-footer-extension[data-fleet-footer-project="karte"] :is(a, summary):focus-visible {
+  outline: 2px solid #d7b97e;
+  outline-offset: 4px;
+}
+
+@media (max-width: 760px) {
+  fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-main {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-bottom {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-bottom p {
+    justify-self: start;
+    text-align: left;
+  }
+}
