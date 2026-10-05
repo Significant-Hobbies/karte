@@ -13,10 +13,13 @@ import playfairNormalUrl from '@fontsource-variable/playfair-display/files/playf
 import playfairItalicUrl from '@fontsource-variable/playfair-display/files/playfair-display-latin-wght-italic.woff2?url';
 import interNormalUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import '@/styles/landing.css';
+import '@/styles/footer-precise.css';
 import { SITE_ORIGIN, staticPublicRoute } from '../../../public-route-contract.mjs';
 import { product } from '@/lib/product';
 
 interface Props {
+  /** True when the page content supplies the shared footer host. */
+  hasProductFooter?: boolean;
   title: string;
   description: string;
   canonicalPath?: string;
@@ -34,6 +37,7 @@ const canonicalUrl = new URL(canonicalPath, SITE_ORIGIN);
 // other route, so this URL still resolves. See README → cutover notes.
 const OG_IMAGE = `${SITE_ORIGIN}/opengraph-image`;
 const markdownPath = canonicalPath === '/' ? '/index.md' : `${canonicalPath}.md`;
+const hasProductFooter = Astro.props.hasProductFooter === true;
 ---
 
 <!doctype html>
@@ -131,18 +135,61 @@ const markdownPath = canonicalPath === '/' ? '/index.md' : `${canonicalPath}.md`
   </head>
   <body class="antialiased">
     <slot />
-    <portfolio-project-strip current-project="karte"></portfolio-project-strip>
-    <ai-chat-footer product-name="Karte"></ai-chat-footer>
+    {!hasProductFooter && (
+      <fleet-footer-extension
+        data-fleet-footer-project="karte"
+        product-name="Karte"
+        signature-name="Karte"
+        signature-font="inherit"
+        font-base="/fonts/fleet-footer-precise-v1/"
+        theme="dark"
+        surface="web"
+        art-src="/footer-art/karte.webp"
+        art-alt="Karte: A creator-owned welcome alcove centers a portfolio folio and visitor-question envelope. A restrained gold doorway opens toward public work while a closed drawer keeps private notes separate."
+        art-width="2170"
+        art-height="725"
+        art-position="50% 50%"
+        art-credit="Original illustration for Karte"
+      >
+        <a slot="cta" data-fleet-footer-cta data-fleet-footer-primary href="/create" data-app-health-event="page_creation_opened">
+          Create your page →
+        </a>
+        <footer slot="navigation" data-fleet-footer-navigation class="product-footer product-footer-fallback">
+          <a class="karte-brand" href="/"><span aria-hidden="true">◆</span><strong>Karte</strong></a>
+          <nav class="product-footer-groups" aria-label="Karte links">
+            <div class="product-footer-group">
+              <h2>Explore</h2>
+              <a href="/faq">FAQ</a>
+              <a href="/articles">Articles</a>
+              <a href="/changelog">Changelog</a>
+            </div>
+            <div class="product-footer-group">
+              <h2>Policy and source</h2>
+              <a href="/privacy">Privacy</a>
+              <a href="/terms">Terms</a>
+              <a href="/skill.md">Agent API</a>
+              <a href="https://github.com/Significant-Hobbies/karte" target="_blank" rel="noopener noreferrer">Source</a>
+            </div>
+          </nav>
+        </footer>
+      </fleet-footer-extension>
+    )}
     <script
       is:inline
-      src="https://sassmaker.com/project-strip.js"
+      src="https://sassmaker.com/project-strip.js?v=precise-b0adaa67"
       data-project="karte"
+      data-theme="dark"
+      data-host-only="true"
       defer
     ></script>
     <script
       is:inline
-      src="https://sassmaker.com/ai-chat-footer.js"
+      src="https://sassmaker.com/ai-chat-footer.js?v=precise-b0adaa67"
+      data-project="karte"
       data-name="Karte"
+      data-theme="dark"
+      data-surface="web"
+      data-host-only="true"
       defer
     ></script>
   </body>

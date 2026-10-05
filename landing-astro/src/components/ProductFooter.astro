@@ -2,55 +2,76 @@
 import { product } from '@/lib/product';
 ---
 
-<footer class="product-footer">
-  <div class="product-footer-main">
-    <div>
-      <p class="section-label">CURRENT PRODUCT STATE · AUGUST 2026</p>
-      <h2>A public page for one owner. <em>Company cards are next.</em></h2>
-      <p>{product.state}</p>
+<fleet-footer-extension
+  data-fleet-footer-project="karte"
+  product-name="Karte"
+  signature-name="Karte"
+  signature-font="inherit"
+  font-base="/fonts/fleet-footer-precise-v1/"
+  theme="dark"
+  surface="web"
+  art-src="/footer-art/karte.webp"
+  art-alt="Karte: A creator-owned welcome alcove centers a portfolio folio and visitor-question envelope. A restrained gold doorway opens toward public work while a closed drawer keeps private notes separate."
+  art-width="2170"
+  art-height="725"
+  art-position="50% 50%"
+  art-credit="Original illustration for Karte"
+>
+  <a
+    slot="cta"
+    data-fleet-footer-cta
+    data-fleet-footer-primary
+    href="/create"
+    data-app-health-event="page_creation_opened"
+  >
+    Create your page →
+  </a>
+  <footer slot="navigation" data-fleet-footer-navigation class="product-footer">
+    <div class="product-footer-main">
+      <div class="product-footer-state">
+        <p class="section-label">CURRENT PRODUCT STATE · AUGUST 2026</p>
+        <h2>A public page for one owner. <em>Company cards are next.</em></h2>
+        <p>{product.state}</p>
+        <details class="product-footer-disclosure">
+          <summary>Access, cost and AI boundary</summary>
+          <dl>
+            <div><dt>Access</dt><dd>{product.access}</dd></div>
+            <div><dt>Cost</dt><dd>{product.commercial}</dd></div>
+            <div><dt>AI boundary</dt><dd>{product.ai}</dd></div>
+          </dl>
+        </details>
+      </div>
+      <nav class="product-footer-groups" aria-label="Karte links">
+        <div class="product-footer-group">
+          <h3>Explore</h3>
+          <a href="/faq">FAQ</a>
+          <a href="/articles">Articles</a>
+          <a href="/changelog">Changelog</a>
+        </div>
+        <div class="product-footer-group">
+          <h3>Privacy and source</h3>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+          <a href="/skill.md">Agent API</a>
+          <a
+            href="https://github.com/Significant-Hobbies/karte"
+            aria-label="GitHub repository"
+            title="GitHub repository"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-github-link"
+          ><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+          </a>
+        </div>
+      </nav>
     </div>
-    <dl>
-      <div>
-        <dt>Access</dt>
-        <dd>{product.access}</dd>
-      </div>
-      <div>
-        <dt>Cost</dt>
-        <dd>{product.commercial}</dd>
-      </div>
-      <div>
-        <dt>AI boundary</dt>
-        <dd>{product.ai}</dd>
-      </div>
-    </dl>
-  </div>
-  <div class="product-footer-bottom">
-    <a class="karte-brand" href="/"><span aria-hidden="true">◆</span><strong>Karte</strong></a>
-    <nav aria-label="Product links">
-      <a href="/faq">FAQ</a>
-      <a href="/articles">Articles</a>
-      <a href="/changelog">Changelog</a>
-      <a href="/privacy">Privacy</a>
-      <a href="/terms">Terms</a>
-      <a href="/skill.md">Agent API</a>
-      <a
-        href="https://github.com/Significant-Hobbies/karte"
-        aria-label="GitHub repository"
-        title="GitHub repository"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="footer-github-link"
-        ><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"
-          ><path
-            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
-          ></path></svg
-        ></a
-      >
-    </nav>
-    <p>
-      Live and maintained for direct personal use. PostHog and Microsoft Clarity measure only
-      these static marketing pages; profiles, chat, contact, sign-in, and dashboard surfaces are
-      excluded from Clarity session replay.
-    </p>
-  </div>
-</footer>
+    <div class="product-footer-bottom">
+      <a class="karte-brand" href="/"><span aria-hidden="true">◆</span><strong>Karte</strong></a>
+      <p>
+        Live and maintained for direct personal use. PostHog and Microsoft Clarity measure only
+        these static marketing pages; profiles, chat, contact, sign-in, and dashboard surfaces are
+        excluded from Clarity session replay.
+      </p>
+    </div>
+  </footer>
+</fleet-footer-extension>
