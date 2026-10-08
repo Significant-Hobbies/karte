@@ -70,3 +70,6 @@ cache.bin
 # local agent logs / scratch
 .agent-logs/
 devin-*.log
+
+# local Fleet agent evidence and review scratch
+.fleet-local/
