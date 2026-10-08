@@ -17,6 +17,8 @@ import { SITE_ORIGIN, staticPublicRoute } from '../../../public-route-contract.m
 import { product } from '@/lib/product';
 
 interface Props {
+  /** This route renders its own declarative product footer. */
+  hasProductFooter?: boolean;
   title: string;
   description: string;
   canonicalPath?: string;
@@ -34,6 +36,7 @@ const canonicalUrl = new URL(canonicalPath, SITE_ORIGIN);
 // other route, so this URL still resolves. See README → cutover notes.
 const OG_IMAGE = `${SITE_ORIGIN}/opengraph-image`;
 const markdownPath = canonicalPath === '/' ? '/index.md' : `${canonicalPath}.md`;
+const hasProductFooter = Astro.props.hasProductFooter === true;
 ---
 
 <!doctype html>
@@ -131,6 +134,7 @@ const markdownPath = canonicalPath === '/' ? '/index.md' : `${canonicalPath}.md`
   </head>
   <body class="antialiased">
     <slot />
+    {!hasProductFooter && <fleet-footer-extension product-name="Karte" art-src="https://sassmaker.com/footer-art/karte.webp" surface="app"></fleet-footer-extension>}
     <portfolio-project-strip current-project="karte"></portfolio-project-strip>
     <ai-chat-footer product-name="Karte"></ai-chat-footer>
     <script
