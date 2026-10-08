@@ -40,24 +40,14 @@ const baselines = {
     percentage: 4.561910142925901,
   },
   suppressions: 7,
-  dependencies: { critical: 0, highIds: 14, highFindings: 18 },
+  dependencies: { critical: 0, highIds: 5, highFindings: 5 },
 };
 const acceptedHigh = new Set([
   'GHSA-22p9-wv53-3rq4',
-  'GHSA-2p49-hgcm-8545',
-  'GHSA-2pvr-wf23-7pc7',
-  'GHSA-4cwx-7wf7-3272',
-  'GHSA-52cp-r559-cp3m',
-  'GHSA-5p4m-2wfm-xmqj',
   'GHSA-6g55-p6wh-862q',
-  'GHSA-8hv8-536x-4wqp',
-  'GHSA-c2c7-rcm5-vvqj',
   // http-cache-semantics <=4.2.0 via dev tooling; no patched version exists. Re-review when upstream releases a fix.
   'GHSA-ch52-4w7c-c8xp',
-  'GHSA-f88m-g3jw-g9cj',
-  'GHSA-mh99-v99m-4gvg',
   'GHSA-r28c-9q8g-f849',
-  'GHSA-rgw5-rvv9-x895',
   'GHSA-v245-v573-v5vm',
 ]);
 
