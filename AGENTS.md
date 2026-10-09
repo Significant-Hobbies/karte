@@ -112,7 +112,7 @@ pnpm docs:check           # validate docs (links / frontmatter / placeholders)
 ## Fleet Guidance
 
 ### Adding Tasks
-- Track Karte work in this repository's GitHub issues or OpenSpec changes.
+- Track Karte work in this repository's GitHub issues.
 - Keep reusable cross-project automation in `saas-maker/tooling/` and private
   portfolio metadata in Site Health, not SaaS Maker.
 
