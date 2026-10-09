@@ -1,8 +1,7 @@
 # Creator Opportunity Desk
 
 Owner-reviewed creator partnership signals and AI-assisted briefs. Shipped
-2026-07-13. Spec-driven change archived under
-`openspec/changes/archive/2026-07-12-add-creator-opportunity-desk/`.
+2026-07-13.
 
 ## What it is
 
@@ -58,4 +57,6 @@ signal → drafted → approved | dismissed
 
 ## Spec
 
-Full requirements + scenarios: `openspec/specs/creator-opportunity-desk/spec.md`.
+The requirements lived in a repo-local OpenSpec directory that has since been
+removed. This page and the code are the source of truth; track further work in
+GitHub issues.
