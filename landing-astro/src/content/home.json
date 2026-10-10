@@ -20,7 +20,9 @@
         {
           "@type": "WebSite",
           "name": "Karte",
-          "alternateName": ["karte.cc"],
+          "alternateName": [
+            "karte.cc"
+          ],
           "url": "https://karte.cc",
           "description": "Karte gives creators and independent operators one public profile for links, projects, visitor questions, and better-contextualized inbound.",
           "isAccessibleForFree": true,
@@ -58,7 +60,8 @@
       "--brand-soft": "#292015",
       "--background": "#0a0805",
       "--foreground": "#f3ead3",
-      "--muted-foreground": "#b5aa9d"
+      "--muted-foreground": "#b5aa9d",
+      "--display-weight": "400"
     }
   },
   "product": "karte",
