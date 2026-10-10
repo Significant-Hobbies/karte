@@ -27,13 +27,10 @@ if (content.closing.form) content.closing.form.action = new URL(content.closing.
         the unchanged App Health bridge handles clicks and flushes navigation. */}
     <script is:inline>
       document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('a[href="/create"], a[href="/sarthak"]').forEach((link) => {
-          link.setAttribute('data-app-health-event', link.getAttribute('href') === '/create'
-            ? 'page_creation_opened'
-            : 'live_profile_opened');
-        });
-        document.querySelectorAll('form[data-identity-form] button[type="submit"]').forEach((button) => {
-          button.setAttribute('data-app-health-event', 'page_creation_opened');
+        document.querySelectorAll('a[href="/create"], a[href="/sarthak"], [data-identity-form] [type="submit"]').forEach((link) => {
+          link.setAttribute('data-app-health-event', link.getAttribute('href') === '/sarthak'
+            ? 'live_profile_opened'
+            : 'page_creation_opened');
         });
       });
     </script>
