@@ -1,0 +1,186 @@
+{
+  "template": "gallery",
+  "page": {
+    "title": "Karte — A public profile that answers back",
+    "description": "Karte gives creators and independent operators one public profile for links, projects, visitor questions, and better-contextualized inbound.",
+    "theme": "gallery",
+    "mode": "dark",
+    "icon": "/icon.svg",
+    "canonical": "https://karte.cc/",
+    "assetBase": "/images/",
+    "og": {
+      "image": "https://karte.cc/opengraph-image",
+      "siteName": "Karte",
+      "type": "website",
+      "twitterCard": "summary_large_image"
+    },
+    "jsonLd": {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "name": "Karte",
+          "alternateName": ["karte.cc"],
+          "url": "https://karte.cc",
+          "description": "Karte gives creators and independent operators one public profile for links, projects, visitor questions, and better-contextualized inbound.",
+          "isAccessibleForFree": true,
+          "creator": {
+            "@type": "Person",
+            "name": "Sarthak Agrawal",
+            "url": "https://sarthakagrawal.dev"
+          }
+        },
+        {
+          "@type": "Organization",
+          "name": "Karte",
+          "url": "https://karte.cc",
+          "founder": {
+            "@type": "Person",
+            "name": "Sarthak Agrawal",
+            "url": "https://sarthakagrawal.dev"
+          }
+        }
+      ]
+    }
+  },
+  "product": "karte",
+  "url": "https://karte.cc",
+  "mark": "/icon.svg",
+  "frame": "none",
+  "nav": [
+    {
+      "label": "how it works",
+      "href": "/ai-link-in-bio"
+    },
+    {
+      "label": "faq",
+      "href": "/faq"
+    },
+    {
+      "label": "articles",
+      "href": "/articles"
+    },
+    {
+      "label": "changelog",
+      "href": "/changelog"
+    }
+  ],
+  "hero": {
+    "eyebrow": "public profile · inbound desk",
+    "title": "karte — a public card that *answers back.*",
+    "lede": "Karte gives creators and independent operators one place for their work, public context, visitor questions, and better inbound. People understand who you are before they ask for your time.",
+    "primary": {
+      "label": "create your page",
+      "href": "/create"
+    },
+    "secondary": {
+      "label": "open a live profile",
+      "href": "/sarthak"
+    },
+    "note": "Visitors do not need an account. Google sign-in opens the dashboard and owner-only settings. No billing in the current product.",
+    "backdrop": "/footer-art/karte.webp",
+    "screen": {
+      "src": "profile.webp",
+      "alt": "Live public Karte profile at karte.cc/sarthak, showing public work and profile context.",
+      "width": 1800,
+      "height": 1125,
+      "frame": "none"
+    }
+  },
+  "sections": [
+    {
+      "kind": "spread",
+      "id": "handoff",
+      "eyebrow": "contextual handoff",
+      "title": "not just links. *a better arrival.*",
+      "lede": "A Karte page remains useful as a normal profile. The assistant adds context when a visitor needs more than a link.",
+      "screen": {
+        "src": "specimen.webp",
+        "alt": "Illustrative Karte profile and contextual inbound handoff using fictional example profile Mira Castell.",
+        "width": 1200,
+        "height": 1113,
+        "frame": "none"
+      },
+      "caption": {
+        "text": "Illustrative handoff using a fictional example profile. Karte does not claim private knowledge."
+      }
+    },
+    {
+      "kind": "statement",
+      "id": "boundary",
+      "eyebrow": "company-friendly · not company-finished",
+      "title": "the foundation fits a company introduction. *the workflow still needs proof.*",
+      "lede": "Karte can already collect public context, projects, answers, and inbound on one page. It does not yet ship company ownership, team roles, approval, or a validated repeated-company workflow."
+    },
+    {
+      "kind": "faq",
+      "id": "access",
+      "title": "free today. *not a promise forever.*",
+      "lede": "There is no billing in the current product. Karte is free to use today, but the long-term commercial model is not committed.",
+      "items": [
+        {
+          "q": "browse, ask, or contact",
+          "a": "No visitor account is required on a published profile. Chat answers from owner-supplied public memory and falls back safely when the AI path cannot respond."
+        },
+        {
+          "q": "claim and manage",
+          "a": "Google sign-in opens the dashboard and owner-only settings. The owner controls content, appearance, memory, leads, analytics, and custom domains."
+        },
+        {
+          "q": "one profile. several useful doors.",
+          "a": "Links, projects, timeline, writing, and proof stay together on one owned page. Chat, direct contact, and optional page email preserve who asked and why. Optional encyclopedia, newspaper, and roast views reuse the same owner-supplied profile. Agent-type pages can publish operator, capability, disclosure, and machine-readable manifest data."
+        },
+        {
+          "q": "grounded, with fallbacks",
+          "a": "Karte’s gateway is the default; a profile owner can configure another provider key. Every feature starts with the same source: content the profile owner publishes or connects. AI is optional; the page is not."
+        }
+      ]
+    }
+  ],
+  "closing": {
+    "title": "give the relevant visitor *a better first move.*",
+    "primary": {
+      "label": "create your page",
+      "href": "/create"
+    },
+    "note": "No billing in the current product. Sign in only when you are ready to claim the page.",
+    "image": "/footer-art/karte.webp"
+  },
+  "footer": {
+    "catalogId": "karte",
+    "capture": "newsletter",
+    "privacyUrl": "/privacy",
+    "summary": "Live and maintained for personal use. Person and agent profiles ship today; company and team workflows remain the next validation.",
+    "legal": "PostHog and Microsoft Clarity measure only these static marketing pages; profiles, chat, contact, sign-in, and dashboard surfaces are excluded from Clarity session replay.",
+    "links": [
+      {
+        "label": "faq",
+        "href": "/faq"
+      },
+      {
+        "label": "articles",
+        "href": "/articles"
+      },
+      {
+        "label": "changelog",
+        "href": "/changelog"
+      },
+      {
+        "label": "privacy",
+        "href": "/privacy"
+      },
+      {
+        "label": "terms",
+        "href": "/terms"
+      },
+      {
+        "label": "agent api",
+        "href": "/skill.md"
+      },
+      {
+        "label": "source",
+        "href": "https://github.com/Significant-Hobbies/karte"
+      }
+    ]
+  }
+}

@@ -43,30 +43,19 @@ test.describe('landing page', () => {
   }) => {
     await page.goto('/');
 
-    await page
-      .getByText(/What ships today/i)
-      .first()
-      .scrollIntoViewIfNeeded();
     await expect(
-      page.getByRole('heading', { name: /One profile. Several useful doors/i }),
-    ).toBeVisible();
-    await expect(
-      page
-        .locator('.capability-ledger')
-        .locator('dt', { hasText: 'Contact and inbox' }),
-    ).toBeVisible();
-    await expect(
-      page
-        .locator('.capability-ledger')
-        .locator('dt', { hasText: 'Owner dashboard' }),
-    ).toBeVisible();
-
-    await page.locator('.boundary-section').scrollIntoViewIfNeeded();
+      page.getByText(/One profile. Several useful doors/i).first(),
+    ).toBeAttached();
     await expect(
       page.getByRole('heading', {
         name: /The foundation fits a company introduction/i,
       }),
     ).toBeVisible();
+    await expect(
+      page.locator(
+        'footer[data-fleet-footer="studio"][data-catalog-id="karte"]',
+      ),
+    ).toHaveCount(1);
   });
 
   test('the primary CTA is a large enough touch target', async ({ page }) => {

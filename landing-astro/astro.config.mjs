@@ -1,17 +1,11 @@
 // @ts-check
 
+import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
+import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
 
-// Mirrors fleet/sarthakagrawal/astro.config.mjs, which is the reference
-// 360 ms-LCP Astro setup. Pure static output (no SSR adapter) — the
-// Onyx Deck is fully static markup. CSS is inlined into the HTML
-// (`build.inlineStylesheets: 'always'`) so the LCP path is one round-
-// trip: HTML → fonts → paint.
-//
-// Lightning CSS replaces the default PostCSS pipeline as both
-// transformer and minifier (fleet web-stack standard, VoidZero / Vite
-// ecosystem). See ../AGENTS.md → "Fleet web stack standard".
+// Static landing assets are copied into OpenNext by the overlay script.
 export default defineConfig({
   site: 'https://karte.cc',
   output: 'static',
@@ -20,10 +14,10 @@ export default defineConfig({
   // on every link. Same as sarthakagrawal.pages.dev.
   build: {
     format: 'file',
-    inlineStylesheets: 'always',
   },
-  integrations: [sitemap()],
+  integrations: [sitemap(), react()],
   vite: {
+    plugins: [tailwindcss()],
     css: { transformer: 'lightningcss' },
     build: { cssMinify: 'lightningcss' },
   },

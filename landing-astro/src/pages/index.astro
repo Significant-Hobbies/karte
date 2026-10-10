@@ -1,144 +1,47 @@
 ---
-import Layout from '@/layouts/Layout.astro';
-import ProductFooter from '@/components/ProductFooter.astro';
-import SiteHeader from '@/components/SiteHeader.astro';
-import { product } from '@/lib/product';
+import Base from '@saas-maker/templates/Base.astro';
+import { GalleryPage } from '@saas-maker/templates/gallery-page';
+import { baseProps } from '@saas-maker/templates/page';
+import { galleryContent } from '@saas-maker/templates/schema';
+import json from '../content/home.json';
 
-const capabilities = [
-  ['Public profile', 'Links, projects, timeline, writing, and proof stay together on one owned page.'],
-  ['Contextual chat', 'Visitors ask against public profile context instead of sending a blank “hey.”'],
-  ['Contact and inbox', 'Chat, direct contact, and optional page email preserve who asked and why.'],
-  ['Owner dashboard', 'The owner controls content, appearance, memory, leads, analytics, and custom domains.'],
-  ['Profile modes', 'Optional encyclopedia, newspaper, and roast views reuse the same owner-supplied profile.'],
-  ['Agent profile', 'Agent-type pages can publish operator, capability, disclosure, and machine-readable manifest data.'],
-] as const;
+const content = galleryContent.parse(json);
 ---
 
-<Layout hasProductFooter title={product.title} description={product.description}>
-  <main class="karte-page">
-    <SiteHeader current="home" />
-
-    <section class="karte-hero" aria-labelledby="hero-title">
-      <div class="karte-hero-copy">
-        <p class="section-label"><span aria-hidden="true"></span> PUBLIC PROFILE · INBOUND DESK</p>
-        <h1 id="hero-title">Karte — a public card that <em>answers back.</em></h1>
-        <p class="hero-summary">
-          Karte gives creators and independent operators one place for their work,
-          public context, visitor questions, and better inbound. People understand
-          who you are before they ask for your time.
-        </p>
-        <div class="hero-actions">
-          <a class="onyx-btn-primary" href="/create" data-app-health-event="page_creation_opened">Create your page <span aria-hidden="true">→</span></a>
-          <a class="onyx-btn-ghost" href="/sarthak" data-app-health-event="live_profile_opened">Open a live profile <span aria-hidden="true">↗</span></a>
-        </div>
-        <dl class="hero-ledger" aria-label="Karte access summary">
-          <div><dt>Visitor</dt><dd>No account</dd></div>
-          <div><dt>Owner</dt><dd>Google sign-in</dd></div>
-          <div><dt>Cost today</dt><dd>No billing</dd></div>
-          <div><dt>Company use</dt><dd>Next validation</dd></div>
-        </dl>
-      </div>
-
-      <div class="inbound-specimen" aria-label="Illustrative Karte profile and inbound handoff">
-        <div class="specimen-topline"><span>PUBLIC CARD · /MIRA</span><span>EXAMPLE PROFILE</span></div>
-        <div class="specimen-profile">
-          <div class="specimen-avatar" aria-hidden="true">MC</div>
-          <div>
-            <p class="specimen-name">Mira Castell</p>
-            <p>Product designer · brand systems and prototyping</p>
-          </div>
-          <span class="specimen-status">Ask profile</span>
-        </div>
-        <ul class="specimen-links" aria-label="Public profile contents">
-          <li><span>01</span>Selected projects and proof</li>
-          <li><span>02</span>Experience and public writing</li>
-          <li><span>03</span>Contact routes and boundaries</li>
-        </ul>
-        <div class="specimen-conversation">
-          <p class="specimen-message visitor"><span>Visitor</span> Is Mira open to helping with a design system?</p>
-          <p class="specimen-message assistant"><span>Karte</span> Her public profile shows current work in design systems, brand identity, and interactive prototypes. Share the project, stage, and the specific help you need.</p>
-        </div>
-        <div class="specimen-handoff">
-          <span>CONTEXTUAL HANDOFF</span>
-          <strong>Topic, project stage, contact, and ask captured together.</strong>
-        </div>
-        <p class="specimen-note">Illustrative handoff using a fictional example profile. Karte does not claim private knowledge.</p>
-      </div>
-    </section>
-
-    <section class="journey-section" aria-labelledby="journey-title">
-      <div class="section-heading">
-        <p class="section-label">THE VISITOR PATH · THREE MOVES</p>
-        <h2 id="journey-title">Not just links. <em>A better arrival.</em></h2>
-        <p>A Karte page remains useful as a normal profile. The assistant adds context when a visitor needs more than a link.</p>
-      </div>
-      <ol class="journey-list">
-        <li><span>01</span><h3>Browse the owned context</h3><p>Links, projects, timeline entries, writing, rates, and boundaries give the visitor a real first read.</p></li>
-        <li><span>02</span><h3>Ask the public profile</h3><p>Chat answers from owner-supplied public memory and falls back safely when the AI path cannot respond.</p></li>
-        <li><span>03</span><h3>Hand off with intent</h3><p>Contact, chat, page email, leads, and the owner dashboard keep the question attached to the person who asked it.</p></li>
-      </ol>
-    </section>
-
-    <section class="capability-section" aria-labelledby="capability-title">
-      <div class="section-heading split-heading">
-        <div>
-          <p class="section-label">WHAT SHIPS TODAY</p>
-          <h2 id="capability-title">One profile. <em>Several useful doors.</em></h2>
-        </div>
-        <p>Every feature starts with the same source: content the profile owner publishes or connects. AI is optional; the page is not.</p>
-      </div>
-      <dl class="capability-ledger">
-        {capabilities.map(([term, detail], index) => (
-          <div>
-            <dt><span>{String(index + 1).padStart(2, '0')}</span>{term}</dt>
-            <dd>{detail}</dd>
-          </div>
-        ))}
-      </dl>
-    </section>
-
-    <section class="boundary-section" aria-labelledby="boundary-title">
-      <div class="boundary-stamp" aria-hidden="true">PERSON<br />FIRST</div>
-      <div>
-        <p class="section-label">COMPANY-FRIENDLY · NOT COMPANY-FINISHED</p>
-        <h2 id="boundary-title">The foundation fits a company introduction. <em>The workflow still needs proof.</em></h2>
-        <p>
-          Karte can already collect public context, projects, answers, and inbound on one page.
-          It does not yet ship company ownership, team roles, approval, or a validated repeated-company workflow.
-          That is the next product test—not a capability hidden behind marketing copy.
-        </p>
-        <div class="boundary-columns">
-          <div><h3>Available now</h3><p>Person profiles, agent profiles, public content, chat, contact, inboxes, leads, custom domains, and owner controls.</p></div>
-          <div><h3>Needs validation</h3><p>Company identity, multiple contributors, approvals, company-specific intake, and one real company using the whole loop.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="access-section" aria-labelledby="access-title">
-      <div class="section-heading">
-        <p class="section-label">ACCESS · COST · CONTROL</p>
-        <h2 id="access-title">Free today. <em>Not a promise forever.</em></h2>
-        <p>{product.commercial} Visitors do not need an account; owners sign in to claim and manage their page.</p>
-      </div>
-      <div class="access-rail">
-        <div><span>PUBLIC</span><strong>Browse, ask, or contact</strong><p>No visitor account is required on a published profile.</p></div>
-        <div><span>OWNER</span><strong>Claim and manage</strong><p>Google sign-in opens the dashboard and owner-only settings.</p></div>
-        <div><span>AI</span><strong>Grounded, with fallbacks</strong><p>Karte’s gateway is the default; a profile owner can configure another provider key.</p></div>
-      </div>
-    </section>
-
-    <section class="closing-section" aria-labelledby="closing-title">
-      <p class="section-label">ISSUE A PUBLIC CARD</p>
-      <h2 id="closing-title">Give the relevant visitor <em>a better first move.</em></h2>
-      <p>Start with the profile. Add chat, inbox, generated modes, and agent metadata only when they improve the handoff.</p>
-      <form class="closing-form" action="/create" method="GET">
-        <label for="karte-slug">karte.cc /</label>
-        <input id="karte-slug" name="slug" placeholder="yourname" maxlength="40" pattern="[a-z0-9\-]{1,40}" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" />
-        <button class="onyx-btn-primary" type="submit">Create <span aria-hidden="true">→</span></button>
-      </form>
-      <p class="closing-note">No billing in the current product. Sign in only when you are ready to claim the page.</p>
-    </section>
-
-    <ProductFooter />
-  </main>
-</Layout>
+<Base {...baseProps(content)}>
+  <Fragment slot="head">
+    <meta name="application-name" content="Karte" />
+    <meta name="theme-color" content="#0a0805" />
+    <meta name="keywords" content="inbound assistant, link in bio, personal website, digital card, Carrd alternative, Own.page alternative, Linktree alternative" />
+    <link rel="alternate" type="text/markdown" href="https://karte.cc/index.md" />
+    <link rel="alternate" type="text/plain" href="https://karte.cc/llms.txt" />
+    <script
+      is:inline
+      async
+      src="https://www.clarity.ms/tag/y6bv15rm1t"
+      onload="window.clarity('set', 'project_id', 'karte')"
+    ></script>
+    {/* Template links have no attribute field. Tag the same destinations before
+        the unchanged App Health bridge handles clicks and flushes navigation. */}
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('a[href="/create"], a[href="/sarthak"]').forEach((link) => {
+          link.setAttribute('data-app-health-event', link.getAttribute('href') === '/create'
+            ? 'page_creation_opened'
+            : 'live_profile_opened');
+        });
+      });
+    </script>
+    <script is:inline src="/app-health-log.js" defer></script>
+    <script
+      is:inline
+      defer
+      src="https://health.sassmaker.com/tracker.js"
+      data-key="ahk_pub_479f6271328580806dd8b901f129ffd06726daf26cf537832bdbd943290744ff"
+      data-project="app-731a1d3c-2eff-4ee8-aa6f-eaef1daaa7bf"
+      data-identity="persistent"
+      data-endpoint="https://ingest.sassmaker.com/v1/browser"
+    ></script>
+  </Fragment>
+  <GalleryPage content={content} />
+</Base>
