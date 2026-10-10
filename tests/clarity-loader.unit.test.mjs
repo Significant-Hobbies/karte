@@ -7,7 +7,10 @@ const events = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
 function load(relativePath) {
   const page = readFileSync(new URL(relativePath, import.meta.url), 'utf8');
   expect(page).toContain('set:html={clarityLoaderScript}');
-  const source = readFileSync(new URL('../landing-astro/src/lib/clarity-loader.ts', import.meta.url), 'utf8');
+  const source = readFileSync(
+    new URL('../landing-astro/src/lib/clarity-loader.ts', import.meta.url),
+    'utf8',
+  );
   const script = source.slice(source.indexOf('`') + 1, source.lastIndexOf('`'));
   const target = new EventTarget();
   const inserted = [];
