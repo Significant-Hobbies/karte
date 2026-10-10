@@ -6,6 +6,8 @@ import { galleryContent } from '@saas-maker/templates/schema';
 import json from '../content/home.json';
 
 const content = galleryContent.parse(json);
+// v0.1.13 validates absolute form URLs; submit to this origin's /create.
+if (content.closing.form) content.closing.form.action = new URL(content.closing.form.action).pathname;
 ---
 
 <Base {...baseProps(content)}>
@@ -25,10 +27,10 @@ const content = galleryContent.parse(json);
         the unchanged App Health bridge handles clicks and flushes navigation. */}
     <script is:inline>
       document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('a[href="/create"], a[href="/sarthak"]').forEach((link) => {
-          link.setAttribute('data-app-health-event', link.getAttribute('href') === '/create'
-            ? 'page_creation_opened'
-            : 'live_profile_opened');
+        document.querySelectorAll('a[href="/create"], a[href="/sarthak"], [data-identity-form] [type="submit"]').forEach((link) => {
+          link.setAttribute('data-app-health-event', link.getAttribute('href') === '/sarthak'
+            ? 'live_profile_opened'
+            : 'page_creation_opened');
         });
       });
     </script>
