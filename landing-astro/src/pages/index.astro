@@ -1,4 +1,5 @@
 ---
+import { clarityLoaderScript } from '../lib/clarity-loader';
 import Base from '@saas-maker/templates/Base.astro';
 import { GalleryPage } from '@saas-maker/templates/gallery-page';
 import { baseProps } from '@saas-maker/templates/page';
@@ -17,23 +18,7 @@ if (content.closing.form) content.closing.form.action = new URL(content.closing.
     <meta name="keywords" content="inbound assistant, link in bio, personal website, digital card, Carrd alternative, Own.page alternative, Linktree alternative" />
     <link rel="alternate" type="text/markdown" href="https://karte.cc/index.md" />
     <link rel="alternate" type="text/plain" href="https://karte.cc/llms.txt" />
-    <script is:inline>
-      (function(c,l,a,r,i){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        var done=0,ev=["pointerdown","keydown","touchstart","scroll"];
-        function go(){
-          if(done)return;
-          done=1;
-          clearTimeout(timer);
-          ev.forEach(function(e){removeEventListener(e,go)});
-          var t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-          var y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        }
-        ev.forEach(function(e){addEventListener(e,go,{passive:true,once:true})});
-        var timer=setTimeout(go,90000);
-      })(window,document,"clarity","script","y6bv15rm1t");
-      window.clarity('set', 'project_id', 'karte');
-    </script>
+    <script is:inline set:html={clarityLoaderScript}></script>
     {/* Template links have no attribute field. Tag the same destinations before
         the unchanged App Health bridge handles clicks and flushes navigation. */}
     <script is:inline>
