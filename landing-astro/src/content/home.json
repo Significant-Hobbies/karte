@@ -41,6 +41,24 @@
           }
         }
       ]
+    },
+    "fonts": {
+      "display": "newsreader",
+      "text": "figtree",
+      "accentStyle": "italic"
+    },
+    "surface": {
+      "variant": "editorial-dark",
+      "backdrop": "none"
+    },
+    "tokens": {
+      "--brand": "#d4b072",
+      "--brand-foreground": "#0a0805",
+      "--brand-ink": "#d4b072",
+      "--brand-soft": "#292015",
+      "--background": "#0a0805",
+      "--foreground": "#f3ead3",
+      "--muted-foreground": "#b5aa9d"
     }
   },
   "product": "karte",
@@ -78,13 +96,12 @@
       "href": "/sarthak"
     },
     "note": "Visitors do not need an account. Google sign-in opens the dashboard and owner-only settings. No billing in the current product.",
-    "backdrop": "/footer-art/karte.webp",
-    "screen": {
-      "src": "profile.webp",
-      "alt": "Live public Karte profile at karte.cc/sarthak, showing public work and profile context.",
-      "width": 1800,
-      "height": 1125,
-      "frame": "none"
+    "layout": "split",
+    "card": {
+      "src": "specimen.webp",
+      "alt": "Illustrative Karte profile and contextual inbound handoff using fictional example profile Mira Castell.",
+      "width": 1200,
+      "height": 1113
     }
   },
   "sections": [
@@ -139,12 +156,17 @@
   ],
   "closing": {
     "title": "give the relevant visitor *a better first move.*",
-    "primary": {
-      "label": "create your page",
-      "href": "/create"
-    },
     "note": "No billing in the current product. Sign in only when you are ready to claim the page.",
-    "image": "/footer-art/karte.webp"
+    "image": "/footer-art/karte.webp",
+    "form": {
+      "label": "claim your karte.cc/ name",
+      "name": "slug",
+      "placeholder": "yourname",
+      "submit": "create your page",
+      "action": "https://karte.cc/create",
+      "required": true,
+      "pattern": "[a-z0-9\\-]{1,40}"
+    }
   },
   "footer": {
     "catalogId": "karte",

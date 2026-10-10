@@ -30,6 +30,9 @@ const content = galleryContent.parse(json);
             ? 'page_creation_opened'
             : 'live_profile_opened');
         });
+        document.querySelectorAll('form[data-identity-form] button[type="submit"]').forEach((button) => {
+          button.setAttribute('data-app-health-event', 'page_creation_opened');
+        });
       });
     </script>
     <script is:inline src="/app-health-log.js" defer></script>
