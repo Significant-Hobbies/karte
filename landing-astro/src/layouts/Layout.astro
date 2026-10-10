@@ -1,4 +1,5 @@
 ---
+import { clarityLoaderScript } from '../lib/clarity-loader';
 // Self-hosted variable fonts. Astro inlines the @font-face into the
 // page's CSS via Lightning CSS (build.inlineStylesheets: 'always'),
 // so we drop the external fonts.googleapis.com round-trip from the
@@ -131,12 +132,7 @@ const hasProductFooter = Astro.props.hasProductFooter === true;
         ai-chat-footer { min-height: 9rem; }
       }
     </style>
-    <script
-      is:inline
-      async
-      src="https://www.clarity.ms/tag/y6bv15rm1t"
-      onload="window.clarity('set', 'project_id', 'karte')"
-    ></script>
+    <script is:inline set:html={clarityLoaderScript}></script>
     <script is:inline src="/app-health-log.js" defer></script>
     <script
       is:inline

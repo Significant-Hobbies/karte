@@ -1,4 +1,5 @@
 ---
+import { clarityLoaderScript } from '../lib/clarity-loader';
 import Base from '@saas-maker/templates/Base.astro';
 import { GalleryPage } from '@saas-maker/templates/gallery-page';
 import { baseProps } from '@saas-maker/templates/page';
@@ -17,12 +18,7 @@ if (content.closing.form) content.closing.form.action = new URL(content.closing.
     <meta name="keywords" content="inbound assistant, link in bio, personal website, digital card, Carrd alternative, Own.page alternative, Linktree alternative" />
     <link rel="alternate" type="text/markdown" href="https://karte.cc/index.md" />
     <link rel="alternate" type="text/plain" href="https://karte.cc/llms.txt" />
-    <script
-      is:inline
-      async
-      src="https://www.clarity.ms/tag/y6bv15rm1t"
-      onload="window.clarity('set', 'project_id', 'karte')"
-    ></script>
+    <script is:inline set:html={clarityLoaderScript}></script>
     {/* Template links have no attribute field. Tag the same destinations before
         the unchanged App Health bridge handles clicks and flushes navigation. */}
     <script is:inline>
