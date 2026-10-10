@@ -20,9 +20,7 @@
         {
           "@type": "WebSite",
           "name": "Karte",
-          "alternateName": [
-            "karte.cc"
-          ],
+          "alternateName": ["karte.cc"],
           "url": "https://karte.cc",
           "description": "Karte gives creators and independent operators one public profile for links, projects, visitor questions, and better-contextualized inbound.",
           "isAccessibleForFree": true,
