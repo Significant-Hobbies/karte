@@ -14,7 +14,8 @@
         "src/layouts/Article.astro",
         "src/pages/**/*.{astro,ts}",
         "scripts/*.mjs"
-      ]
+      ],
+      "ignoreDependencies": ["lucide-react", "motion", "radix-ui"]
     }
   },
   "project": ["**/*.{ts,tsx,js,jsx,mjs,cjs,mts}"],
