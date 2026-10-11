@@ -8,6 +8,27 @@ import { privateRouteMetadata } from '@/lib/public-route-metadata';
 const modeLabels = ['Profile', 'Ask', 'Inbox', 'Newspaper'];
 export const metadata = privateRouteMetadata('Sign in — Karte');
 
+function LoginBrandMark() {
+  return (
+    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-karte-accent">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 32 32"
+        fill="none"
+        className="h-6 w-6"
+      >
+        <path
+          d="M8 7 h16 a4 4 0 0 1 4 4 v9 a4 4 0 0 1 -4 4 h-9 l-4 4 v-4 h-3 a4 4 0 0 1 -4 -4 v-9 a4 4 0 0 1 4 -4 Z"
+          fill="#0a0a0a"
+        />
+        <circle cx="13" cy="15.5" r="1.25" fill="var(--karte-accent)" />
+        <circle cx="16.5" cy="15.5" r="1.25" fill="var(--karte-accent)" />
+        <circle cx="20" cy="15.5" r="1.25" fill="var(--karte-accent)" />
+      </svg>
+    </div>
+  );
+}
+
 export default async function LoginPage() {
   const session = await getSession().catch(() => null);
   if (session?.user) redirect('/dashboard');
@@ -59,37 +80,7 @@ export default async function LoginPage() {
 
           <div className="rounded-3xl border border-karte-border bg-karte-surface p-6">
             <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-karte-accent">
-                <svg
-                  aria-hidden="true"
-                  viewBox="0 0 32 32"
-                  fill="none"
-                  className="h-6 w-6"
-                >
-                  <path
-                    d="M8 7 h16 a4 4 0 0 1 4 4 v9 a4 4 0 0 1 -4 4 h-9 l-4 4 v-4 h-3 a4 4 0 0 1 -4 -4 v-9 a4 4 0 0 1 4 -4 Z"
-                    fill="#0a0a0a"
-                  />
-                  <circle
-                    cx="13"
-                    cy="15.5"
-                    r="1.25"
-                    fill="var(--karte-accent)"
-                  />
-                  <circle
-                    cx="16.5"
-                    cy="15.5"
-                    r="1.25"
-                    fill="var(--karte-accent)"
-                  />
-                  <circle
-                    cx="20"
-                    cy="15.5"
-                    r="1.25"
-                    fill="var(--karte-accent)"
-                  />
-                </svg>
-              </div>
+              <LoginBrandMark />
               <div>
                 <p
                   className="text-[18px] font-normal italic tracking-[-0.005em] text-karte-text"
