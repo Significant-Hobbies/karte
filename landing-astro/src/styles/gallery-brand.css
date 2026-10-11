@@ -1,5 +1,28 @@
 /* v0.1.20 fromApp supplies the palette; these adapters match app type/CTAs.
    Its display font mapping otherwise overrides page.fonts.accent. */
+.karte-gallery-header a[href="/"] > span:last-child {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+.karte-brand-mark {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: #c4a46b;
+}
+.karte-brand-mark svg { width: 18px; height: 18px; }
+html[data-theme="gallery"] .identity-card,
+html[data-theme="gallery"] #handoff .motion-reveal {
+  border-radius: 12px;
+  border: 1px solid #272727;
+  background: #121211;
+}
 html[data-theme="gallery"] .font-display { letter-spacing: -0.025em; }
 html[data-theme="gallery"] .font-display :is(em, .accent) {
   font-family: 'Instrument Serif', Georgia, serif;
