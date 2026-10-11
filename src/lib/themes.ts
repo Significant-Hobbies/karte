@@ -108,6 +108,16 @@ export function isThemePresetId(value: string): value is ThemePresetId {
   return THEME_PRESETS.some((preset) => preset.id === value);
 }
 
+/** Only profiles without an explicit palette use the shared brand chrome. */
+export function isUnthemedProfile(config?: ThemeConfig | null) {
+  return (
+    !config?.presetId &&
+    !config?.accentColor &&
+    !config?.gradientFrom &&
+    !config?.gradientTo
+  );
+}
+
 export function resolveThemeConfig(config?: ThemeConfig | null) {
   const preset =
     THEME_PRESETS.find((item) => item.id === config?.presetId) ??
@@ -119,7 +129,9 @@ export function resolveThemeConfig(config?: ThemeConfig | null) {
     description: preset.description,
     gradientFrom: config?.gradientFrom ?? preset.gradientFrom,
     gradientTo: config?.gradientTo ?? preset.gradientTo,
-    accentColor: config?.accentColor ?? preset.accentColor,
+    accentColor: isUnthemedProfile(config)
+      ? '#c4a46b'
+      : (config?.accentColor ?? preset.accentColor),
     chatPosition: config?.chatPosition ?? 'bottom-right',
   };
 }

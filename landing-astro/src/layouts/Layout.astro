@@ -1,18 +1,9 @@
 ---
 import { clarityLoaderScript } from '../lib/clarity-loader';
-// Self-hosted variable fonts. Astro inlines the @font-face into the
-// page's CSS via Lightning CSS (build.inlineStylesheets: 'always'),
-// so we drop the external fonts.googleapis.com round-trip from the
-// LCP path. Family names register as 'Playfair Display Variable' and
-// 'Inter Variable' — mapped onto the existing --font-* CSS vars below
-// so landing.css needs no changes. Playfair italic is required by
-// the deck (.onyx-screen-title, .onyx-quote, etc.).
-import '@fontsource-variable/playfair-display';
-import '@fontsource-variable/playfair-display/wght-italic.css';
-import '@fontsource-variable/inter';
-import playfairNormalUrl from '@fontsource-variable/playfair-display/files/playfair-display-latin-wght-normal.woff2?url';
-import playfairItalicUrl from '@fontsource-variable/playfair-display/files/playfair-display-latin-wght-italic.woff2?url';
-import interNormalUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+// Reuse the same bundled font faces as the Gallery landing.
+import geistUrl from '@saas-maker/ui/fonts/geist-latin-normal.woff2?url';
+import instrumentItalicUrl from '@saas-maker/ui/fonts/instrument-serif-latin-italic.woff2?url';
+import geistMonoUrl from '@saas-maker/ui/fonts/geist-mono-latin-normal.woff2?url';
 import '@/styles/landing.css';
 import '@/styles/footer-precise.css';
 import { SITE_ORIGIN, staticPublicRoute } from '../../../public-route-contract.mjs';
@@ -34,8 +25,8 @@ const resolvedDescription = route?.description ?? description;
 const canonicalUrl = new URL(canonicalPath, SITE_ORIGIN);
 // OG/Twitter image lives on the Next.js Worker at /opengraph-image
 // (Next file convention → dynamic JSX → PNG). Astro can't trivially
-// reproduce that. Post-cutover Pages takes `/` and Workers keeps every
-// other route, so this URL still resolves. See README → cutover notes.
+// reproduce that. Astro is overlaid into the same Worker, which keeps
+// the dynamic image route.
 const OG_IMAGE = `${SITE_ORIGIN}/opengraph-image`;
 const markdownPath = canonicalPath === '/' ? '/index.md' : `${canonicalPath}.md`;
 const hasProductFooter = Astro.props.hasProductFooter === true;
@@ -50,11 +41,9 @@ const hasProductFooter = Astro.props.hasProductFooter === true;
     <title>{resolvedTitle}</title>
     <meta name="description" content={resolvedDescription} />
     <meta name="application-name" content="Karte" />
-    <meta name="theme-color" content="#0a0805" />
+    <meta name="theme-color" content="#0a0a0a" />
 
-    <link rel="preload" href={playfairNormalUrl} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={playfairItalicUrl} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={interNormalUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={geistUrl} as="font" type="font/woff2" crossorigin />
 
     <link rel="canonical" href={canonicalUrl} />
     <link rel="alternate" type="text/markdown" href={new URL(markdownPath, SITE_ORIGIN)} />
@@ -105,22 +94,16 @@ const hasProductFooter = Astro.props.hasProductFooter === true;
       ],
     })} />
 
-    {/* Wire the same CSS vars Next.js's next/font set up, so landing.css
-       (which references var(--font-playfair) / var(--font-inter)) keeps
-       working without changes. Fontsource Variable registers families
-       as 'Playfair Display Variable' / 'Inter Variable', with the
-       plain names left in the fallback chain so any cached non-variable
-       face still hits before the system fallback. Geist/Instrument
-       Serif/JetBrains were never loaded on this surface — kept as
-       fallback-only var values to match the original Next.js layout. */}
+    <style is:inline set:html={`
+      @font-face { font-family: 'Geist Variable'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('${geistUrl}') format('woff2'); }
+      @font-face { font-family: 'Instrument Serif'; font-style: italic; font-weight: 400; font-display: swap; src: url('${instrumentItalicUrl}') format('woff2'); }
+      @font-face { font-family: 'Geist Mono Variable'; font-style: normal; font-weight: 400 600; font-display: swap; src: url('${geistMonoUrl}') format('woff2'); }
+    `} />
     <style is:inline>
       :root {
-        --font-playfair: 'Playfair Display Variable', 'Playfair Display', Georgia, 'Times New Roman', serif;
-        --font-inter: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+        --font-geist-sans: 'Geist Variable', system-ui, sans-serif;
         --font-instrument-serif: 'Instrument Serif', Georgia, serif;
-        --font-geist-sans: 'Geist', system-ui, sans-serif;
-        --font-geist-mono: 'Geist Mono', ui-monospace, monospace;
-        --font-jetbrains: 'JetBrains Mono', ui-monospace, monospace;
+        --font-geist-mono: 'Geist Mono Variable', ui-monospace, monospace;
       }
       html.dark { color-scheme: dark; }
       body { margin: 0; }

@@ -13,13 +13,16 @@ export default async function LoginPage() {
   if (session?.user) redirect('/dashboard');
 
   return (
-    <main className="min-h-screen overflow-hidden bg-karte-bg text-karte-text-2 antialiased">
+    <main
+      data-onyx-brand
+      className="min-h-screen overflow-hidden bg-karte-bg text-karte-text-2 antialiased"
+    >
       <PublicTopBar current="login" variant="minimal" />
 
       <section className="relative min-h-[calc(100vh-4rem)]">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:72px_72px] [mask-image:radial-gradient(ellipse_at_top_left,#000_20%,transparent_70%)]" />
-          <div className="absolute -top-40 -left-40 h-[520px] w-[520px] rounded-full bg-cyan-400/[0.10] blur-[160px]" />
+          <div className="absolute -top-40 -left-40 h-[520px] w-[520px] rounded-full bg-karte-accent/10 blur-[160px]" />
         </div>
 
         <div className="relative mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-12 px-6 py-16 lg:grid-cols-[1fr_420px] lg:gap-16">
@@ -67,9 +70,24 @@ export default async function LoginPage() {
                     d="M8 7 h16 a4 4 0 0 1 4 4 v9 a4 4 0 0 1 -4 4 h-9 l-4 4 v-4 h-3 a4 4 0 0 1 -4 -4 v-9 a4 4 0 0 1 4 -4 Z"
                     fill="#0a0a0a"
                   />
-                  <circle cx="13" cy="15.5" r="1.25" fill="#67e8f9" />
-                  <circle cx="16.5" cy="15.5" r="1.25" fill="#67e8f9" />
-                  <circle cx="20" cy="15.5" r="1.25" fill="#67e8f9" />
+                  <circle
+                    cx="13"
+                    cy="15.5"
+                    r="1.25"
+                    fill="var(--karte-accent)"
+                  />
+                  <circle
+                    cx="16.5"
+                    cy="15.5"
+                    r="1.25"
+                    fill="var(--karte-accent)"
+                  />
+                  <circle
+                    cx="20"
+                    cy="15.5"
+                    r="1.25"
+                    fill="var(--karte-accent)"
+                  />
                 </svg>
               </div>
               <div>

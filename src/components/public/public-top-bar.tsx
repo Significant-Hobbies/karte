@@ -63,7 +63,7 @@ export async function PublicTopBar({
               <rect width="32" height="32" rx="7" fill="#0a0a0a" />
               <path
                 d="M8 7 h16 a4 4 0 0 1 4 4 v9 a4 4 0 0 1 -4 4 h-9 l-4 4 v-4 h-3 a4 4 0 0 1 -4 -4 v-9 a4 4 0 0 1 4 -4 Z"
-                fill="#67e8f9"
+                fill="var(--karte-accent)"
               />
               <circle cx="13" cy="15.5" r="1.25" fill="#0a0a0a" />
               <circle cx="16.5" cy="15.5" r="1.25" fill="#0a0a0a" />

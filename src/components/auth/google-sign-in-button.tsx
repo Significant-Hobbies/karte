@@ -12,7 +12,7 @@ export function GoogleSignInButton() {
           callbackURL: '/dashboard',
         })
       }
-      className="flex w-full items-center justify-center gap-3 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-gray-950 transition hover:bg-cyan-50"
+      className="flex w-full items-center justify-center gap-3 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-gray-950 transition hover:bg-zinc-100"
     >
       <svg className="h-5 w-5" viewBox="0 0 24 24">
         <path

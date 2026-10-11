@@ -16,15 +16,16 @@ runtime; this project mirrors that config (output: `'static'`,
 
 ## Stack
 
-- Astro 5 — `output: 'static'`
+- Astro — `output: 'static'`
 - Lightning CSS — transformer + minifier (fleet web-stack standard,
   see `../AGENTS.md` → "Fleet web stack standard")
 - `@astrojs/sitemap`
-- Cloudflare Pages — see `wrangler.toml` (`pages_build_output_dir =
-  "dist"`)
+- OpenNext Worker overlay; `wrangler.toml` retains the historical Pages
+  project name and is not used by the production release pipeline.
 
-No SSR adapter, React, or page-owned client JavaScript. The Onyx reading-room
-materials and the public-inbound-desk layout are pure CSS. Shared project-strip
+No SSR adapter. The landing uses the shared Gallery React renderer at build
+time; supporting pages are authored Astro. The shared neutral-Geist + gold
+identity and the public-inbound-desk layout are pure CSS. Shared project-strip
 and Ask AI scripts load after the authored product footer.
 
 ## Commands
@@ -49,7 +50,7 @@ landing-astro/
     layouts/Layout.astro    # Metadata, schema, fonts, and shared loaders.
     components/             # Shared product header and authored footer.
     lib/product.ts          # Landing and FAQ product truth.
-    styles/landing.css      # Onyx reading room plus supporting content routes.
+    styles/landing.css      # Shared app identity for supporting content routes.
   public/_headers           # CF Pages cache headers.
 ```
 
@@ -69,6 +70,6 @@ landing-astro/
 ## Build and release boundary
 
 `pnpm cf:build` builds Next/OpenNext, builds this Astro package, and overlays
-the four authored routes into `.open-next/assets`. Local qualification or a
+the static marketing routes into `.open-next/assets`. Local qualification or a
 Quick Tunnel does not release production. Production deployment remains the
 separate manual `pnpm deploy:cf` workflow.

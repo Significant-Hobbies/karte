@@ -43,23 +43,29 @@
       ]
     },
     "fonts": {
-      "display": "newsreader",
-      "text": "figtree",
+      "accent": "instrument-serif",
       "accentStyle": "italic"
     },
     "surface": {
-      "variant": "editorial-dark",
-      "backdrop": "none"
+      "backdrop": "grid"
     },
-    "tokens": {
-      "--brand": "#d4b072",
-      "--brand-foreground": "#0a0805",
-      "--brand-ink": "#d4b072",
-      "--brand-soft": "#292015",
-      "--background": "#0a0805",
-      "--foreground": "#f3ead3",
-      "--muted-foreground": "#b5aa9d",
-      "--display-weight": "400"
+    "fromApp": {
+      "background": "#0A0A0A",
+      "foreground": "#EDEDED",
+      "card": "#121211",
+      "surface": "#0C0C0B",
+      "muted": "#121211",
+      "mutedForeground": "#A1A1AA",
+      "border": "#272727",
+      "brand": "#C4A46B",
+      "brandForeground": "#0A0A0A",
+      "destructive": "#FCA5A5",
+      "radius": "12px",
+      "fonts": {
+        "sans": "geist",
+        "display": "geist",
+        "mono": "geist-mono"
+      }
     }
   },
   "product": "karte",
@@ -86,7 +92,7 @@
   ],
   "hero": {
     "eyebrow": "public profile · inbound desk",
-    "title": "karte — a public card that *answers back.*",
+    "title": "karte — a public card that answers *back.*",
     "lede": "Karte gives creators and independent operators one place for their work, public context, visitor questions, and better inbound. People understand who you are before they ask for your time.",
     "primary": {
       "label": "create your page",
@@ -99,7 +105,7 @@
     "note": "Visitors do not need an account. Google sign-in opens the dashboard and owner-only settings. No billing in the current product.",
     "layout": "split",
     "card": {
-      "src": "specimen.webp",
+      "src": "specimen.svg",
       "alt": "Illustrative Karte profile and contextual inbound handoff using fictional example profile Mira Castell.",
       "width": 1200,
       "height": 1113
@@ -110,10 +116,10 @@
       "kind": "spread",
       "id": "handoff",
       "eyebrow": "contextual handoff",
-      "title": "not just links. *a better arrival.*",
+      "title": "not just links. a better *arrival.*",
       "lede": "A Karte page remains useful as a normal profile. The assistant adds context when a visitor needs more than a link.",
       "screen": {
-        "src": "specimen.webp",
+        "src": "specimen.svg",
         "alt": "Illustrative Karte profile and contextual inbound handoff using fictional example profile Mira Castell.",
         "width": 1200,
         "height": 1113,
@@ -127,13 +133,13 @@
       "kind": "statement",
       "id": "boundary",
       "eyebrow": "company-friendly · not company-finished",
-      "title": "the foundation fits a company introduction. *the workflow still needs proof.*",
+      "title": "the foundation fits a company introduction. the workflow still needs *proof.*",
       "lede": "Karte can already collect public context, projects, answers, and inbound on one page. It does not yet ship company ownership, team roles, approval, or a validated repeated-company workflow."
     },
     {
       "kind": "faq",
       "id": "access",
-      "title": "free today. *not a promise forever.*",
+      "title": "free today. not a promise *forever.*",
       "lede": "There is no billing in the current product. Karte is free to use today, but the long-term commercial model is not committed.",
       "items": [
         {
@@ -156,7 +162,7 @@
     }
   ],
   "closing": {
-    "title": "give the relevant visitor *a better first move.*",
+    "title": "give the relevant visitor a better first *move.*",
     "note": "No billing in the current product. Sign in only when you are ready to claim the page.",
     "image": "/footer-art/karte.webp",
     "form": {
