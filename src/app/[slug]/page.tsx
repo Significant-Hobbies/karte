@@ -22,7 +22,7 @@ import type { ProjectCardData } from '@/components/public/widgets';
 import { agentOperatorLabel, isAgentPage } from '@/lib/agent-profiles';
 import { isDemoSlug, resolvePublicProfileSlug } from '@/lib/demo-profiles';
 import { metadataForProfile } from '@/lib/public-route-metadata';
-import { resolveThemeConfig } from '@/lib/themes';
+import { isUnthemedProfile, resolveThemeConfig } from '@/lib/themes';
 
 import { getFullPageData } from './_lib/get-page-data';
 
@@ -262,6 +262,7 @@ function ProfileContent({ slug, data }: { slug: string; data: FullPageData }) {
 
   return (
     <main
+      data-onyx-brand={isUnthemedProfile(page.themeConfig) ? true : undefined}
       className="relative min-h-screen overflow-x-clip bg-karte-bg text-karte-text antialiased"
       style={{
         background: `radial-gradient(circle at 0% 0%, ${theme.accentColor}1a, transparent 45%), radial-gradient(circle at 100% 100%, ${theme.accentColor}10, transparent 50%), linear-gradient(180deg, #0a0a0a 0%, #0b0b0c 50%, #0a0a0a 100%)`,

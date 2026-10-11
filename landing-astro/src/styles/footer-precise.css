@@ -1,19 +1,19 @@
-/* Karte's adapter styles keep the shared footer full-bleed while preserving
-   the product's Onyx, parchment, and gold language in the native slot. */
+/* Shared footer adapter: neutral surfaces, Geist, and restrained gold. */
 fleet-footer-extension[data-fleet-footer-project="karte"] {
   display: block;
   width: 100vw;
   max-width: 100vw;
   margin-inline: calc(50% - 50vw);
   overflow: clip;
-  background: #090704;
-  color: #e8dfca;
-  font-family: var(--font-playfair), Georgia, serif;
-  --fleet-footer-signature-font: var(--font-playfair), Georgia, serif;
-  --fleet-footer-bg: #090704;
-  --fleet-footer-fg: #e8dfca;
-  --fleet-footer-muted: rgba(232, 223, 202, 0.58);
-  --fleet-footer-accent: #d7b97e;
+  background: #0a0a0a;
+  border-top: 1px solid #272727;
+  color: #d4d4d8;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  --fleet-footer-signature-font: var(--font-geist-sans), system-ui, sans-serif;
+  --fleet-footer-bg: #0a0a0a;
+  --fleet-footer-fg: #d4d4d8;
+  --fleet-footer-muted: #a1a1aa;
+  --fleet-footer-accent: #c4a46b;
 }
 
 fleet-footer-extension[data-fleet-footer-project="karte"] > [slot="navigation"] {
@@ -54,29 +54,31 @@ fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-state 
 fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-state h2 {
   max-width: 15ch;
   margin: 12px 0 16px;
-  color: #f4ebd4;
-  font-family: var(--font-playfair), Georgia, serif;
+  color: #ededed;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
   font-size: clamp(30px, 4vw, 48px);
   line-height: 1.08;
+  font-weight: 600;
+  letter-spacing: -0.025em;
 }
 
 fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-state > p:last-of-type {
   max-width: 52ch;
   margin: 0;
-  color: rgba(232, 223, 202, 0.68);
+  color: #a1a1aa;
   font-size: 14px;
   line-height: 1.7;
 }
 
 fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-disclosure {
   margin-top: 20px;
-  border-top: 1px solid rgba(196, 164, 107, 0.28);
+  border-top: 1px solid #272727;
 }
 
 fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-disclosure summary {
   min-height: 44px;
   padding-block: 12px;
-  color: #d7b97e;
+  color: #d4d4d8;
   cursor: pointer;
   font-size: 13px;
 }
@@ -90,17 +92,17 @@ fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-disclo
   grid-template-columns: minmax(82px, 0.3fr) minmax(0, 1fr);
   gap: 16px;
   padding: 12px 0;
-  border-top: 1px dotted rgba(196, 164, 107, 0.25);
+  border-top: 1px solid #272727;
 }
 
 fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-disclosure dt {
-  color: #d7b97e;
+  color: #d4d4d8;
   font: 500 11px/1.5 var(--fleet-footer-label-font, var(--fleet-footer-loaded-mono, ui-monospace, monospace));
 }
 
 fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-disclosure dd {
   margin: 0;
-  color: rgba(232, 223, 202, 0.66);
+  color: #a1a1aa;
   font-size: 13px;
   line-height: 1.65;
 }
@@ -121,20 +123,20 @@ fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-group 
 
 fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-group :is(h2, h3) {
   margin: 0 0 8px;
-  color: rgba(232, 223, 202, 0.48);
+  color: #a1a1aa;
   font: 400 11px/1.5 var(--fleet-footer-label-font, var(--fleet-footer-loaded-mono, ui-monospace, monospace));
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-group a {
-  color: rgba(232, 223, 202, 0.84);
+  color: #d4d4d8;
   text-decoration: none;
   text-underline-offset: 4px;
 }
 
 fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-group a:hover {
-  color: #f4ebd4;
+  color: #ededed;
   text-decoration: underline;
 }
 
@@ -144,21 +146,21 @@ fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-bottom
   gap: 24px;
   align-items: center;
   padding-block: 20px 28px;
-  border-top: 1px solid rgba(196, 164, 107, 0.2);
+  border-top: 1px solid #272727;
 }
 
 fleet-footer-extension[data-fleet-footer-project="karte"] .product-footer-bottom p {
   justify-self: end;
   max-width: 64ch;
   margin: 0;
-  color: rgba(232, 223, 202, 0.46);
+  color: #a1a1aa;
   font-size: 11px;
   line-height: 1.6;
   text-align: right;
 }
 
 fleet-footer-extension[data-fleet-footer-project="karte"] :is(a, summary):focus-visible {
-  outline: 2px solid #d7b97e;
+  outline: 2px solid #c4a46b;
   outline-offset: 4px;
 }
 

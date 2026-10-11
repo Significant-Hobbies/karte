@@ -1,0 +1,38 @@
+<!-- Editable profile specimen. Run scripts/build-landing-specimen.py to outline
+     the library's bundled Geist face for reliable standalone image rendering. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1113" width="1200" height="1113" font-family="Geist" fill="#EDEDED">
+  <title>Illustrative Karte profile and contextual inbound handoff using fictional example profile Mira Castell.</title>
+  <rect x="1" y="1" width="1198" height="1111" rx="24" fill="#121211" stroke="#272727" stroke-width="2"/>
+  <circle cx="74" cy="79" r="4" fill="#C4A46B"/>
+  <text x="92" y="85" font-size="16" font-weight="500" letter-spacing="2" fill="#A1A1AA">PUBLIC CARD · /MIRA</text>
+  <text x="1132" y="85" text-anchor="end" font-size="16" font-weight="500" letter-spacing="2" fill="#A1A1AA">EXAMPLE PROFILE</text>
+  <path d="M68 124H1132 M68 313H1132 M68 484H1132 M422 313V484 M776 313V484" stroke="#272727" stroke-width="2" fill="none"/>
+  <circle cx="113" cy="219" r="44" fill="#0C0C0B" stroke="#272727" stroke-width="2"/>
+  <text x="113" y="231" text-anchor="middle" font-size="30" font-weight="500">MC</text>
+  <text x="184" y="219" font-size="42" font-weight="600">Mira Castell</text>
+  <text x="184" y="260" font-size="23" fill="#A1A1AA">Product designer · brand systems and prototyping</text>
+  <rect x="969" y="194" width="163" height="50" rx="12" fill="#C4A46B"/>
+  <text x="1050.5" y="226" text-anchor="middle" font-size="16" font-weight="600" letter-spacing="1" fill="#0A0A0A">ASK PROFILE</text>
+  <text x="92" y="360" font-size="16" fill="#A1A1AA">01</text>
+  <text x="92" y="411" font-size="25" font-weight="600">Selected projects and</text>
+  <text x="92" y="447" font-size="25" font-weight="600">proof</text>
+  <text x="446" y="360" font-size="16" fill="#A1A1AA">02</text>
+  <text x="446" y="411" font-size="25" font-weight="600">Experience and public</text>
+  <text x="446" y="447" font-size="25" font-weight="600">writing</text>
+  <text x="800" y="360" font-size="16" fill="#A1A1AA">03</text>
+  <text x="800" y="411" font-size="25" font-weight="600">Contact routes and</text>
+  <text x="800" y="447" font-size="25" font-weight="600">boundaries</text>
+  <rect x="68" y="528" width="936" height="113" rx="12" fill="#0C0C0B" stroke="#272727" stroke-width="2"/>
+  <text x="100" y="569" font-size="16" font-weight="500" letter-spacing="2" fill="#A1A1AA">VISITOR</text>
+  <text x="100" y="608" font-size="23">Is Mira open to helping with a design system?</text>
+  <rect x="195" y="664" width="937" height="149" rx="12" fill="#0C0C0B" stroke="#272727" stroke-width="2"/>
+  <path d="M1130 676V801" stroke="#C4A46B" stroke-width="4"/>
+  <text x="222" y="706" font-size="16" font-weight="500" letter-spacing="2" fill="#A1A1AA">KARTE</text>
+  <text x="222" y="747" font-size="23">Her public profile shows current work in design systems, brand identity, and</text>
+  <text x="222" y="781" font-size="23">interactive prototypes. Share the project, stage, and the specific help you need.</text>
+  <rect x="68" y="856" width="1064" height="139" rx="12" fill="#0C0C0B" stroke="#272727" stroke-width="2"/>
+  <circle cx="105" cy="899" r="4" fill="#C4A46B"/>
+  <text x="122" y="905" font-size="16" font-weight="500" letter-spacing="2" fill="#A1A1AA">CONTEXTUAL HANDOFF</text>
+  <text x="100" y="953" font-size="27" font-weight="600">Topic, project stage, contact, and ask captured together.</text>
+  <text x="68" y="1039" font-size="16" fill="#A1A1AA">Illustrative handoff using a fictional example profile. Karte does not claim private knowledge.</text>
+</svg>

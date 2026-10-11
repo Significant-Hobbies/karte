@@ -15,7 +15,7 @@
   --karte-text: #ededed;        /* primary headlines */
   --karte-text-2: #d4d4d8;      /* zinc-300, body */
   --karte-text-3: #a1a1aa;      /* zinc-400, secondary */
-  --karte-text-4: #71717a;      /* zinc-500, eyebrows / hints */
+  --karte-text-4: #8a8a93;      /* readable eyebrows / hints */
 
   /* Borders — hairlines, no shadows */
   --karte-border: rgb(255 255 255 / 0.06);
@@ -57,7 +57,7 @@
 }
 
 /* Onyx-brand scope — applied on surfaces that should match the
-   landing-deck calling-card aesthetic (dashboard, /create, etc.).
+   shared neutral-Geist + gold identity (dashboard, /create, login, etc.).
    Overrides the cyan accent to the gold ramp from the landing without
    touching the underlying tokens used by per-page profile themes. */
 [data-onyx-brand],
