@@ -1,9 +1,11 @@
 // @ts-check
 
+import { fileURLToPath } from 'node:url';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
+import { normalizeBuiltLandingHtml } from '../scripts/normalize-landing-html.mjs';
 
 // Static landing assets are copied into OpenNext by the overlay script.
 export default defineConfig({
@@ -15,7 +17,18 @@ export default defineConfig({
   build: {
     format: 'file',
   },
-  integrations: [sitemap(), react()],
+  integrations: [
+    sitemap(),
+    react(),
+    {
+      name: 'karte-landing-html',
+      hooks: {
+        'astro:build:done': async ({ dir }) => {
+          await normalizeBuiltLandingHtml(fileURLToPath(dir));
+        },
+      },
+    },
+  ],
   vite: {
     plugins: [tailwindcss()],
     css: { transformer: 'lightningcss' },
