@@ -38,3 +38,11 @@ describe('default public profile palette', () => {
     expect(resolveThemeConfig(config)).toMatchObject(config);
   });
 });
+
+it('uses the established landing gold palette for new drafts', () => {
+  expect(resolveThemeConfig({ presetId: 'karte' })).toMatchObject({
+    accentColor: '#c4a46b',
+    gradientFrom: '#c4a46b',
+    gradientTo: '#0a0a0a',
+  });
+});
