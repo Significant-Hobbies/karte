@@ -5,21 +5,6 @@ import { useEffect, useRef } from 'react';
 
 import { trackEvent } from '@/lib/analytics';
 
-const RESERVED_PATHS = new Set(['', 'dashboard', 'login', 'api']);
-
-function getPublicSlug(pathname: string) {
-  const parts = pathname.split('/').filter(Boolean);
-  if (parts.length !== 1) {
-    return null;
-  }
-
-  if (RESERVED_PATHS.has(parts[0])) {
-    return null;
-  }
-
-  return parts[0];
-}
-
 function isExternalUrl(href: string) {
   try {
     const url = new URL(href, window.location.href);
@@ -41,15 +26,14 @@ function getProfileVariantFromLocation() {
   );
 }
 
-function getAnalyticsSlug(pathname: string) {
-  const pathSlug = getPublicSlug(pathname);
-  if (pathSlug) {
-    return pathSlug;
-  }
-
-  const hint = document.querySelector<HTMLElement>('[data-karte-public-slug]')
-    ?.dataset.kartePublicSlug;
-  return hint || null;
+function getAnalyticsSlug() {
+  // Only the public profile layout supplies this marker. App/static routes
+  // (including /create) are not profile slugs; custom-domain profiles and
+  // generated modes still carry the marker even when their URL is different.
+  return (
+    document.querySelector<HTMLElement>('[data-karte-public-slug]')?.dataset
+      .kartePublicSlug || null
+  );
 }
 
 export function PageAnalyticsTracker() {
@@ -57,7 +41,7 @@ export function PageAnalyticsTracker() {
   const lastTrackedPath = useRef<string | null>(null);
 
   useEffect(() => {
-    const slug = getAnalyticsSlug(pathname);
+    const slug = getAnalyticsSlug();
     const profileVariant = getProfileVariantFromLocation();
     const trackedPath = `${slug ?? pathname}?variant=${profileVariant}`;
     if (!slug || lastTrackedPath.current === trackedPath) {
@@ -77,7 +61,7 @@ export function PageAnalyticsTracker() {
   }, [pathname]);
 
   useEffect(() => {
-    const analyticsSlug = getAnalyticsSlug(pathname);
+    const analyticsSlug = getAnalyticsSlug();
     if (!analyticsSlug) {
       return;
     }

@@ -46,7 +46,7 @@ export default async function CreatePage({
         <div className="absolute -top-40 -left-40 h-[520px] w-[520px] rounded-full bg-karte-accent/10 blur-[160px]" />
       </div>
 
-      <PublicTopBar current="create" variant="minimal" accentColor="#67e8f9" />
+      <PublicTopBar current="create" variant="minimal" accentColor="#c4a46b" />
 
       <div className="relative mx-auto max-w-5xl px-6 py-12 sm:py-16">
         <div className="mx-auto mb-10 max-w-2xl text-center sm:mb-12">
@@ -70,36 +70,31 @@ export default async function CreatePage({
           </p>
         </div>
 
-        <div className="mb-10 sm:mb-12">
-          <ImportPasteCard />
-        </div>
-
-        <div className="relative mb-10 flex items-center gap-4 sm:mb-12">
-          <div className="h-px flex-1 bg-white/[0.08]" />
-          <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-karte-text-4">
-            or chat your way through it
-          </span>
-          <div className="h-px flex-1 bg-white/[0.08]" />
-        </div>
-
-        <div className="mb-10 sm:mb-12">
-          <OnboardingChat />
-        </div>
-
-        <div className="relative mb-10 flex items-center gap-4 sm:mb-12">
-          <div className="h-px flex-1 bg-white/[0.08]" />
-          <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-karte-text-4">
-            or design from scratch
-          </span>
-          <div className="h-px flex-1 bg-white/[0.08]" />
-        </div>
-
         <PageSettings
           page={null}
           initialSlug={initialSlug}
           requireAuthToCreate
           loginHref="/login?next=/dashboard/appearance"
         />
+
+        <div className="mt-10 space-y-4 sm:mt-12">
+          <details className="rounded-xl border border-karte-border-strong p-5">
+            <summary className="cursor-pointer text-sm text-karte-accent">
+              Import links from an existing page
+            </summary>
+            <div className="mt-5">
+              <ImportPasteCard />
+            </div>
+          </details>
+          <details className="rounded-xl border border-karte-border-strong p-5">
+            <summary className="cursor-pointer text-sm text-karte-accent">
+              Get help drafting with chat
+            </summary>
+            <div className="mt-5">
+              <OnboardingChat />
+            </div>
+          </details>
+        </div>
       </div>
     </div>
   );

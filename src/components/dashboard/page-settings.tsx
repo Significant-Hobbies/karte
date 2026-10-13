@@ -497,7 +497,7 @@ export function PageSettings({
             <div
               className="relative overflow-hidden rounded-[27px] border border-karte-border-strong bg-karte-bg p-5 sm:p-8"
               style={{
-                background: `linear-gradient(180deg, ${previewTheme.gradientFrom}1a 0%, ${previewTheme.gradientTo}1a 40%, #020617 100%)`,
+                background: `linear-gradient(180deg, ${previewTheme.gradientFrom}1a 0%, ${previewTheme.gradientTo}1a 40%, var(--karte-bg) 100%)`,
               }}
             >
               <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center">

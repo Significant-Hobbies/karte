@@ -3,10 +3,10 @@ export const THEME_PRESETS = [
     id: 'karte',
     label: 'Karte Default',
     description:
-      'Editorial dark — off-black, hairline borders, single cyan accent. Matches the marketing site.',
-    gradientFrom: '#67e8f9',
+      'Editorial dark — off-black, hairline borders, single gold accent. Matches the marketing site.',
+    gradientFrom: '#c4a46b',
     gradientTo: '#0a0a0a',
-    accentColor: '#67e8f9',
+    accentColor: '#c4a46b',
   },
   {
     id: 'atelier',
