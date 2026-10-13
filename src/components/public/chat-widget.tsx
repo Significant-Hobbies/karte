@@ -7,6 +7,7 @@ import { renderComponent } from '@/components/public/ai-components/registry';
 import { ChatEmailGate } from '@/components/public/chat-email-gate';
 import { ChatMessageBody } from '@/components/public/chat-message-body';
 import { ContactFormSection } from '@/components/public/contact-form-section';
+import { ProfileActionIcon } from '@/components/public/profile-action-icon';
 import { TurnstileWidget } from '@/components/public/turnstile-widget';
 import type { DmMode } from '@/db/schema';
 import { applyLayoutDirectives } from '@/lib/ai-components/layout';
@@ -118,6 +119,7 @@ export function ChatWidget({
   const initialRoomId = initialRoomIdProp ?? searchParams?.get('room') ?? null;
 
   const [open, setOpen] = useState(false);
+  const launcherRef = useRef<HTMLButtonElement>(null);
   const [expanded, setExpanded] = useState(false);
   const prevOpenRef = useRef(false);
   const [mode, setMode] = useState<'chat' | 'contact'>(
@@ -623,18 +625,23 @@ export function ChatWidget({
   }, [chatEnabled, dmEnabled, sendQuery, slug]);
 
   const launcherPositionClass =
-    position === 'bottom-left' ? 'left-4 sm:left-6' : 'right-4 sm:right-6';
+    position === 'bottom-left' ? 'lg:left-6' : 'lg:right-6';
   const panelPositionClass = expanded
     ? 'left-3 right-3 sm:left-1/2 sm:right-auto sm:w-[min(760px,calc(100vw-3rem))] sm:-translate-x-1/2'
     : position === 'bottom-left'
       ? 'left-3 right-3 sm:right-auto sm:left-6 sm:w-[380px]'
       : 'left-3 right-3 sm:left-auto sm:right-6 sm:w-[380px]';
   const panelHeightClass = expanded
-    ? 'h-[min(780px,calc(100vh-4.5rem))] sm:h-[min(780px,calc(100vh-3rem))]'
-    : 'h-[min(520px,calc(100vh-6rem))]';
+    ? 'h-[min(780px,calc(100dvh-6rem-env(safe-area-inset-bottom)))] lg:h-[min(780px,calc(100dvh-3rem))]'
+    : 'h-[min(520px,calc(100dvh-6rem-env(safe-area-inset-bottom)))]';
   const showModeTabs = chatEnabled && dmEnabled;
   const title =
     mode === 'chat' ? `Chat with ${displayName}` : `DM ${displayName}`;
+
+  function closeMessenger() {
+    setOpen(false);
+    launcherRef.current?.focus();
+  }
 
   if (!chatEnabled && !dmEnabled) {
     return null;
@@ -642,22 +649,53 @@ export function ChatWidget({
 
   return (
     <>
-      <button
-        onClick={() => setOpen((current) => !current)}
-        className={`fixed bottom-4 ${launcherPositionClass} z-50 flex h-14 w-14 items-center justify-center rounded-full border border-karte-border-strong text-2xl backdrop-blur-xl transition-all duration-200 ease-[var(--karte-ease)] hover:scale-105 active:scale-95 sm:bottom-6`}
-        aria-label={open ? 'Close messenger' : 'Open messenger'}
-        style={{
-          backgroundColor: `${accentColor}f2`,
-          boxShadow: `0 18px 44px -18px ${accentColor}`,
-          color: accentTextColor,
-        }}
+      <style>{`
+        @media (max-width: 1023px) {
+          html:has([data-profile-messenger-dock]) {
+            scroll-padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+          }
+        }
+      `}</style>
+      <div
+        data-profile-messenger-dock=""
+        className={`sticky bottom-0 z-50 flex border-t border-karte-border-strong bg-karte-bg px-5 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-xl lg:contents ${position === 'bottom-left' ? 'justify-start' : 'justify-end'}`}
       >
-        {open ? '\u2715' : '\uD83D\uDCAC'}
-      </button>
+        <button
+          ref={launcherRef}
+          type="button"
+          onClick={() => setOpen((current) => !current)}
+          className={`z-50 flex h-12 min-w-12 items-center justify-center gap-2 rounded-full border border-karte-border-strong px-4 text-sm font-semibold transition-all duration-200 ease-[var(--karte-ease)] hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-karte-accent lg:fixed lg:bottom-6 ${launcherPositionClass} lg:h-14 lg:w-14 lg:px-0`}
+          aria-label={open ? 'Close messenger' : 'Open messenger'}
+          aria-expanded={open}
+          aria-controls={`karte-messenger-${slug}`}
+          style={{
+            backgroundColor: `${accentColor}f2`,
+            boxShadow: `0 18px 44px -18px ${accentColor}`,
+            color: accentTextColor,
+          }}
+        >
+          <ProfileActionIcon
+            name={open ? 'close' : 'chat'}
+            className="h-5 w-5 shrink-0 lg:h-6 lg:w-6"
+          />
+          <span className="lg:sr-only">
+            {open ? 'Close' : chatEnabled ? 'Chat' : 'Message'}
+          </span>
+        </button>
+      </div>
 
       {open && (
         <div
-          className={`fixed bottom-20 ${panelPositionClass} ${panelHeightClass} z-50 flex w-auto flex-col overflow-hidden rounded-2xl border border-karte-border-strong bg-karte-surface/95 backdrop-blur-xl transition-[height,width,transform] duration-200 ease-[var(--karte-ease)] sm:bottom-24 ${expanded ? 'sm:bottom-6' : ''}`}
+          id={`karte-messenger-${slug}`}
+          role="dialog"
+          aria-label={title}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              event.preventDefault();
+              closeMessenger();
+            }
+          }}
+          className={`fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] ${panelPositionClass} ${panelHeightClass} z-50 flex w-auto flex-col overflow-hidden rounded-2xl border border-karte-border-strong bg-karte-surface/95 backdrop-blur-xl transition-[height,width,transform] duration-200 ease-[var(--karte-ease)] lg:bottom-24 ${expanded ? 'lg:bottom-6' : ''}`}
         >
           <div className="border-b border-karte-border-strong px-4 py-3">
             <div className="flex flex-col gap-2">
@@ -667,11 +705,11 @@ export function ChatWidget({
                 </h3>
                 <button
                   type="button"
-                  onClick={() => setOpen(false)}
+                  onClick={closeMessenger}
                   className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white/40 transition hover:bg-white/10 hover:text-karte-text"
                   aria-label="Close chat"
                 >
-                  ✕
+                  <ProfileActionIcon name="close" />
                 </button>
               </div>
               <div className="flex min-w-0 flex-wrap items-center gap-2">
@@ -811,7 +849,10 @@ export function ChatWidget({
                   messages.length === 0 &&
                   historyStatus !== 'error' && (
                     <div className="mt-4 flex flex-col items-center gap-4 px-2 text-center sm:mt-8">
-                      <div className="text-5xl sm:text-4xl">👋</div>
+                      <ProfileActionIcon
+                        name="chat"
+                        className="mx-auto h-10 w-10 text-karte-text-3"
+                      />
                       <div className="space-y-1.5">
                         <p className="text-base font-semibold text-karte-text sm:text-sm">
                           Ask {displayName} anything
