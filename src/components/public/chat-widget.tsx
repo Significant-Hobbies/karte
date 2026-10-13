@@ -849,7 +849,10 @@ export function ChatWidget({
                   messages.length === 0 &&
                   historyStatus !== 'error' && (
                     <div className="mt-4 flex flex-col items-center gap-4 px-2 text-center sm:mt-8">
-                      <div className="text-5xl sm:text-4xl">👋</div>
+                      <ProfileActionIcon
+                        name="chat"
+                        className="mx-auto h-10 w-10 text-karte-text-3"
+                      />
                       <div className="space-y-1.5">
                         <p className="text-base font-semibold text-karte-text sm:text-sm">
                           Ask {displayName} anything
