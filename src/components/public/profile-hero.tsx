@@ -3,6 +3,10 @@
 import { useSearchParams } from 'next/navigation';
 
 import { OpenChatButton } from '@/components/public/open-chat-button';
+import {
+  ProfileActionIcon,
+  type ProfileActionIconName,
+} from '@/components/public/profile-action-icon';
 import { ProfileAvatar } from '@/components/public/profile-avatar';
 import { SocialIconRow } from '@/components/public/social-icon-row';
 import { hostnameFromUrl } from '@/lib/hostname';
@@ -11,7 +15,7 @@ import { getProfileVariant } from '@/lib/profile-variants';
 interface QuickAction {
   label: string;
   url: string;
-  icon: string;
+  icon: ProfileActionIconName;
 }
 
 function calendarLabel(url: string) {
@@ -94,16 +98,16 @@ export function ProfileHero({
     quickActions.push({
       label: calendarLabel(calendarUrl),
       url: calendarUrl,
-      icon: '📅',
+      icon: 'calendar',
     });
   if (newsletterUrl)
     quickActions.push({
       label: 'Subscribe to newsletter',
       url: newsletterUrl,
-      icon: '✉︎',
+      icon: 'mail',
     });
   if (tipUrl)
-    quickActions.push({ label: tipLabel(tipUrl), url: tipUrl, icon: '☕' });
+    quickActions.push({ label: tipLabel(tipUrl), url: tipUrl, icon: 'coffee' });
 
   return (
     <aside
@@ -166,9 +170,7 @@ export function ProfileHero({
             href={`mailto:${inboxEmailAddress}`}
             className="mt-4 inline-flex min-h-11 items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.025] px-3 py-1 text-[11px] font-medium text-karte-text-3 transition-colors duration-200 hover:border-white/[0.18] hover:text-karte-text-2"
           >
-            <span aria-hidden="true" className="text-[11px]">
-              ✉︎
-            </span>
+            <ProfileActionIcon name="mail" className="h-3.5 w-3.5 shrink-0" />
             {inboxEmailAddress}
           </a>
         )}
@@ -209,7 +211,7 @@ export function ProfileHero({
             style={{ backgroundColor: accentColor }}
           >
             <span className="flex items-center gap-2">
-              <span aria-hidden="true">💬</span>
+              <ProfileActionIcon name="chat" />
               {selectedVariant.id === 'baseline'
                 ? primaryChatCta
                 : selectedVariant.primaryCta}
@@ -236,9 +238,7 @@ export function ProfileHero({
             style={{ borderColor: `${accentColor}1f` }}
           >
             <span className="flex items-center gap-2.5">
-              <span aria-hidden="true" className="text-[15px]">
-                {action.icon}
-              </span>
+              <ProfileActionIcon name={action.icon} />
               {action.label}
             </span>
             <span

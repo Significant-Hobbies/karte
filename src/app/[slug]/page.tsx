@@ -12,6 +12,7 @@ import {
 import { AnimatedReveal } from '@/components/public/animated-reveal';
 import { LayoutRenderer } from '@/components/public/layout-renderer';
 import { PageSectionRenderer } from '@/components/public/page-section-renderer';
+import { ProfileActionIcon } from '@/components/public/profile-action-icon';
 import { ProfileHero } from '@/components/public/profile-hero';
 import { RoamingCharacter } from '@/components/public/roaming-character';
 import { TimelineSection } from '@/components/public/timeline-section';
@@ -226,7 +227,7 @@ function ProfileContent({ slug, data }: { slug: string; data: FullPageData }) {
   const newspaperPreview = modePreviews?.newspaper;
   if (newspaperPreview) {
     const headline = newspaperPreview.split('—')[0]?.trim();
-    if (headline) greetingLines.push(`📰 ${headline}`);
+    if (headline) greetingLines.push(`Newspaper: ${headline}`);
   }
   const wikiPreview = modePreviews?.encyclopedia;
   if (wikiPreview) {
@@ -236,7 +237,7 @@ function ProfileContent({ slug, data }: { slug: string; data: FullPageData }) {
   const roastPreview = modePreviews?.roast;
   if (roastPreview) {
     const firstClause = roastPreview.split(/[.—]/)[0]?.trim();
-    if (firstClause) greetingLines.push(`🔥 ${firstClause}.`);
+    if (firstClause) greetingLines.push(`Roast: ${firstClause}.`);
   }
   if (greetingLines.length === 0) {
     greetingLines.push(`Hey, I'm ${firstName}.`);
@@ -263,7 +264,7 @@ function ProfileContent({ slug, data }: { slug: string; data: FullPageData }) {
   return (
     <main
       data-onyx-brand={isUnthemedProfile(page.themeConfig) ? true : undefined}
-      className="relative min-h-screen overflow-x-clip bg-karte-bg text-karte-text antialiased"
+      className="relative flex min-h-screen flex-col overflow-x-clip bg-karte-bg text-karte-text antialiased"
       style={{
         background: `radial-gradient(circle at 0% 0%, ${theme.accentColor}1a, transparent 45%), radial-gradient(circle at 100% 100%, ${theme.accentColor}10, transparent 50%), linear-gradient(180deg, #0a0a0a 0%, #0b0b0c 50%, #0a0a0a 100%)`,
       }}
@@ -295,7 +296,9 @@ function ProfileContent({ slug, data }: { slug: string; data: FullPageData }) {
         `}</style>
       </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-16 pt-8 sm:px-8">
+      <div
+        className={`relative z-10 mx-auto w-full max-w-6xl flex-1 px-5 pt-8 sm:px-8 ${hasMessenger ? 'pb-4 lg:pb-16' : 'pb-16'}`}
+      >
         {isAgent && <AgentProfileBanner page={page} slug={slug} />}
         {isDemoProfile && !isAgent && (
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-400/25 bg-amber-400/[0.06] px-4 py-2.5 text-[12px] text-amber-200/90">
@@ -523,8 +526,12 @@ function ProfileContent({ slug, data }: { slug: string; data: FullPageData }) {
                           className="pointer-events-none absolute -top-12 left-1/2 h-32 w-32 -translate-x-1/2 rounded-full bg-[#ff4d6d]/30 blur-3xl"
                         />
                         <div className="relative">
-                          <div className="inline-block rotate-[-3deg] border-2 border-[#ff4d6d] bg-black px-2 py-0.5 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-[#ff4d6d]">
-                            🔥 Roast
+                          <div className="inline-flex items-center gap-1.5 rotate-[-3deg] border-2 border-[#ff4d6d] bg-black px-2 py-0.5 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-[#ff4d6d]">
+                            <ProfileActionIcon
+                              name="flame"
+                              className="h-3.5 w-3.5 shrink-0"
+                            />
+                            Roast
                           </div>
                           <h3 className="mt-3 text-[17px] font-bold tracking-[-0.015em] text-white">
                             {card.title}
