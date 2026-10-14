@@ -166,10 +166,10 @@
     "note": "No billing in the current product. Sign in only when you are ready to claim the page.",
     "image": "/footer-art/karte.webp",
     "form": {
-      "label": "claim your karte.cc/ name",
+      "label": "start with your karte.cc/ name",
       "name": "slug",
       "placeholder": "yourname",
-      "submit": "create your page",
+      "submit": "draft your page",
       "action": "https://karte.cc/create",
       "required": true,
       "pattern": "[a-z0-9\\-]{1,40}"
