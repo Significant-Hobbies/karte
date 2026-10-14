@@ -100,21 +100,22 @@ export async function PublicTopBar({
               </>
             ) : (
               <>
-                <Link
-                  href="/login"
-                  className="text-[13px] font-medium text-karte-text-3 transition-colors duration-200 hover:text-karte-text"
-                >
-                  Log in
-                </Link>
-                <Link
-                  href="/create"
-                  className="group inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-[13px] font-medium text-zinc-950 transition-all duration-200 ease-[var(--karte-ease)] hover:bg-zinc-100"
-                >
-                  Claim your name
-                  <span className="transition-transform duration-200 ease-[var(--karte-ease)] group-hover:translate-x-0.5">
-                    →
-                  </span>
-                </Link>
+                {current !== 'login' && (
+                  <Link
+                    href="/login"
+                    className="text-[13px] font-medium text-karte-text-3 transition-colors duration-200 hover:text-karte-text"
+                  >
+                    Log in
+                  </Link>
+                )}
+                {current !== 'create' && (
+                  <Link
+                    href="/create"
+                    className="text-[13px] font-medium text-karte-text-3 transition-colors duration-200 hover:text-karte-text"
+                  >
+                    Draft your page
+                  </Link>
+                )}
               </>
             )}
           </div>

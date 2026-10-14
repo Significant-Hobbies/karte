@@ -28,6 +28,11 @@ for (const width of [390, 768, 1440]) {
       }),
     );
     await page.goto('/create?slug=Fixture-Guest');
+    const guestNav = page.getByRole('navigation');
+    await expect(
+      guestNav.getByRole('link', { name: 'Log in' }),
+    ).toHaveAttribute('href', '/login');
+    await expect(guestNav.locator('a[href="/create"]')).toHaveCount(0);
     await expect(page.getByLabel('Page URL')).toHaveValue('fixture-guest');
     await expect(
       page.getByRole('heading', { name: 'Build Your Profile' }),
@@ -84,6 +89,12 @@ for (const width of [390, 768, 1440]) {
       .getByRole('button', { name: 'Continue to Claim Username' })
       .click();
     await expect(page).toHaveURL(/\/login\?next=/);
+    const loginNav = page.getByRole('navigation');
+    await expect(
+      loginNav.getByRole('link', { name: 'Draft your page' }),
+    ).toHaveAttribute('href', '/create');
+    await expect(loginNav.locator('a[href="/login"]')).toHaveCount(0);
+    await page.screenshot({ path: `work/login-${width}.png`, fullPage: true });
     const draft = await page.evaluate(() =>
       JSON.parse(localStorage.getItem('karte:page-draft') || '{}'),
     );
