@@ -43,14 +43,14 @@
     "@dnd-kit/modifiers": "9.0.0",
     "@dnd-kit/sortable": "10.0.0",
     "@dnd-kit/utilities": "3.2.2",
-    "@opennextjs/cloudflare": "1.20.2",
+    "@opennextjs/cloudflare": "1.20.12",
     "@types/sanitize-html": "^2.16.1",
     "ai": "6.0.168",
     "better-auth": "1.6.25",
     "drizzle-orm": "0.45.2",
     "html-to-image": "1.11.13",
     "motion": "^12.42.2",
-    "next": "16.3.8",
+    "next": "16.4.1",
     "novel": "1.0.2",
     "posthog-js": "^1.407.3",
     "react": "19.2.8",
@@ -80,7 +80,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "6.0.3",
     "vitest": "^4.1.10",
-    "wrangler": "4.114.0"
+    "wrangler": "4.149.0"
   },
   "packageManager": "pnpm@10.33.2",
   "pnpm": {
@@ -92,7 +92,18 @@
       "source-map-js@<1.2.2": "1.2.2",
       "proxy-addr@<2.0.8": "2.0.8",
       "prosemirror-view@<1.42.3": "1.42.3",
-      "undici@>=7.0.0 <7.29.1": "7.29.1"
+      "undici@>=7.0.0 <7.29.1": "7.29.1",
+      "markdown-it": "14.3.3",
+      "linkify-it": "5.0.2",
+      "postcss": "8.5.30",
+      "dompurify": "3.4.17",
+      "vite@>=8.0.0 <8.3.3": "8.3.5",
+      "http-cache-semantics": "4.3.0",
+      "glob@>=10.2.0 <10.5.0": "10.5.0"
+    },
+    "patchedDependencies": {
+      "@saas-maker/templates@0.1.20": "patches/saas-maker-templates-footer-retry-0.1.20.patch",
+      "http-cache-semantics@4.3.0": "patches/http-cache-semantics@4.3.0.patch"
     }
   }
 }

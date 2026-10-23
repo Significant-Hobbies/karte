@@ -40,16 +40,9 @@ const baselines = {
     percentage: 4.093792043052085,
   },
   suppressions: 7,
-  dependencies: { critical: 0, highIds: 5, highFindings: 5 },
+  dependencies: { critical: 0, highIds: 0, highFindings: 0 },
 };
-const acceptedHigh = new Set([
-  'GHSA-22p9-wv53-3rq4',
-  'GHSA-6g55-p6wh-862q',
-  // http-cache-semantics <=4.2.0 via dev tooling; no patched version exists. Re-review when upstream releases a fix.
-  'GHSA-ch52-4w7c-c8xp',
-  'GHSA-r28c-9q8g-f849',
-  'GHSA-v245-v573-v5vm',
-]);
+const acceptedHigh = new Set();
 
 function output(message) {
   process.stdout.write(`${message}\n`);
@@ -216,6 +209,7 @@ function cycles() {
 }
 
 function dependencies() {
+  run('node', ['--test', 'scripts/http-cache-security.test.mjs']);
   const advisories = Object.values(
     json(run('pnpm', ['audit', '--json'], true), 'pnpm audit').advisories ?? {},
   );
