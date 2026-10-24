@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
 import { trackEvent } from '@/lib/analytics';
+import { getAnalyticsLabels } from '@/lib/analytics-labels';
 
 function isExternalUrl(href: string) {
   try {
@@ -18,12 +19,6 @@ function isExternalUrl(href: string) {
   } catch {
     return false;
   }
-}
-
-function getProfileVariantFromLocation() {
-  return (
-    new URLSearchParams(window.location.search).get('variant') || 'baseline'
-  );
 }
 
 function getAnalyticsSlug() {
@@ -42,7 +37,8 @@ export function PageAnalyticsTracker() {
 
   useEffect(() => {
     const slug = getAnalyticsSlug();
-    const profileVariant = getProfileVariantFromLocation();
+    const analyticsLabels = getAnalyticsLabels();
+    const { profileVariant } = analyticsLabels;
     const trackedPath = `${slug ?? pathname}?variant=${profileVariant}`;
     if (!slug || lastTrackedPath.current === trackedPath) {
       return;
@@ -54,7 +50,7 @@ export function PageAnalyticsTracker() {
       eventType: 'page_view',
       metadata: {
         pathname,
-        profileVariant,
+        ...analyticsLabels,
         referrer: document.referrer || null,
       },
     });
@@ -83,7 +79,7 @@ export function PageAnalyticsTracker() {
         return;
       }
 
-      const profileVariant = getProfileVariantFromLocation();
+      const analyticsLabels = getAnalyticsLabels();
 
       trackEvent(slug, {
         eventType: 'outbound_click',
@@ -96,7 +92,7 @@ export function PageAnalyticsTracker() {
           href,
         metadata: {
           href,
-          profileVariant,
+          ...analyticsLabels,
         },
       });
     }

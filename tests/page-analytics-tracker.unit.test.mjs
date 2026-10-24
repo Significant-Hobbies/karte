@@ -70,3 +70,25 @@ it.each(['/fixture-profile', '/', '/fixture-profile/roast'])(
     );
   },
 );
+
+it('attaches only normalized variant and explicit traffic labels', () => {
+  state.pathname = '/fixture-profile';
+  state.slug = 'fixture-profile';
+  window.location.search = '?variant=proof&karte_traffic=internal';
+
+  PageAnalyticsTracker();
+  state.effects.forEach((effect) => {
+    effect();
+  });
+
+  expect(state.track).toHaveBeenCalledWith(
+    'fixture-profile',
+    expect.objectContaining({
+      eventType: 'page_view',
+      metadata: expect.objectContaining({
+        profileVariant: 'proof',
+        trafficLabel: 'internal',
+      }),
+    }),
+  );
+});

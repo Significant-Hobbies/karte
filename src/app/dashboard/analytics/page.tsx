@@ -28,6 +28,37 @@ function relativeTime(value: Date | string | null) {
   return `${days}d ago`;
 }
 
+function activityLabel(
+  eventType: string,
+  metadata: Record<string, unknown> | null,
+) {
+  if (eventType === 'chat_question_submitted') return 'Question submitted';
+  if (eventType !== 'chat_answer_outcome') return null;
+
+  switch (metadata?.outcome) {
+    case 'delivered':
+      return 'Answer delivered';
+    case 'empty_response':
+      return 'Empty answer';
+    case 'rate_limited':
+      return 'Answer rate limited';
+    case 'server_error':
+      return 'Answer service error';
+    case 'request_rejected':
+      return 'Answer request rejected';
+    case 'missing_stream':
+      return 'Answer stream missing';
+    case 'conversation_setup_error':
+      return 'Conversation setup failed';
+    case 'request_error':
+      return 'Answer request failed';
+    case 'stream_error':
+      return 'Answer stream failed';
+    default:
+      return 'Answer outcome recorded';
+  }
+}
+
 function MetricCard({
   label,
   value,
@@ -284,24 +315,32 @@ export default async function AnalyticsPage() {
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
                       <p className="text-[13px] font-medium text-karte-text">
-                        {event.eventType === 'page_view'
-                          ? 'Page viewed'
-                          : event.eventType === 'section_view'
-                            ? 'Section viewed'
-                            : event.eventType === 'contact_submit'
-                              ? 'Lead captured'
-                              : event.eventType === 'dm_submit'
-                                ? 'Direct message sent'
-                                : event.eventType === 'hook_open'
-                                  ? 'Chat widget opened'
-                                  : event.eventType === 'chat_cta_click'
-                                    ? 'Chat CTA clicked'
-                                    : 'Outbound click'}
+                        {activityLabel(event.eventType, event.metadata) ??
+                          (event.eventType === 'page_view'
+                            ? 'Page viewed'
+                            : event.eventType === 'section_view'
+                              ? 'Section viewed'
+                              : event.eventType === 'contact_submit'
+                                ? 'Lead captured'
+                                : event.eventType === 'dm_submit'
+                                  ? 'Direct message sent'
+                                  : event.eventType === 'hook_open'
+                                    ? 'Chat widget opened'
+                                    : event.eventType === 'chat_cta_click'
+                                      ? 'Chat CTA clicked'
+                                      : 'Outbound click')}
                       </p>
                       <p className="mt-1 truncate text-[12px] text-karte-text-3">
                         {event.resourceLabel ||
                           event.resourceId ||
                           'Public page'}
+                      </p>
+                      <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-karte-text-4">
+                        {event.metadata?.trafficLabel === 'internal'
+                          ? 'Internal traffic'
+                          : event.metadata?.trafficLabel === 'qa'
+                            ? 'QA traffic'
+                            : 'Unmarked traffic'}
                       </p>
                     </div>
                     <span className="shrink-0 text-[11px] tabular-nums text-karte-text-4">

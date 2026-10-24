@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-
+import { getAnalyticsLabels } from '@/lib/analytics-labels';
 import { getOrCreateVisitorId } from '@/lib/visitor-id';
 
 type WidgetMode = 'chat' | 'contact';
@@ -40,7 +40,7 @@ export function OpenChatButton({
               resourceType: 'chat_cta',
               resourceLabel:
                 typeof children === 'string' ? children : prompt || mode,
-              metadata: { prompt, autoSend, mode },
+              metadata: { ...getAnalyticsLabels(), prompt, autoSend, mode },
             }),
             keepalive: true,
           });

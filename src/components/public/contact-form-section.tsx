@@ -3,6 +3,7 @@
 import { type FormEvent, useId, useState } from 'react';
 
 import type { DmMode } from '@/db/schema';
+import { getAnalyticsLabels } from '@/lib/analytics-labels';
 import { authClient } from '@/lib/auth-client';
 import { getOrCreateVisitorId } from '@/lib/visitor-id';
 import { TurnstileWidget } from './turnstile-widget';
@@ -80,6 +81,7 @@ export function ContactFormSection({
               : trimmedEmail,
           message: trimmedMessage,
           visitorId: getOrCreateVisitorId(),
+          analyticsLabels: getAnalyticsLabels(),
           sectionId,
           senderType: isAnonymous ? 'anonymous' : 'email',
           turnstileToken,

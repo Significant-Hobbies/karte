@@ -17,6 +17,8 @@ const EVENT_TYPES = new Set([
   'chat_cta_click',
   'dm_start',
   'dm_submit',
+  'chat_question_submitted',
+  'chat_answer_outcome',
 ]);
 
 export async function POST(

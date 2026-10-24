@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 
 import { trackEvent } from '@/lib/analytics';
+import { getAnalyticsLabels } from '@/lib/analytics-labels';
 
 export function TrackableSection({
   slug,
@@ -39,6 +40,7 @@ export function TrackableSection({
           resourceType: sectionType,
           resourceId: sectionId,
           resourceLabel: sectionTitle,
+          metadata: getAnalyticsLabels(),
         });
         observer.disconnect();
       },
