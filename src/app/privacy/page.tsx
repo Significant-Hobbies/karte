@@ -62,8 +62,10 @@ export default function PrivacyPage() {
           waitlist on the landing page.
         </li>
         <li>
-          Anonymous analytics events (clicks, scrolls, mode triggers) tagged by
-          visitor cookie.
+          Anonymous analytics events (views, clicks, mode triggers, and coarse
+          chat question/answer outcomes) tagged by visitor cookie. Question and
+          answer text are not copied into these analytics events; chat
+          conversations are stored separately as described above.
         </li>
       </ul>
 

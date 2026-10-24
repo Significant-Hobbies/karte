@@ -34,6 +34,9 @@ vi.mock('@/lib/profile-memory', () => ({
 }));
 
 const { POST } = await import('../src/app/api/chat/[slug]/route');
+const { getChatDeliveryOutcome, readChatDelivery } = await import(
+  '../src/lib/chat-delivery'
+);
 const { pages, users } = await import('../src/db/schema');
 
 const VISITOR_EMAIL = 'visitor@example.test';
@@ -138,7 +141,13 @@ describe('public chat verification boundary', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toContain('text/plain');
-    expect(await response.text()).toBe('A grounded answer.');
+    const visibleChunks = [];
+    const delivery = await readChatDelivery(response, (text) => {
+      visibleChunks.push(text);
+    });
+    expect(delivery.text).toBe('A grounded answer.');
+    expect(visibleChunks.join('')).toBe('A grounded answer.');
+    expect(getChatDeliveryOutcome(delivery.text)).toBe('delivered');
     expect(boundary.verifyTurnstile).toHaveBeenCalledExactlyOnceWith({
       token: 'challenge-token',
       action: 'turnstile-spin-v2',
@@ -215,9 +224,14 @@ describe('public chat grounding', () => {
     const response = await ask('test-slug', 'Who is Test Owner?');
 
     expect(response.status).toBe(200);
-    const text = await response.text();
-    expect(text).toContain('Test Owner');
-    expect(text).toContain('builds Karte');
+    const visibleChunks = [];
+    const delivery = await readChatDelivery(response, (text) => {
+      visibleChunks.push(text);
+    });
+    expect(delivery.text).toContain('Test Owner');
+    expect(delivery.text).toContain('builds Karte');
+    expect(visibleChunks.join('')).toBe(delivery.text);
+    expect(getChatDeliveryOutcome(delivery.text)).toBe('delivered');
     expect(boundary.generate).not.toHaveBeenCalled();
     expect(boundary.buildProfileMemory).not.toHaveBeenCalled();
   });

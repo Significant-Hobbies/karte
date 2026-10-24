@@ -8,7 +8,9 @@ export type EventType =
   | 'hook_open'
   | 'chat_cta_click'
   | 'dm_start'
-  | 'dm_submit';
+  | 'dm_submit'
+  | 'chat_question_submitted'
+  | 'chat_answer_outcome';
 
 export interface TrackPayload {
   eventType: EventType;

@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { db, ensureProjectsTable } from '@/db';
 import { contactSubmissions, pages } from '@/db/schema';
 import { recordAggregate } from '@/lib/analytics-aggregates';
+import { normalizeAnalyticsLabels } from '@/lib/analytics-labels';
 import { recordEvent } from '@/lib/analytics-server';
 import { getSession } from '@/lib/auth-server';
 import { rateLimit } from '@/lib/rate-limit';
@@ -41,6 +42,7 @@ export async function POST(
   const message = typeof body.message === 'string' ? body.message.trim() : '';
   const visitorId =
     typeof body.visitorId === 'string' ? body.visitorId.trim() : null;
+  const analyticsLabels = normalizeAnalyticsLabels(body.analyticsLabels);
   const sectionId =
     typeof body.sectionId === 'string' ? body.sectionId.trim() : null;
   const senderType = body.senderType === 'anonymous' ? 'anonymous' : 'email';
@@ -155,6 +157,7 @@ export async function POST(
       sectionId,
       senderType,
       verified: Boolean(verifiedSender),
+      ...analyticsLabels,
     },
   });
 

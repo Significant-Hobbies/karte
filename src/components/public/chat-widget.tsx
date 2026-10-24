@@ -11,16 +11,13 @@ import { ProfileActionIcon } from '@/components/public/profile-action-icon';
 import { TurnstileWidget } from '@/components/public/turnstile-widget';
 import type { DmMode } from '@/db/schema';
 import { applyLayoutDirectives } from '@/lib/ai-components/layout';
-import {
-  createStreamParserState,
-  feedChunk,
-  finishStream,
-} from '@/lib/ai-components/stream-parser';
 import type {
   LayoutDirectives,
   RenderableComponent,
 } from '@/lib/ai-components/types';
 import { trackEvent } from '@/lib/analytics';
+import { getAnalyticsLabels } from '@/lib/analytics-labels';
+import { getChatDeliveryOutcome, readChatDelivery } from '@/lib/chat-delivery';
 import {
   buildRoomShareUrl,
   clearStoredRoomId,
@@ -121,7 +118,6 @@ export function ChatWidget({
   const [open, setOpen] = useState(false);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const [expanded, setExpanded] = useState(false);
-  const prevOpenRef = useRef(false);
   const [mode, setMode] = useState<'chat' | 'contact'>(
     chatEnabled ? 'chat' : 'contact',
   );
@@ -184,21 +180,6 @@ export function ChatWidget({
       inputRef.current.style.height = 'auto';
     }
   }, [input]);
-
-  useEffect(() => {
-    if (open && !prevOpenRef.current) {
-      void fetch(`/api/track/${slug}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          eventType: 'hook_open',
-          visitorId: visitorIdRef.current,
-        }),
-        keepalive: true,
-      });
-    }
-    prevOpenRef.current = open;
-  }, [open, slug]);
 
   useEffect(() => {
     if (open && mode === 'chat') {
@@ -397,10 +378,27 @@ export function ChatWidget({
       const verificationToken = turnstileToken as string;
       setLoading(true);
 
+      const analyticsLabels = getAnalyticsLabels();
+      let failureOutcome:
+        | 'conversation_setup_error'
+        | 'request_error'
+        | 'stream_error' = 'conversation_setup_error';
+      const trackAnswerOutcome = (outcome: string) => {
+        trackEvent(slug, {
+          eventType: 'chat_answer_outcome',
+          metadata: { ...analyticsLabels, outcome },
+        });
+      };
+      trackEvent(slug, {
+        eventType: 'chat_question_submitted',
+        metadata: analyticsLabels,
+      });
+
       try {
         const convId = await ensureConversation(visitorEmail);
         void saveMessage(convId, 'user', query);
 
+        failureOutcome = 'request_error';
         const res = await fetch(`/api/chat/${slug}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -413,6 +411,13 @@ export function ChatWidget({
         });
 
         if (!res.ok) {
+          const outcome =
+            res.status === 429
+              ? 'rate_limited'
+              : res.status >= 500
+                ? 'server_error'
+                : 'request_rejected';
+          trackAnswerOutcome(outcome);
           const err = await res
             .json()
             .catch(() => ({ error: 'Something went wrong' }));
@@ -432,8 +437,8 @@ export function ChatWidget({
         // The parser flushes plain text up until the marker boundary
         // (handling cross-chunk splits), then buffers the JSON tail.
         // Components materialize on stream-completion.
-        const reader = res.body?.getReader();
-        if (!reader) {
+        if (!res.body) {
+          trackAnswerOutcome('missing_stream');
           setMessages((prev) => [
             ...prev,
             { role: 'assistant', content: 'No response stream.' },
@@ -442,49 +447,42 @@ export function ChatWidget({
         }
 
         setMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
-
-        const decoder = new TextDecoder();
-        const parser = createStreamParserState();
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          const chunk = decoder.decode(value, { stream: true });
-          const flushed = feedChunk(parser, chunk);
-          if (flushed) {
-            setMessages((prev) => {
-              const updated = [...prev];
-              const last = updated[updated.length - 1];
-              if (last?.role === 'assistant') {
-                updated[updated.length - 1] = {
-                  ...last,
-                  content: last.content + flushed,
-                };
-              }
-              return updated;
-            });
-          }
-        }
-
-        const { flushedText, components, layout } = finishStream(parser);
+        failureOutcome = 'stream_error';
+        const delivery = await readChatDelivery(res, (flushed) => {
+          setMessages((prev) => {
+            const updated = [...prev];
+            const last = updated[updated.length - 1];
+            if (last?.role === 'assistant') {
+              updated[updated.length - 1] = {
+                ...last,
+                content: last.content + flushed,
+              };
+            }
+            return updated;
+          });
+        });
         setMessages((prev) => {
           const updated = [...prev];
           const last = updated[updated.length - 1];
           if (last?.role === 'assistant') {
             updated[updated.length - 1] = {
               ...last,
-              content: last.content + flushedText,
-              components: components.length ? components : undefined,
-              layout: layout ?? undefined,
+              content: last.content,
+              components: delivery.components.length
+                ? delivery.components
+                : undefined,
+              layout: delivery.layout ?? undefined,
             };
           }
           return updated;
         });
 
-        const finalText = parser.text;
-        if (finalText) {
-          void saveMessage(convId, 'assistant', finalText);
+        const answerOutcome = getChatDeliveryOutcome(delivery.text);
+        if (answerOutcome === 'delivered') {
+          trackAnswerOutcome(answerOutcome);
+          void saveMessage(convId, 'assistant', delivery.text);
         } else {
+          trackAnswerOutcome(answerOutcome);
           setMessages((prev) => {
             const updated = [...prev];
             const last = updated[updated.length - 1];
@@ -505,6 +503,7 @@ export function ChatWidget({
           void saveMessage(convId, 'assistant', EMPTY_CHAT_RESPONSE_MESSAGE);
         }
       } catch (err) {
+        trackAnswerOutcome(failureOutcome);
         captureActionFailure(err, { action: 'chat_send' });
         setMessages((prev) => {
           const updated = [...prev];
@@ -565,7 +564,7 @@ export function ChatWidget({
       trackEvent(slug, {
         eventType: 'hook_open',
         resourceType: 'widget',
-        metadata: { mode },
+        metadata: { ...getAnalyticsLabels(), mode },
       });
     }
   }, [open, slug]);
@@ -575,6 +574,7 @@ export function ChatWidget({
       trackEvent(slug, {
         eventType: 'dm_start',
         resourceType: 'widget',
+        metadata: getAnalyticsLabels(),
       });
     }
   }, [mode, open, slug]);
@@ -596,7 +596,7 @@ export function ChatWidget({
           eventType: 'chat_cta_click',
           resourceType: 'cta',
           resourceLabel: prompt,
-          metadata: { autoSend: detail?.autoSend },
+          metadata: { ...getAnalyticsLabels(), autoSend: detail?.autoSend },
         });
       }
 

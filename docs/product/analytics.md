@@ -45,6 +45,19 @@ Visitor interactions on public profile pages are tracked in LinkChat-owned stora
 | `dm_start` | Visitor starts the DM flow | Chat widget |
 | `dm_submit` | Visitor submits a direct message | Contact API |
 | `contact_submit` | Visitor submits a contact form | Contact API |
+| `chat_question_submitted` | A visitor submits a question after the local email and Turnstile gates; no question text is recorded in analytics | Chat widget |
+| `chat_answer_outcome` | Completed answer delivery, empty result, request rejection/rate limit/server error, missing stream, or client setup/stream failure | Chat widget |
+
+Public profile, chat, and contact events include a finite `profileVariant` and
+`trafficLabel`. `karte_traffic=internal` or `karte_traffic=qa` explicitly marks
+owner/test traffic for measurement; absent or unrecognized values remain
+`unmarked` and must not be treated as confirmed external traffic. Chat outcome
+events contain only the coarse outcome and labels, never prompt or answer text.
+The existing opaque visitor ID joins stages at visitor level; it does not
+identify individual question turns. At a later cohort read, a submitted
+question with no terminal outcome after the declared observation window is
+unresolved; do not infer delivery from HTTP 200 or call that abandonment without
+checking the window and available failure outcomes.
 
 ## Visitor Identity
 
