@@ -1,13 +1,13 @@
 import { getProfileVariant } from './profile-variants';
 
-export type AnalyticsTrafficLabel = 'unmarked' | 'internal' | 'qa';
+type AnalyticsTrafficLabel = 'unmarked' | 'internal' | 'qa';
 
 export type AnalyticsLabels = {
   profileVariant: string;
   trafficLabel: AnalyticsTrafficLabel;
 };
 
-export function normalizeTrafficLabel(value: unknown): AnalyticsTrafficLabel {
+function normalizeTrafficLabel(value: unknown): AnalyticsTrafficLabel {
   return value === 'internal' || value === 'qa' ? value : 'unmarked';
 }
 
