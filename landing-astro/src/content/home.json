@@ -18,16 +18,33 @@
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": "WebSite",
-          "name": "Karte",
-          "alternateName": ["karte.cc"],
-          "url": "https://karte.cc",
-          "description": "Karte gives creators and independent operators one public profile for links, projects, visitor questions, and better-contextualized inbound.",
-          "isAccessibleForFree": true,
-          "creator": {
-            "@type": "Person",
-            "name": "Sarthak Agrawal",
-            "url": "https://sarthakagrawal.dev"
+          "@type": "Person",
+          "@id": "https://sarthakagrawal.dev/#person",
+          "name": "Sarthak Agrawal",
+          "jobTitle": "AI Infrastructure & Product Engineer",
+          "url": "https://sarthakagrawal.dev",
+          "image": "https://avatars.githubusercontent.com/u/43884471?v=4",
+          "sameAs": [
+            "https://sarthakagrawal.dev",
+            "https://www.linkedin.com/in/sarthakagrawal927",
+            "https://github.com/sarthakagrawal927",
+            "https://x.com/sarthakcodes",
+            "https://huggingface.co/sarthakagrawal927"
+          ],
+          "knowsAbout": [
+            "AI infrastructure",
+            "Local-first software",
+            "Post-training language models",
+            "AI code review",
+            "Cloudflare Workers",
+            "TypeScript",
+            "Rust"
+          ],
+          "affiliation": {
+            "@type": "Organization",
+            "@id": "https://sassmaker.com/#app",
+            "name": "SaaS Maker",
+            "url": "https://sassmaker.com"
           }
         },
         {
@@ -35,10 +52,25 @@
           "name": "Karte",
           "url": "https://karte.cc",
           "founder": {
-            "@type": "Person",
-            "name": "Sarthak Agrawal",
-            "url": "https://sarthakagrawal.dev"
-          }
+            "@id": "https://sarthakagrawal.dev/#person"
+          },
+          "@id": "https://karte.cc/#org"
+        },
+        {
+          "@type": "WebSite",
+          "name": "Karte",
+          "alternateName": ["karte.cc"],
+          "url": "https://karte.cc",
+          "description": "Karte gives creators and independent operators one public profile for links, projects, visitor questions, and better-contextualized inbound.",
+          "isAccessibleForFree": true,
+          "creator": {
+            "@id": "https://sarthakagrawal.dev/#person"
+          },
+          "@id": "https://karte.cc/#website",
+          "publisher": {
+            "@id": "https://karte.cc/#org"
+          },
+          "sameAs": ["https://github.com/Significant-Hobbies/karte"]
         }
       ]
     },

@@ -39,7 +39,9 @@ export const AGENT_SURFACE = {
     "openapi": "https://karte.cc/openapi.json",
     "markdown": {
       "suffix": ".md",
-      "negotiation": true
+      "negotiation": true,
+      "catalog": "https://karte.cc/api/md/_catalog",
+      "direct": "https://karte.cc/api/md/"
     },
     "surfaces": STATIC_PUBLIC_ROUTES.map((route) => ({
       "id": route.path === "/" ? "home" : route.path.slice(1),

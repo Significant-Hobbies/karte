@@ -1,5 +1,5 @@
 import {
-  getFullPageData,
+  getFreshPublicPageData,
   getGeneratedPage,
 } from '@/app/[slug]/_lib/get-page-data';
 import { normalizeEncyclopediaContent } from '@/lib/encyclopedia-compat';
@@ -8,12 +8,17 @@ import {
   type NewspaperContent,
   type RoastContent,
 } from '@/lib/generated-page-types';
-import { AI_LINK_IN_BIO_MARKDOWN } from '../../content-pages/ai-link-in-bio.mjs';
 import { ARTICLE_MARKDOWN, ARTICLES } from '../../content-pages/articles.mjs';
+import { articleDisplayMeta } from '../../content-pages/public-editorial.mjs';
 import {
   parsePublicHtmlPath,
   SITE_ORIGIN,
 } from '../../public-route-contract.mjs';
+import { resolvePublicProfileSlug } from './demo-profiles';
+import { publicProfileMarkdown } from './public-profile-source';
+import { renderPublicStaticSource } from './public-static-source';
+import { richSourceMarkdown } from './rich-source-markdown';
+import { isCompletePublicUrl } from './validation';
 
 export async function renderPublicRouteMarkdown(
   pathname: string,
@@ -22,35 +27,17 @@ export async function renderPublicRouteMarkdown(
   if (!parsed) return null;
   const source = `${SITE_ORIGIN}${parsed.path === '/' ? '' : parsed.path}`;
 
-  if (parsed.kind === 'static') {
-    const route = parsed.route;
-    if (!route) return null;
-    if (parsed.path === '/ai-link-in-bio') return AI_LINK_IN_BIO_MARKDOWN;
-    return document(
-      route.title,
-      source,
-      route.description,
-      route.markdown.map((paragraph: string) => plain(paragraph)),
-    );
-  }
+  if (parsed.kind === 'static') return renderPublicStaticSource(parsed.path);
 
-  if (parsed.kind === 'article') {
-    const body = ARTICLE_MARKDOWN[parsed.slug];
-    if (!body) return null;
-    const meta = ARTICLES.find((article) => article.slug === parsed.slug);
-    return document(
-      meta?.title ?? parsed.slug,
-      source,
-      meta?.description ?? '',
-      [body],
-      false,
-    );
-  }
+  if (parsed.kind === 'article') return renderArticle(parsed.slug, source);
 
   if (!parsed.slug) return null;
-  const data = await getFullPageData(parsed.slug);
+  const data = await getFreshPublicPageData(
+    resolvePublicProfileSlug(parsed.slug),
+  );
   if (!data) return null;
-  if (parsed.kind === 'profile') return renderProfile(data, source);
+  if (parsed.kind === 'profile')
+    return publicProfileMarkdown(resolvePublicProfileSlug(parsed.slug), data);
 
   const mode = parsed.mode?.segment;
   if (
@@ -64,13 +51,19 @@ export async function renderPublicRouteMarkdown(
   if (generated?.status !== 'ready' || !generated.content) return null;
 
   if (mode === 'encyclopedia') {
-    return renderEncyclopedia(data.page.displayName, generated.content, source);
+    return renderEncyclopedia(
+      data.page.displayName,
+      generated.content,
+      source,
+      data.page.avatarUrl,
+    );
   }
   if (mode === 'newspaper') {
     return renderNewspaper(
       data.page.displayName,
       generated.content as unknown as NewspaperContent,
       source,
+      data.page.avatarUrl,
     );
   }
   if (mode === 'roast') {
@@ -89,103 +82,29 @@ function modeEnabled(page: PublicPageData['page'], mode: ProfileMode) {
   return Boolean(page.roastEnabled);
 }
 
-type PublicPageData = NonNullable<Awaited<ReturnType<typeof getFullPageData>>>;
+type PublicPageData = NonNullable<
+  Awaited<ReturnType<typeof getFreshPublicPageData>>
+>;
 type ProfileMode = 'encyclopedia' | 'newspaper' | 'roast';
 
 function isProfileMode(value: unknown): value is ProfileMode {
   return value === 'encyclopedia' || value === 'newspaper' || value === 'roast';
 }
 
-function renderProfile(data: PublicPageData, source: string) {
-  const { page, links, projects, sections, timeline } = data;
-  const blocks: string[] = [];
-
-  if (page.location) blocks.push(`Location: ${plain(page.location)}`);
-  if (page.pageType === 'agent') {
-    if (page.agentOperator) {
-      blocks.push(`Operator: ${plain(page.agentOperator)}`);
-    }
-    const capabilities = Array.isArray(page.agentCapabilities)
-      ? page.agentCapabilities
-          .map(describeCapability)
-          .filter(Boolean)
-          .map((capability) => `- ${capability}`)
-      : [];
-    if (capabilities.length > 0) {
-      blocks.push(`## Capabilities\n\n${capabilities.join('\n')}`);
-    }
-    if (page.agentDisclosurePolicy) {
-      blocks.push(
-        `## Disclosure policy\n\n${plain(page.agentDisclosurePolicy)}`,
-      );
-    }
-  }
-
-  if (links.length > 0) {
-    blocks.push(
-      `## Links\n\n${links
-        .map((link) => `- [${plain(link.title)}](${link.url})`)
-        .join('\n')}`,
-    );
-  }
-  if (projects.length > 0) {
-    blocks.push(
-      `## Projects\n\n${projects
-        .map((project) => {
-          const title = plain(project.title);
-          const label = project.url ? `[${title}](${project.url})` : title;
-          return `- ${label}${project.description ? ` — ${plain(project.description)}` : ''}`;
-        })
-        .join('\n')}`,
-    );
-  }
-  for (const section of sections) {
-    const content = publicSectionMarkdown(section);
-    if (content) blocks.push(`## ${plain(section.title)}\n\n${content}`);
-  }
-  if (timeline.length > 0) {
-    blocks.push(
-      `## Timeline\n\n${timeline
-        .map((event) => {
-          const title = event.link
-            ? `[${plain(event.title)}](${event.link})`
-            : plain(event.title);
-          const detail = [
-            plain(event.whenLabel),
-            event.whereLabel ? plain(event.whereLabel) : '',
-            event.body ? plain(event.body) : '',
-          ]
-            .filter(Boolean)
-            .join(' — ');
-          return `- ${title}${detail ? ` — ${detail}` : ''}`;
-        })
-        .join('\n')}`,
-    );
-  }
-
-  return document(
-    page.displayName,
-    source,
-    page.agentPurpose ??
-      page.bio ??
-      `${page.displayName}'s public profile on Karte.`,
-    blocks,
-    false,
-  );
-}
-
 function renderEncyclopedia(
   displayName: string,
   content: unknown,
   source: string,
+  avatarUrl?: string | null,
 ) {
   const normalized = normalizeEncyclopediaContent(content);
   if (!normalized) return null;
-  const article = htmlFragmentToMarkdown(normalized.markdown);
+  const article = richSourceMarkdown(normalized.markdown);
   const infobox = Object.entries(normalized.infobox ?? {}).map(
     ([key, value]) => `- **${plain(key)}:** ${plain(value)}`,
   );
   const blocks = [
+    publicImage(displayName, avatarUrl),
     infobox.length > 0 ? `## Profile\n\n${infobox.join('\n')}` : '',
     article,
     normalized.categories?.length
@@ -206,19 +125,23 @@ function renderNewspaper(
   displayName: string,
   content: NewspaperContent,
   source: string,
+  avatarUrl?: string | null,
 ) {
   const pages = getNewspaperPages(content);
   if (pages.length === 0) return null;
   const blocks = pages.map((page, index) => {
     const stories = [
-      `### ${plain(page.leadStory.headline)}\n\n${plain(page.leadStory.subheadline)}\n\n${plain(page.leadStory.body)}${
+      `### ${plain(page.leadStory.headline)}\n\n${plain(page.leadStory.subheadline)}\n\n${paragraphs(page.leadStory.body)}${
         page.leadStory.pullQuote
           ? `\n\n> ${plain(page.leadStory.pullQuote)}`
           : ''
       }`,
       ...page.secondaryStories.map(
-        (story) => `### ${plain(story.headline)}\n\n${plain(story.body)}`,
+        (story) => `### ${plain(story.headline)}\n\n${paragraphs(story.body)}`,
       ),
+      ...(page.sidebar?.facts ?? []).map((fact) => `- ${plain(fact)}`),
+      page.sidebar?.mood ? `Mood: ${plain(page.sidebar.mood)}` : '',
+      ...(page.fakeAds ?? []).map((ad) => `Advertisement: ${plain(ad)}`),
     ];
     return `## ${plain(page.sectionLabel ?? `Page ${index + 1}`)}\n\n${stories.join('\n\n')}`;
   });
@@ -229,7 +152,7 @@ function renderNewspaper(
       .filter(Boolean)
       .map(plain)
       .join(' — '),
-    blocks,
+    [publicImage(displayName, avatarUrl), ...blocks],
     false,
   );
 }
@@ -251,6 +174,18 @@ function renderRoast(
     content.firstImpression
       ? `- First impression: ${plain(content.firstImpression)}`
       : '',
+    content.bestLink
+      ? `- Best link: ${plain(content.bestLink.title)} — ${plain(content.bestLink.reason)}`
+      : '',
+    content.worstLink
+      ? `- Worst link: ${plain(content.worstLink.title)} — ${plain(content.worstLink.reason)}`
+      : '',
+    content.spiritPlatform
+      ? `- Spirit platform: ${plain(content.spiritPlatform)}`
+      : '',
+    content.celebrityMatch
+      ? `- Celebrity match: ${plain(content.celebrityMatch)}`
+      : '',
     ...(content.redFlags ?? []).map((flag) => `- ${plain(flag)}`),
   ].filter(Boolean);
   return document(
@@ -262,105 +197,6 @@ function renderRoast(
       details.length > 0 ? `## Scorecard\n\n${details.join('\n')}` : '',
     ],
     false,
-  );
-}
-
-function publicSectionMarkdown(section: {
-  content: string | null;
-  buttonLabel: string | null;
-  buttonUrl: string | null;
-}) {
-  const parts = [];
-  if (section.content) {
-    parts.push(
-      section.content
-        .split('\n')
-        .map((line) => plain(line))
-        .filter(Boolean)
-        .join('\n'),
-    );
-  }
-  if (section.buttonLabel && section.buttonUrl) {
-    parts.push(`[${plain(section.buttonLabel)}](${section.buttonUrl})`);
-  }
-  return parts.join('\n\n');
-}
-
-function describeCapability(capability: unknown) {
-  if (typeof capability === 'string') return plain(capability);
-  if (!capability || typeof capability !== 'object') return '';
-  const value = capability as Record<string, unknown>;
-  const label = value.label ?? value.name ?? value.id ?? value.key;
-  const description = value.description ?? value.summary;
-  if (typeof label !== 'string') return '';
-  return `${plain(label)}${
-    typeof description === 'string' ? ` — ${plain(description)}` : ''
-  }`;
-}
-
-function htmlFragmentToMarkdown(html: string) {
-  if (!html.trim()) return '';
-  return decodeEntities(
-    html
-      .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
-      .replace(
-        /<a\b[^>]*href=(?:"([^"]*)"|'([^']*)')[^>]*>([\s\S]*?)<\/a>/gi,
-        (_match, doubleQuoted, singleQuoted, label) =>
-          `[${stripTags(label)}](${doubleQuoted || singleQuoted})`,
-      )
-      .replace(
-        /<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi,
-        (_match, level, value) =>
-          `\n\n${'#'.repeat(Number(level))} ${stripTags(value)}\n\n`,
-      )
-      .replace(/<li\b[^>]*>([\s\S]*?)<\/li>/gi, (_match, value) => {
-        return `\n- ${stripTags(value)}`;
-      })
-      .replace(
-        /<blockquote\b[^>]*>([\s\S]*?)<\/blockquote>/gi,
-        (_match, value) => `\n\n> ${stripTags(value)}\n\n`,
-      )
-      .replace(/<br\s*\/?>/gi, '\n')
-      .replace(/<\/?(p|div|section|article|ul|ol)\b[^>]*>/gi, '\n')
-      .replace(/<[^>]+>/g, ' '),
-  )
-    .replace(/[ \t]+\n/g, '\n')
-    .replace(/\n[ \t]+/g, '\n')
-    .replace(/[ \t]{2,}/g, ' ')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
-}
-
-function stripTags(value: string) {
-  return value
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function decodeEntities(value: string) {
-  const named: Record<string, string> = {
-    amp: '&',
-    apos: "'",
-    gt: '>',
-    lt: '<',
-    nbsp: ' ',
-    quot: '"',
-  };
-  return value.replace(
-    /&(#x[\da-f]+|#\d+|[a-z]+);/gi,
-    (entity, code: string) => {
-      if (code.startsWith('#')) {
-        const numeric =
-          code[1]?.toLowerCase() === 'x'
-            ? Number.parseInt(code.slice(2), 16)
-            : Number.parseInt(code.slice(1), 10);
-        return Number.isFinite(numeric)
-          ? String.fromCodePoint(numeric)
-          : entity;
-      }
-      return named[code.toLowerCase()] ?? entity;
-    },
   );
 }
 
@@ -382,4 +218,29 @@ function document(
 
 function plain(value: string) {
   return value.replace(/\s+/g, ' ').trim();
+}
+
+function paragraphs(value: string) {
+  return value.split('\n').map(plain).filter(Boolean).join('\n\n');
+}
+
+function publicImage(label: string, url?: string | null) {
+  return url && isCompletePublicUrl(url) ? `![${plain(label)}](${url})` : '';
+}
+
+function renderArticle(slug: string, source: string) {
+  const body = ARTICLE_MARKDOWN[slug];
+  if (!body) return null;
+  const meta = ARTICLES.find((article) => article.slug === slug);
+  return document(
+    meta?.title ?? slug,
+    source,
+    meta?.description ?? '',
+    [
+      'Karte article',
+      ...(meta ? [articleDisplayMeta(meta).join(' · ')] : []),
+      body,
+    ],
+    false,
+  );
 }

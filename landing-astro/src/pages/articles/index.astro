@@ -1,4 +1,5 @@
 ---
+import { articlesCopy, displayDate } from '../../../../content-pages/public-editorial.mjs';
 import Layout from '@/layouts/Layout.astro';
 import ProductFooter from '@/components/ProductFooter.astro';
 import SiteHeader from '@/components/SiteHeader.astro';
@@ -37,11 +38,10 @@ const articles = Object.entries(
     <SiteHeader current="articles" />
     <section class="changelog-shell">
       <header class="changelog-header">
-        <p class="changelog-kicker">Writing</p>
-        <h1>Articles</h1>
+        <p class="changelog-kicker">{articlesCopy.eyebrow}</p>
+        <h1>{articlesCopy.title}</h1>
         <p>
-          Essays on public profiles, contextual inbound, and the requirements
-          behind interactive profile pages.
+          {articlesCopy.lede}
         </p>
       </header>
 
@@ -51,11 +51,7 @@ const articles = Object.entries(
             <li>
               <article class="changelog-entry">
                 <time datetime={article.date}>
-                  {new Date(`${article.date}T00:00:00`).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
+                  {displayDate(article.date)}
                 </time>
                 <h2>
                   <a href={article.href}>{article.title}</a>

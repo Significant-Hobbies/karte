@@ -4,6 +4,7 @@ import {
   mkdir,
   readdir,
   readFile,
+  unlink,
   writeFile,
 } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
@@ -62,6 +63,7 @@ export async function runOverlay(opts = {}) {
     return;
   }
 
+  await removeLegacySummaries(target);
   const files = await walk(astroDist);
   let _copied = 0;
   let _skipped = 0;
@@ -78,5 +80,13 @@ export async function runOverlay(opts = {}) {
     await mkdir(dirname(dest), { recursive: true });
     await copyFile(src, dest);
     _copied += 1;
+  }
+}
+
+async function removeLegacySummaries(target) {
+  // Legacy static summaries would bypass the source-backed Worker routes.
+  for (const name of ['index.md', 'llms.txt', 'llms-full.txt']) {
+    const path = join(target, name);
+    if (existsSync(path)) await unlink(path);
   }
 }

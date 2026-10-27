@@ -131,7 +131,7 @@ test('does not precompress Astro assets before Cloudflare content negotiation', 
     'utf8',
   );
   const astroAssetBlock = worker.match(
-    /if \(env\.ASSETS && ASTRO_ASSET_PATHS\.has\(url\.pathname\)\) \{([\s\S]*?)\n {6}\}\n\n {6}const cache/u,
+    /if \(env\.ASSETS && ASTRO_ASSET_PATHS\.has\(url\.pathname\)\) \{([\s\S]*?)\n {4}\}\n\n {4}const cache/u,
   );
   assert.ok(astroAssetBlock, 'Astro asset branch must remain explicit');
   assert.doesNotMatch(astroAssetBlock[1], /CompressionStream/u);
@@ -219,12 +219,18 @@ test('serves explicit Markdown and content negotiation with clear unavailable re
   assert.equal(article.status, 200);
   assert.equal(
     article.headers.get('content-location'),
-    '/articles/some-slug.md',
+    'https://karte.cc/articles/some-slug',
   );
   assert.equal(explicit.status, 200);
-  assert.equal(explicit.headers.get('content-location'), '/faq.md');
+  assert.equal(
+    explicit.headers.get('content-location'),
+    'https://karte.cc/faq',
+  );
   assert.equal(negotiated.status, 200);
-  assert.equal(negotiated.headers.get('content-location'), '/about.md');
+  assert.equal(
+    negotiated.headers.get('content-location'),
+    'https://karte.cc/about',
+  );
   assert.equal(unavailable.status, 404);
   assert.match(await unavailable.text(), /No public Markdown document/);
 });

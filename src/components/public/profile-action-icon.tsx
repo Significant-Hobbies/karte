@@ -24,6 +24,8 @@ export function ProfileActionIcon({
   className = 'h-4 w-4 shrink-0',
   ...props
 }: SVGProps<SVGSVGElement> & { name: ProfileActionIconName }) {
+  'use no memo';
+
   return (
     <svg
       {...props}

@@ -1,6 +1,10 @@
 import { type NextRequest, NextResponse } from 'next/server';
-
+import { markdownResponse } from '@/lib/agent-surfaces/http.mjs';
 import { renderPublicRouteMarkdown } from '@/lib/public-route-markdown';
+import {
+  parsePublicHtmlPath,
+  SITE_ORIGIN,
+} from '../../../../../public-route-contract.mjs';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,16 +21,20 @@ export async function GET(request: NextRequest) {
   if (!markdown) {
     return new NextResponse('# Not found\n', {
       status: 404,
-      headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
+      headers: {
+        'Content-Type': 'text/markdown; charset=utf-8',
+        'Cache-Control': 'no-store',
+        'X-Robots-Tag': 'noindex, follow',
+        'Access-Control-Allow-Origin': '*',
+      },
     });
   }
 
-  return new NextResponse(markdown, {
-    status: 200,
-    headers: {
-      'Cache-Control':
-        'public, max-age=60, s-maxage=60, stale-while-revalidate=300',
-      'Content-Type': 'text/markdown; charset=utf-8',
-    },
+  return markdownResponse(markdown, request, {
+    'Cache-Control': 'private, no-store',
+    'Content-Location': new URL(
+      parsePublicHtmlPath(path)?.path ?? path,
+      SITE_ORIGIN,
+    ).href,
   });
 }

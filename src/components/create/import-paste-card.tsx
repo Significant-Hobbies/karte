@@ -3,12 +3,9 @@
 import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useState } from 'react';
-
-import {
-  type ImportedLinkItem,
-  ImportedLinkPreview,
-} from '@/components/create/imported-link-preview';
+import type { ImportedLinkItem } from '@/components/create/imported-link-preview';
 import { hostnameFromUrl } from '@/lib/hostname';
+import { ImportPasteCardView } from './import-paste-card-view';
 
 const PENDING_IMPORT_STORAGE_KEY = 'karte_pending_import';
 
@@ -37,7 +34,7 @@ function normalizeSubmittedUrl(value: string): string {
   return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
 }
 
-export function ImportPasteCard() {
+export function useImportPasteCard() {
   const router = useRouter();
   const [sourceUrl, setSourceUrl] = useState('');
   const [loading, setLoading] = useState(false);
@@ -167,82 +164,18 @@ export function ImportPasteCard() {
     router.push('/login?next=/welcome');
   }
 
-  return (
-    <section className="rounded-3xl border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-xl sm:p-8">
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-karte-text-4">
-            <span className="text-karte-accent/80">·</span> Fast lane
-          </p>
-          <h2 className="mt-3 text-2xl font-semibold leading-tight tracking-[-0.02em] text-karte-text sm:text-3xl">
-            Already have a link page?{' '}
-            <span
-              className="font-normal italic text-karte-accent-soft"
-              style={{ fontFamily: 'var(--font-instrument-serif), serif' }}
-            >
-              Import it in 3 seconds.
-            </span>
-          </h2>
-          <p className="mt-3 max-w-xl text-[14px] leading-[1.6] text-karte-text-3">
-            Paste your Linktree, Beacons, Bio.link or Carrd URL. We&apos;ll pull
-            your links and show you exactly how they&apos;ll look on Karte.
-          </p>
-        </div>
-      </div>
+  return {
+    handleSubmit,
+    sourceUrl,
+    setSourceUrl,
+    loading,
+    errorMessage,
+    importedLinks,
+    normalizedSource,
+    handleClaim,
+  };
+}
 
-      <form
-        onSubmit={handleSubmit}
-        className="mt-6 flex flex-col gap-3 sm:flex-row"
-      >
-        <input
-          type="url"
-          inputMode="url"
-          autoComplete="url"
-          placeholder="https://linktr.ee/yourname"
-          value={sourceUrl}
-          onChange={(event) => setSourceUrl(event.target.value)}
-          className="min-w-0 flex-1 rounded-xl border border-white/[0.10] bg-black/30 px-4 py-3 text-[15px] text-karte-text placeholder-karte-text-4 outline-none transition focus:border-karte-accent/40 focus:bg-black/40"
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-karte-accent px-5 py-3 text-[15px] font-semibold text-zinc-950 transition hover:bg-karte-accent-soft disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {loading ? 'Importing…' : 'Import & Preview'}
-        </button>
-      </form>
-
-      {errorMessage ? (
-        <p className="mt-4 text-sm text-rose-300/90" role="alert">
-          {errorMessage}
-        </p>
-      ) : null}
-
-      {importedLinks.length > 0 ? (
-        <div className="mt-8 space-y-6">
-          <ImportedLinkPreview
-            links={importedLinks}
-            sourceUrl={normalizedSource}
-          />
-
-          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-            <p className="text-sm text-karte-text-3">
-              Looks good? Sign in to claim your Karte page and bring these links
-              along.
-            </p>
-            <button
-              type="button"
-              onClick={handleClaim}
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-[15px] font-medium text-zinc-950 transition-all duration-200 ease-[var(--karte-ease)] hover:bg-zinc-100 sm:w-auto"
-            >
-              Claim your Karte page
-              <span className="transition-transform duration-200 ease-[var(--karte-ease)] group-hover:translate-x-0.5">
-                →
-              </span>
-            </button>
-          </div>
-        </div>
-      ) : null}
-    </section>
-  );
+export function ImportPasteCard() {
+  return <ImportPasteCardView {...useImportPasteCard()} />;
 }

@@ -236,7 +236,11 @@ describe('edge-owned surfaces still work', () => {
     expect(catalog.url).toBe('https://karte.cc');
   });
 
-  it('serves llms.txt, llms-full.txt, index.md, robots.txt and openapi.json', async () => {
+  it('serves source-backed discovery and preserves robots/OpenAPI', async () => {
+    openNextStub.handler = () =>
+      new Response('# Source-backed public content', {
+        headers: { 'content-type': 'text/markdown' },
+      });
     for (const path of [
       '/llms.txt',
       '/llms-full.txt',
@@ -246,15 +250,23 @@ describe('edge-owned surfaces still work', () => {
     ]) {
       expect((await request(path)).status, path).toBe(200);
     }
-    expect(openNextStub.calls).toEqual([]);
+    expect(openNextStub.calls).toEqual([
+      '/api/ai/discovery',
+      '/api/ai/discovery',
+      '/api/ai/markdown',
+    ]);
   });
 
   it('still negotiates markdown on the homepage', async () => {
+    openNextStub.handler = () =>
+      new Response('# Source-backed home', {
+        headers: { 'content-type': 'text/markdown' },
+      });
     const response = await request('/', {
       headers: { accept: 'text/markdown' },
     });
 
-    expect(openNextStub.calls).toEqual([]);
+    expect(openNextStub.calls).toEqual(['/api/ai/markdown']);
     expect(response.headers.get('content-type')).toContain('text/markdown');
   });
 
@@ -263,7 +275,7 @@ describe('edge-owned surfaces still work', () => {
       headers: { accept: 'text/markdown' },
     });
 
-    expect(openNextStub.calls).toEqual([]);
+    expect(openNextStub.calls).toEqual(['/api/ai/markdown']);
     expect(response.status).toBe(404);
     expect(response.headers.get('content-type')).toContain('text/markdown');
   });

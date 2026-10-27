@@ -1,0 +1,242 @@
+import { OpenChatButton } from '@/components/public/open-chat-button';
+import {
+  ProfileActionIcon,
+  type ProfileActionIconName,
+} from '@/components/public/profile-action-icon';
+import { ProfileAvatar } from '@/components/public/profile-avatar';
+import { SocialIconRow } from '@/components/public/social-icon-row';
+import { hostnameFromUrl } from '@/lib/hostname';
+import { getProfileVariant } from '@/lib/profile-variants';
+
+interface QuickAction {
+  label: string;
+  url: string;
+  icon: ProfileActionIconName;
+}
+
+function calendarLabel(url: string) {
+  const h = hostnameFromUrl(url);
+  if (h.includes('calendly')) return 'Book on Calendly';
+  if (h.includes('cal.com')) return 'Book a call';
+  if (h.includes('savvycal')) return 'Book on SavvyCal';
+  return 'Book time';
+}
+
+function tipLabel(url: string) {
+  const h = hostnameFromUrl(url);
+  if (h.includes('ko-fi')) return 'Tip on Ko-fi';
+  if (h.includes('buymeacoffee')) return 'Buy me a coffee';
+  if (h.includes('stripe')) return 'Send a tip';
+  if (h.includes('patreon')) return 'Support on Patreon';
+  return 'Send a tip';
+}
+
+/**
+ * The big, sticky-on-desktop hero column. Avatar with accent glow,
+ * manifesto-scale name with serif italic accent on the last name,
+ * embedded chat dock, primary CTA, and the quick-action stack.
+ *
+ * On lg+ this stays in view while content scrolls past on the right.
+ * On smaller breakpoints it stacks normally.
+ */
+export function ProfileHeroView(view: {
+  variant?: string | null;
+  displayName: string;
+  bio: string | null;
+  avatarUrl: string | null;
+  location: string | null;
+  accentColor: string;
+  serifFontVar: string;
+  chatEnabled: boolean;
+  hasMessenger: boolean;
+  primaryChatCta: string;
+  calendarUrl: string | null;
+  newsletterUrl: string | null;
+  tipUrl: string | null;
+  socialLinks: ReadonlyArray<{
+    id: string;
+    title: string;
+    url: string;
+    icon: string | null;
+  }>;
+  inboxEmailAddress?: string | null;
+}) {
+  'use no memo';
+
+  const selectedVariant = getProfileVariant(view.variant ?? null);
+  const firstName = view.displayName.split(/\s+/)[0] || view.displayName;
+  const restOfName = view.displayName.slice(firstName.length).trim();
+  const initials =
+    view.displayName
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() ?? '')
+      .join('') ||
+    firstName[0]?.toUpperCase() ||
+    'K';
+
+  const quickActions: QuickAction[] = [];
+  if (view.calendarUrl)
+    quickActions.push({
+      label: calendarLabel(view.calendarUrl),
+      url: view.calendarUrl,
+      icon: 'calendar',
+    });
+  if (view.newsletterUrl)
+    quickActions.push({
+      label: 'Subscribe to newsletter',
+      url: view.newsletterUrl,
+      icon: 'mail',
+    });
+  if (view.tipUrl)
+    quickActions.push({
+      label: tipLabel(view.tipUrl),
+      url: view.tipUrl,
+      icon: 'coffee',
+    });
+
+  return (
+    <aside
+      className="karte-profile-hero relative lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-center lg:py-12 lg:pr-8"
+      style={
+        {
+          // One-shot fade-in on load. Pure CSS, no JS.
+          animation: 'karte-hero-in 800ms cubic-bezier(0.16, 1, 0.3, 1) both',
+        } as React.CSSProperties
+      }
+    >
+      <style>{`
+        @keyframes karte-hero-in {
+          from { opacity: 0; transform: translateY(8px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes karte-avatar-glow {
+          0%, 100% { opacity: 0.45; transform: scale(1); }
+          50%      { opacity: 0.65; transform: scale(1.04); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .karte-profile-hero,
+          .karte-avatar-glow {
+            animation: none !important;
+          }
+        }
+      `}</style>
+
+      {/* Avatar with accent glow */}
+      <div className="relative flex items-start gap-4">
+        <div className="relative shrink-0">
+          <div
+            aria-hidden="true"
+            className="karte-avatar-glow pointer-events-none absolute -inset-3 rounded-full blur-2xl"
+            style={{
+              backgroundColor: `${view.accentColor}55`,
+              animation: 'karte-avatar-glow 4s ease-in-out infinite',
+            }}
+          />
+          <ProfileAvatar
+            src={view.avatarUrl}
+            alt={view.displayName}
+            initials={initials}
+            accentColor={view.accentColor}
+          />
+        </div>
+
+        {view.location && (
+          <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white/[0.04] px-3 py-1 text-[11px] font-medium text-karte-text-3">
+            <span
+              aria-hidden="true"
+              className="h-1.5 w-1.5 rounded-full"
+              style={{ backgroundColor: view.accentColor }}
+            />
+            {view.location}
+          </div>
+        )}
+        {view.inboxEmailAddress && (
+          <a
+            href={`mailto:${view.inboxEmailAddress}`}
+            className="mt-4 inline-flex min-h-11 items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.025] px-3 py-1 text-[11px] font-medium text-karte-text-3 transition-colors duration-200 hover:border-white/[0.18] hover:text-karte-text-2"
+          >
+            <ProfileActionIcon name="mail" className="h-3.5 w-3.5 shrink-0" />
+            {view.inboxEmailAddress}
+          </a>
+        )}
+      </div>
+
+      {/* Name — manifesto scale */}
+      <h1 className="mt-7 text-[44px] font-semibold leading-[0.95] tracking-[-0.035em] text-karte-text sm:text-[56px] lg:text-[64px]">
+        {firstName}
+        {restOfName && (
+          <>
+            <br />
+            <span
+              className="font-normal italic"
+              style={{ fontFamily: view.serifFontVar, color: view.accentColor }}
+            >
+              {restOfName}
+            </span>
+          </>
+        )}
+      </h1>
+
+      {/* Bio */}
+      {view.bio && (
+        <p className="mt-5 max-w-md text-[15px] leading-[1.65] tracking-[-0.005em] text-karte-text-3 sm:text-[16px]">
+          {view.bio}
+        </p>
+      )}
+
+      {/* Social icon row — compact, identity-level not content-level */}
+      <SocialIconRow links={view.socialLinks} accentColor={view.accentColor} />
+
+      {/* Primary CTAs — stacked, not pills */}
+      <div className="mt-7 flex flex-col gap-2">
+        {view.hasMessenger && (
+          <OpenChatButton
+            mode={view.chatEnabled ? 'chat' : 'contact'}
+            className="group inline-flex items-center justify-between rounded-2xl px-5 py-3.5 text-[15px] font-semibold text-zinc-950 transition-all duration-200 ease-[var(--karte-ease)] hover:brightness-110 active:scale-[0.98]"
+            style={{ backgroundColor: view.accentColor }}
+          >
+            <span className="flex items-center gap-2">
+              <ProfileActionIcon name="chat" />
+              {selectedVariant.id === 'baseline'
+                ? view.primaryChatCta
+                : selectedVariant.primaryCta}
+            </span>
+            <span
+              aria-hidden="true"
+              className="transition-transform duration-200 ease-[var(--karte-ease)] group-hover:translate-x-0.5"
+            >
+              →
+            </span>
+          </OpenChatButton>
+        )}
+
+        {quickActions.map((action) => (
+          <a
+            key={action.url}
+            href={action.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-track-type="quick-action"
+            data-track-id={action.url}
+            data-track-label={action.label}
+            className="group inline-flex items-center justify-between rounded-2xl border border-white/[0.06] bg-white/[0.025] px-5 py-3 text-[14px] font-medium text-karte-text transition-all duration-200 ease-[var(--karte-ease)] hover:-translate-y-0.5 hover:border-white/[0.18] hover:bg-white/[0.05]"
+            style={{ borderColor: `${view.accentColor}1f` }}
+          >
+            <span className="flex items-center gap-2.5">
+              <ProfileActionIcon name={action.icon} />
+              {action.label}
+            </span>
+            <span
+              aria-hidden="true"
+              className="text-karte-text-4 transition-transform duration-200 ease-[var(--karte-ease)] group-hover:translate-x-0.5"
+            >
+              ↗
+            </span>
+          </a>
+        ))}
+      </div>
+    </aside>
+  );
+}

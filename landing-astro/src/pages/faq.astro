@@ -1,4 +1,5 @@
 ---
+import { faqCopy } from '../../../content-pages/public-editorial.mjs';
 import Layout from '@/layouts/Layout.astro';
 import ProductFooter from '@/components/ProductFooter.astro';
 import SiteHeader from '@/components/SiteHeader.astro';
@@ -26,9 +27,9 @@ const faqJsonLd = {
     <section class="faq-page" aria-labelledby="faq-title">
       <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} is:inline />
       <div class="section-heading">
-        <p class="section-label">FAQ · PRODUCT BOUNDARIES</p>
-        <h1 id="faq-title">Questions, answered <em>plainly.</em></h1>
-        <p>{product.purpose} These answers describe the product that exists now.</p>
+        <p class="section-label">{faqCopy.eyebrow}</p>
+        <h1 id="faq-title">{faqCopy.title} <em>{faqCopy.emphasis}</em></h1>
+        <p>{product.purpose} {faqCopy.conclusion}</p>
       </div>
       <dl class="faq-ledger">
         {faqs.map((faq, index) => (
@@ -39,8 +40,8 @@ const faqJsonLd = {
         ))}
       </dl>
       <div class="faq-action">
-        <a class="onyx-btn-primary" href="/create">Create a page <span aria-hidden="true">→</span></a>
-        <a href="/ai-link-in-bio">Read the profile comparison</a>
+        <a class="onyx-btn-primary" href={faqCopy.primary.href}>{faqCopy.primary.label} <span aria-hidden="true">→</span></a>
+        <a href={faqCopy.secondary.href}>{faqCopy.secondary.label}</a>
       </div>
     </section>
     <ProductFooter />

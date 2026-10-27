@@ -25,7 +25,7 @@ const profileCacheUrl = (slug: string) =>
 // JSON.stringify drops `Set` instances. We round-trip ready page types
 // as an array and reconstruct the Set on read.
 type CachedPageData = Omit<
-  NonNullable<Awaited<ReturnType<typeof loadFullPageData>>>,
+  NonNullable<Awaited<ReturnType<typeof getFreshPublicPageData>>>,
   'readyPages'
 > & { readyPages: string[] };
 
@@ -73,7 +73,7 @@ export const getFullPageData = cache(async (slug: string) => {
     }
   }
 
-  const data = await loadFullPageData(resolvedSlug);
+  const data = await getFreshPublicPageData(resolvedSlug);
   if (!data) return null;
 
   if (edgeCache) {
@@ -97,7 +97,7 @@ export const getFullPageData = cache(async (slug: string) => {
   return data;
 });
 
-async function loadFullPageData(slug: string) {
+export async function getFreshPublicPageData(slug: string) {
   // ensureProjectsTable runs eagerly on module load (db/index.ts)
   // Just await the existing promise without re-triggering
   await ensureProjectsTable();

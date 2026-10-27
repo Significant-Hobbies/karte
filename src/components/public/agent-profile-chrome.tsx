@@ -10,6 +10,8 @@ export function AgentProfileBanner({
   page: AgentPageFields;
   slug: string;
 }) {
+  'use no memo';
+
   const verified = isAgentVerified(page);
   const operator = page.agentOperator?.trim();
   const operatorUrl = page.agentOperatorUrl?.trim();
@@ -80,6 +82,8 @@ export function AgentCapabilitiesSection({
   page: AgentPageFields;
   accentColor: string;
 }) {
+  'use no memo';
+
   const capabilities = agentCapabilities(page);
   if (capabilities.length === 0) return null;
 

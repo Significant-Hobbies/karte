@@ -35,6 +35,8 @@ export function PageSectionRenderer({
   section: Section;
   accentColor: string;
 }) {
+  'use no memo';
+
   if (section.type === 'social') {
     const items = (section.content ?? '')
       .split('\n')

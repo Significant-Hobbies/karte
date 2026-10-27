@@ -27,7 +27,9 @@ vi.mock('react', async (original) => ({
 
 function render(Component) {
   hooks.cursor = 0;
-  return Component();
+  let node = Component();
+  while (typeof node.type === 'function') node = node.type(node.props);
+  return node;
 }
 function buttons(node) {
   if (!node || typeof node !== 'object') return [];

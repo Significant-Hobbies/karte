@@ -27,7 +27,8 @@
       "!tmp",
       "!landing-astro/dist",
       "!landing-astro/.astro",
-      "!migrations"
+      "!migrations",
+      "!src/lib/agent-surfaces"
     ]
   },
   "formatter": {

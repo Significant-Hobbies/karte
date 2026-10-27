@@ -15,6 +15,7 @@ if (content.closing.form) content.closing.form.action = new URL(content.closing.
 
 <Base {...baseProps(content)}>
   <Fragment slot="head">
+    <meta name="ai-summary" content={content.page.description} />
     <meta name="application-name" content="Karte" />
     <meta name="theme-color" content="#0a0a0a" />
     <meta name="keywords" content="inbound assistant, link in bio, personal website, digital card, Carrd alternative, Own.page alternative, Linktree alternative" />
