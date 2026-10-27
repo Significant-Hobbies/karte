@@ -122,7 +122,15 @@ function pathByHost(host: string): { d: string; viewBox?: string } | null {
   return null;
 }
 
-function HostIcon({ url, accentColor }: { url: string; accentColor: string }) {
+export function HostIcon({
+  url,
+  accentColor,
+}: {
+  url: string;
+  accentColor: string;
+}) {
+  'use no memo';
+
   const host = hostnameFromUrl(url);
   const glyph = host ? pathByHost(host) : null;
 

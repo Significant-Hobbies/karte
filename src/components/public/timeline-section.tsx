@@ -29,6 +29,8 @@ export function TimelineSection({
   accentColor,
   heading = 'Timeline',
 }: TimelineSectionProps) {
+  'use no memo';
+
   if (events.length === 0) return null;
 
   const recentEvents = events.length > 5 ? events.slice(0, 3) : events;

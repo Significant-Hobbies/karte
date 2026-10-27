@@ -1,13 +1,12 @@
 'use client';
 
 import { useId, useRef, useState } from 'react';
-
 import {
-  ALLOWED_IMAGE_CONTENT_TYPES,
   isSupportedImageContentType,
   MAX_IMAGE_UPLOAD_BYTES,
   MAX_IMAGE_UPLOAD_SIZE_MB,
 } from '@/lib/validation';
+import { ImageUploadFieldView } from './image-upload-field-view';
 
 interface ImageUploadFieldProps {
   pageId?: string;
@@ -20,16 +19,17 @@ interface ImageUploadFieldProps {
   onUploadingChange?: (uploading: boolean) => void;
 }
 
-export function ImageUploadField({
-  pageId,
-  kind,
-  label,
-  value,
-  onChange,
-  placeholder,
-  helpText,
-  onUploadingChange,
-}: ImageUploadFieldProps) {
+export function useImageUploadField(props: ImageUploadFieldProps) {
+  const {
+    pageId,
+    kind,
+    label,
+    value,
+    onChange,
+    placeholder,
+    helpText,
+    onUploadingChange,
+  } = props;
   const inputId = useId();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -116,94 +116,25 @@ export function ImageUploadField({
   const preview = value.trim();
   const canUpload = Boolean(pageId);
 
-  return (
-    <div>
-      <div className="mb-2 flex items-center justify-between gap-3">
-        <label
-          htmlFor={inputId}
-          className="block text-sm font-medium text-karte-text"
-        >
-          {label}
-        </label>
-        <span className="text-xs text-karte-text-4">
-          Upload from device or paste a URL
-        </span>
-      </div>
+  return {
+    inputId,
+    label,
+    preview,
+    kind,
+    canUpload,
+    uploading,
+    fileInputRef,
+    onChange,
+    setMessage,
+    handleFileSelect,
+    value,
+    messageType,
+    placeholder,
+    helpText,
+    message,
+  };
+}
 
-      {preview && (
-        <div
-          className={`mb-3 overflow-hidden border border-karte-border-emphasis bg-white/5 ${
-            kind === 'avatar'
-              ? 'h-20 w-20 rounded-full bg-cover bg-center'
-              : 'h-40 w-full rounded-2xl bg-cover bg-center'
-          }`}
-          style={{ backgroundImage: `url(${preview})` }}
-        />
-      )}
-
-      <div className="mb-3 flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          disabled={!canUpload || uploading}
-          onClick={() => fileInputRef.current?.click()}
-          className="rounded-full bg-white/[0.05] px-4 py-2 text-sm font-medium text-karte-text transition-colors duration-200 ease-[var(--karte-ease)] hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {uploading
-            ? 'Uploading...'
-            : `Upload ${kind === 'avatar' ? 'Avatar' : 'Image'}`}
-        </button>
-        <button
-          type="button"
-          disabled={!preview}
-          onClick={() => {
-            onChange('');
-            setMessage('');
-          }}
-          className="rounded-lg border border-karte-border-emphasis px-4 py-2 text-sm text-white/70 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          Clear
-        </button>
-        <span className="text-xs text-karte-text-4">
-          Up to {MAX_IMAGE_UPLOAD_SIZE_MB}MB. JPG, PNG, WebP, GIF, AVIF.
-        </span>
-      </div>
-
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept={ALLOWED_IMAGE_CONTENT_TYPES.join(',')}
-        onChange={handleFileSelect}
-        className="hidden"
-      />
-
-      <input
-        id={inputId}
-        type="url"
-        value={value}
-        onChange={(event) => {
-          onChange(event.target.value);
-          if (messageType === 'success') {
-            setMessage('');
-          }
-        }}
-        placeholder={placeholder}
-        className="w-full rounded-lg bg-white/[0.045] px-4 py-2.5 text-sm text-karte-text placeholder:text-karte-text-4 outline-none ring-1 ring-inset ring-transparent transition-all duration-200 ease-[var(--karte-ease)] hover:bg-white/[0.06] focus:bg-white/[0.06] focus:ring-karte-accent/35"
-      />
-
-      <p className="mt-2 text-xs text-karte-text-4">
-        {helpText ?? 'Upload an image from this device or paste a public URL.'}
-        {!canUpload && ' Create the page first to unlock uploads.'}
-      </p>
-
-      {message && (
-        <p
-          className={`mt-2 text-sm ${
-            messageType === 'success' ? 'text-green-400' : 'text-red-400'
-          }`}
-        >
-          {message}
-        </p>
-      )}
-    </div>
-  );
+export function ImageUploadField(props: ImageUploadFieldProps) {
+  return <ImageUploadFieldView {...useImageUploadField(props)} />;
 }

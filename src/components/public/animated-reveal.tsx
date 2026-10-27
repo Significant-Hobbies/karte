@@ -19,6 +19,8 @@ export function AnimatedReveal({
   className?: string;
   as?: 'div' | 'section' | 'article';
 }) {
+  'use no memo';
+
   const style = {
     '--karte-reveal-delay': `${delay}ms`,
   } as CSSProperties;

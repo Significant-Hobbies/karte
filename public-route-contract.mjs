@@ -145,6 +145,8 @@ export const PROFILE_MODES = Object.freeze([
 export const ROBOTS_ALLOW = Object.freeze([
   '/',
   '/api/ai',
+  '/api/md/',
+  '/ai.txt',
   '/api/v1/agents',
   '/llms.txt',
   '/llms-full.txt',
@@ -178,6 +180,7 @@ const RESERVED_FIRST_SEGMENTS = new Set([
   'skill.md',
   'llms.txt',
   'llms-full.txt',
+  'ai.txt',
   'index.md',
   'humans.txt',
   'robots.txt',
@@ -253,6 +256,19 @@ export function robotsTextFor(origin = SITE_ORIGIN) {
     ...ROBOTS_ALLOW.map((path) => `Allow: ${path}`),
     ...ROBOTS_DISALLOW.map((path) => `Disallow: ${path}`),
     '',
+    ...[
+      'GPTBot',
+      'ClaudeBot',
+      'Google-Extended',
+      'Applebot-Extended',
+      'CCBot',
+      'Bytespider',
+    ].flatMap((name) => [
+      `User-agent: ${name}`,
+      ...ROBOTS_ALLOW.map((path) => `Allow: ${path}`),
+      ...ROBOTS_DISALLOW.map((path) => `Disallow: ${path}`),
+      '',
+    ]),
     `Sitemap: ${origin}/sitemap.xml`,
     '',
   ].join('\n');

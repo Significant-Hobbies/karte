@@ -85,13 +85,15 @@ function domainInitial(host: string): string {
   return label?.[0]?.toUpperCase() ?? '↗';
 }
 
-function DomainIconFallback({
+export function DomainIconFallback({
   host,
   accentColor,
 }: {
   host: string;
   accentColor: string;
 }) {
+  'use no memo';
+
   return (
     <span
       aria-hidden="true"
@@ -113,6 +115,8 @@ export function SocialIconRow({
   links: ReadonlyArray<SocialLink>;
   accentColor: string;
 }) {
+  'use no memo';
+
   if (links.length === 0) return null;
 
   return (

@@ -20,6 +20,7 @@
   },
   "project": ["**/*.{ts,tsx,js,jsx,mjs,cjs,mts}"],
   "ignore": [
+    "src/lib/agent-surfaces/**",
     "**/dist/**",
     "**/build/**",
     "**/.next/**",

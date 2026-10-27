@@ -9,7 +9,9 @@
   "openapi": "https://karte.cc/openapi.json",
   "markdown": {
     "suffix": ".md",
-    "negotiation": true
+    "negotiation": true,
+    "catalog": "https://karte.cc/api/md/_catalog",
+    "direct": "https://karte.cc/api/md/"
   },
   "surfaces": [
     {
@@ -46,6 +48,13 @@
       "md": "https://karte.cc/faq.md",
       "kind": "static",
       "description": "Straight answers about Karte public profiles, visitor chat, owner access, current cost, agent pages, and the not-yet-shipped company workflow."
+    },
+    {
+      "id": "articles",
+      "url": "https://karte.cc/articles",
+      "md": "https://karte.cc/articles.md",
+      "kind": "static",
+      "description": "Essays on public profiles, contextual inbound, and the requirements behind interactive profile pages."
     },
     {
       "id": "changelog",

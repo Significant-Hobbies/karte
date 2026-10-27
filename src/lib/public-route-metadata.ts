@@ -65,7 +65,16 @@ function buildPublicMetadata({
   return {
     title: { absolute: title },
     description,
-    alternates: { canonical },
+    alternates: {
+      canonical,
+      types: {
+        'text/markdown': new URL(
+          path === '/' ? '/index.md' : `${path}.md`,
+          SITE_ORIGIN,
+        ).href,
+      },
+    },
+    other: { 'ai-summary': description },
     openGraph: {
       type: 'website',
       url: canonical,

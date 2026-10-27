@@ -236,7 +236,11 @@ describe('edge-owned surfaces still work', () => {
     expect(catalog.url).toBe('https://karte.cc');
   });
 
-  it('serves llms.txt, llms-full.txt, index.md, robots.txt and openapi.json', async () => {
+  it('serves source-backed discovery and preserves robots/OpenAPI', async () => {
+    openNextStub.handler = () =>
+      new Response('# Source-backed public content', {
+        headers: { 'content-type': 'text/markdown' },
+      });
     for (const path of [
       '/llms.txt',
       '/llms-full.txt',
@@ -246,25 +250,97 @@ describe('edge-owned surfaces still work', () => {
     ]) {
       expect((await request(path)).status, path).toBe(200);
     }
-    expect(openNextStub.calls).toEqual([]);
+    expect(openNextStub.calls).toEqual([
+      '/api/ai/discovery',
+      '/api/ai/discovery',
+      '/api/ai/markdown',
+    ]);
   });
 
   it('still negotiates markdown on the homepage', async () => {
+    openNextStub.handler = () =>
+      new Response('# Source-backed home', {
+        headers: { 'content-type': 'text/markdown' },
+      });
     const response = await request('/', {
       headers: { accept: 'text/markdown' },
     });
 
-    expect(openNextStub.calls).toEqual([]);
+    expect(openNextStub.calls).toEqual(['/api/ai/markdown']);
     expect(response.headers.get('content-type')).toContain('text/markdown');
   });
 
   it('still serves the markdown 404 for unknown non-API pages', async () => {
+    openNextStub.handler = () => new Response('Not found', { status: 404 });
     const response = await request('/no-such-page', {
       headers: { accept: 'text/markdown' },
     });
 
-    expect(openNextStub.calls).toEqual([]);
+    expect(openNextStub.calls).toEqual(['/api/ai/markdown']);
     expect(response.status).toBe(404);
     expect(response.headers.get('content-type')).toContain('text/markdown');
   });
+});
+
+it.each([
+  '/sitemap.xml',
+  '/humans.txt',
+  '/jane/agent.json',
+  '/jane/data.json',
+  '/jane/vcard',
+])(
+  'preserves machine endpoint %s for Markdown-preferring clients',
+  async (path) => {
+    openNextStub.handler = () =>
+      new Response('machine payload', {
+        headers: { 'content-type': 'application/json' },
+      });
+    const response = await request(path, {
+      headers: { accept: 'text/markdown, text/html;q=0.9' },
+    });
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe('machine payload');
+    expect(openNextStub.calls).toEqual([path]);
+  },
+);
+it('custom-domain HTML advertises its rewritten profile Markdown URL', async () => {
+  openNextStub.handler = () =>
+    new Response('public profile', {
+      headers: { 'content-type': 'text/html' },
+    });
+  const DB = {
+    prepare: () => ({
+      bind: () => ({
+        first: async () => ({
+          slug: 'jane',
+          status: 'verified',
+          published: true,
+        }),
+      }),
+    }),
+  };
+  for (const path of ['/', '/encyclopedia']) {
+    const response = await worker.fetch(
+      new Request(`https://jane.example${path}`, {
+        headers: { host: 'jane.example' },
+      }),
+      { ...env, DB },
+      ctx,
+    );
+    expect(response.headers.get('link')).toContain(
+      `https://karte.cc/jane${path === '/' ? '' : path}.md`,
+    );
+  }
+});
+it('HEAD document fallback never writes a non-GET cache entry', async () => {
+  const match = vi.fn();
+  const put = vi.fn();
+  vi.stubGlobal('caches', { default: { match, put } });
+  openNextStub.handler = () =>
+    new Response(null, { headers: { 'content-type': 'text/html' } });
+  const response = await request('/articles/fixture', { method: 'HEAD' });
+  expect(response.status).toBe(200);
+  expect(response.headers.get('cache-control')).toContain('s-maxage=86400');
+  expect(match).not.toHaveBeenCalled();
+  expect(put).not.toHaveBeenCalled();
 });

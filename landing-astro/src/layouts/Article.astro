@@ -1,4 +1,5 @@
 ---
+import { ARTICLE_AUTHOR, articleDisplayMeta } from '../../../content-pages/public-editorial.mjs';
 import Layout from '@/layouts/Layout.astro';
 import ProductFooter from '@/components/ProductFooter.astro';
 import SiteHeader from '@/components/SiteHeader.astro';
@@ -8,23 +9,12 @@ const {
   title,
   description,
   date,
-  author = 'Sarthak Agrawal',
+  author = ARTICLE_AUTHOR,
   readingMinutes,
 } = frontmatter;
 
-const displayDate = date
-  ? new Date(`${date}T00:00:00`).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  : null;
+const meta = articleDisplayMeta({ date, author, readingMinutes });
 
-const meta = [
-  displayDate,
-  author ? `By ${author}` : null,
-  readingMinutes ? `${readingMinutes} min read` : null,
-].filter(Boolean);
 ---
 
 <Layout

@@ -1,4 +1,5 @@
 ---
+import { publicIdentity } from '../../../src/lib/public-identity';
 import { clarityLoaderScript } from '../lib/clarity-loader';
 // Reuse the same bundled font faces as the Gallery landing.
 import geistUrl from '@saas-maker/ui/fonts/geist-latin-normal.woff2?url';
@@ -40,6 +41,7 @@ const hasProductFooter = Astro.props.hasProductFooter === true;
 
     <title>{resolvedTitle}</title>
     <meta name="description" content={resolvedDescription} />
+    <meta name="ai-summary" content={resolvedDescription} />
     <meta name="application-name" content="Karte" />
     <meta name="theme-color" content="#0a0a0a" />
 
@@ -65,34 +67,7 @@ const hasProductFooter = Astro.props.hasProductFooter === true;
 
     {/* WebSite structured data — app-type markup earns no rich result
         without genuine review evidence, so the site describes itself. */}
-    <script type="application/ld+json" set:html={JSON.stringify({
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'WebSite',
-          name: 'Karte',
-          alternateName: ['karte.cc'],
-          url: 'https://karte.cc',
-          description: product.description,
-          isAccessibleForFree: true,
-          creator: {
-            '@type': 'Person',
-            name: 'Sarthak Agrawal',
-            url: 'https://sarthakagrawal.dev',
-          },
-        },
-        {
-          '@type': 'Organization',
-          name: 'Karte',
-          url: 'https://karte.cc',
-          founder: {
-            '@type': 'Person',
-            name: 'Sarthak Agrawal',
-            url: 'https://sarthakagrawal.dev',
-          },
-        },
-      ],
-    })} />
+    <script type="application/ld+json" set:html={JSON.stringify(publicIdentity)} />
 
     <style is:inline set:html={`
       @font-face { font-family: 'Geist Variable'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('${geistUrl}') format('woff2'); }

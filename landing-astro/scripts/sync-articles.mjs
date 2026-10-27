@@ -13,9 +13,11 @@
 // and working sections (Outline, Internal-Link Suggestions, Source Notes)
 // that must never be published.
 
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { ARTICLE_AUTHOR } from '../../content-pages/public-editorial.mjs';
 
 const [draftsDir] = process.argv.slice(2);
 if (!draftsDir) {
@@ -34,9 +36,12 @@ const INLINE_NOTE_LINE =
 const DRAFT_COMMENT =
   /<!--[\s\S]*?(?:source notes|do not publish)[\s\S]*?-->/gi;
 const today = new Date().toISOString().slice(0, 10);
-const pagesDir = new URL('../src/pages/articles/', import.meta.url).pathname;
-const modulePath = new URL('../../content-pages/articles.mjs', import.meta.url)
-  .pathname;
+const pagesDir = fileURLToPath(
+  new URL('../src/pages/articles/', import.meta.url),
+);
+const modulePath = fileURLToPath(
+  new URL('../../content-pages/articles.mjs', import.meta.url),
+);
 
 const parseFrontmatter = (raw) => {
   const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
@@ -124,7 +129,7 @@ for (const article of articles) {
     `title: ${yamlString(article.title)}`,
     `description: ${yamlString(article.description)}`,
     `date: "${article.date}"`,
-    'author: "Sarthak Agrawal"',
+    `author: ${yamlString(ARTICLE_AUTHOR)}`,
     `readingMinutes: ${article.readingMinutes}`,
     '---',
     '',
@@ -143,6 +148,7 @@ const metadata = articles.map(
     description,
     date,
     readingMinutes,
+    author: ARTICLE_AUTHOR,
   }),
 );
 const bodies = Object.fromEntries(articles.map((a) => [a.slug, a.markdown]));
@@ -154,8 +160,8 @@ export const ARTICLE_MARKDOWN = Object.freeze(JSON.parse(${JSON.stringify(JSON.s
 writeFileSync(modulePath, moduleSource);
 // JSON.stringify emits double-quoted output; keep the generated file
 // biome-clean so lint stays green without a manual format pass.
-execSync(`pnpm exec biome format --write ${modulePath}`, {
-  cwd: new URL('../../', import.meta.url).pathname,
+execFileSync('pnpm', ['exec', 'biome', 'format', '--write', modulePath], {
+  cwd: fileURLToPath(new URL('../../', import.meta.url)),
   stdio: 'inherit',
 });
 

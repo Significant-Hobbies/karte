@@ -38,6 +38,8 @@ export function LayoutRenderer({
   accentColor,
   slug,
 }: LayoutRendererProps) {
+  'use no memo';
+
   if (links.length === 0 && projects.length === 0) return null;
 
   const linkPicks = pickLinkVariants(links);

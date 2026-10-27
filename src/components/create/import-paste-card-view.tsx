@@ -1,0 +1,86 @@
+import { ImportedLinkPreview } from '@/components/create/imported-link-preview';
+import type { useImportPasteCard } from './import-paste-card';
+export function ImportPasteCardView(
+  view: ReturnType<typeof useImportPasteCard>,
+) {
+  'use no memo';
+
+  return (
+    <section className="rounded-3xl border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-xl sm:p-8">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-karte-text-4">
+            <span className="text-karte-accent/80">·</span> Fast lane
+          </p>
+          <h2 className="mt-3 text-2xl font-semibold leading-tight tracking-[-0.02em] text-karte-text sm:text-3xl">
+            Already have a link page?{' '}
+            <span
+              className="font-normal italic text-karte-accent-soft"
+              style={{ fontFamily: 'var(--font-instrument-serif), serif' }}
+            >
+              Import it in 3 seconds.
+            </span>
+          </h2>
+          <p className="mt-3 max-w-xl text-[14px] leading-[1.6] text-karte-text-3">
+            Paste your Linktree, Beacons, Bio.link or Carrd URL. We&apos;ll pull
+            your links and show you exactly how they&apos;ll look on Karte.
+          </p>
+        </div>
+      </div>
+
+      <form
+        onSubmit={view.handleSubmit}
+        className="mt-6 flex flex-col gap-3 sm:flex-row"
+      >
+        <input
+          type="url"
+          inputMode="url"
+          autoComplete="url"
+          placeholder="https://linktr.ee/yourname"
+          value={view.sourceUrl}
+          onChange={(event) => view.setSourceUrl(event.target.value)}
+          className="min-w-0 flex-1 rounded-xl border border-white/[0.10] bg-black/30 px-4 py-3 text-[15px] text-karte-text placeholder-karte-text-4 outline-none transition focus:border-karte-accent/40 focus:bg-black/40"
+        />
+        <button
+          type="submit"
+          disabled={view.loading}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-karte-accent px-5 py-3 text-[15px] font-semibold text-zinc-950 transition hover:bg-karte-accent-soft disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {view.loading ? 'Importing…' : 'Import & Preview'}
+        </button>
+      </form>
+
+      {view.errorMessage ? (
+        <p className="mt-4 text-sm text-rose-300/90" role="alert">
+          {view.errorMessage}
+        </p>
+      ) : null}
+
+      {view.importedLinks.length > 0 ? (
+        <div className="mt-8 space-y-6">
+          <ImportedLinkPreview
+            links={view.importedLinks}
+            sourceUrl={view.normalizedSource}
+          />
+
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+            <p className="text-sm text-karte-text-3">
+              Looks good? Sign in to claim your Karte page and bring these links
+              along.
+            </p>
+            <button
+              type="button"
+              onClick={view.handleClaim}
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-[15px] font-medium text-zinc-950 transition-all duration-200 ease-[var(--karte-ease)] hover:bg-zinc-100 sm:w-auto"
+            >
+              Claim your Karte page
+              <span className="transition-transform duration-200 ease-[var(--karte-ease)] group-hover:translate-x-0.5">
+                →
+              </span>
+            </button>
+          </div>
+        </div>
+      ) : null}
+    </section>
+  );
+}

@@ -6,6 +6,8 @@ import { metadataForStaticPath } from '@/lib/public-route-metadata';
 export const metadata: Metadata = metadataForStaticPath('/privacy');
 
 export default function PrivacyPage() {
+  'use no memo';
+
   return (
     <main className="mx-auto max-w-3xl px-4 py-12 text-sm leading-7 text-karte-text-2">
       <Link href="/" className="text-xs text-karte-text-4 hover:underline">

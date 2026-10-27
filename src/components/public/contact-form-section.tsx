@@ -1,15 +1,11 @@
 'use client';
 
 import { type FormEvent, useId, useState } from 'react';
-
 import type { DmMode } from '@/db/schema';
 import { getAnalyticsLabels } from '@/lib/analytics-labels';
 import { authClient } from '@/lib/auth-client';
 import { getOrCreateVisitorId } from '@/lib/visitor-id';
-import { TurnstileWidget } from './turnstile-widget';
-
-const TURNSTILE_SITE_KEY =
-  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '0x4AAAAAAECH9kgw7Nme6V3a';
+import { ContactFormSectionView } from './contact-form-section-view';
 
 type ContactFormSectionProps = {
   slug: string;
@@ -20,7 +16,7 @@ type ContactFormSectionProps = {
   requireVerifiedEmail?: boolean;
 };
 
-export function ContactFormSection({
+export function useContactFormSection({
   slug,
   accentColor = '#2563eb',
   compact = false,
@@ -117,136 +113,33 @@ export function ContactFormSection({
       ? session.user.email
       : null;
 
-  return (
-    <form
-      onSubmit={handleSubmit}
-      className={compact ? 'space-y-3' : 'space-y-4'}
-      aria-label="Contact profile owner"
-    >
-      {needsVerifiedSession ? (
-        <div className="rounded-xl border border-karte-border-strong bg-white/[0.04] p-4">
-          <p className="text-sm font-medium text-karte-text">
-            Verify your email
-          </p>
-          <p className="mt-1 text-xs leading-5 text-white/55">
-            Sign in with Google so the profile owner can see your verified
-            sender identity before you message them.
-          </p>
-          <button
-            type="button"
-            disabled={isPending}
-            onClick={() => {
-              const callbackURL =
-                typeof window === 'undefined' ? '/' : window.location.pathname;
-              void authClient.signIn.social({
-                provider: 'google',
-                callbackURL,
-              });
-            }}
-            className="mt-3 w-full rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-gray-900 transition hover:bg-gray-100 disabled:opacity-50"
-          >
-            {isPending ? 'Checking...' : 'Verify email to send'}
-          </button>
-        </div>
-      ) : dmMode === 'email' && !requireVerifiedEmail ? (
-        <>
-          <div>
-            <label
-              htmlFor={nameId}
-              className="mb-1 block text-xs font-medium text-white/70"
-            >
-              Name
-            </label>
-            <input
-              id={nameId}
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
-              className="w-full rounded-lg border border-karte-border-strong bg-white/5 px-3 py-2 text-sm text-karte-text placeholder-white/40 outline-none focus:border-white/30"
-              required
-            />
-          </div>
+  return {
+    handleSubmit,
+    compact,
+    needsVerifiedSession,
+    isPending,
+    dmMode,
+    requireVerifiedEmail,
+    nameId,
+    name,
+    setName,
+    emailId,
+    email,
+    setEmail,
+    verifiedIdentity,
+    messageId,
+    message,
+    setMessage,
+    turnstileResetSignal,
+    setTurnstileToken,
+    loading,
+    turnstileToken,
+    accentColor,
+    status,
+    feedback,
+  };
+}
 
-          <div>
-            <label
-              htmlFor={emailId}
-              className="mb-1 block text-xs font-medium text-white/70"
-            >
-              Email
-            </label>
-            <input
-              id={emailId}
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="w-full rounded-lg border border-karte-border-strong bg-white/5 px-3 py-2 text-sm text-karte-text placeholder-white/40 outline-none focus:border-white/30"
-              required
-            />
-          </div>
-        </>
-      ) : null}
-
-      {!needsVerifiedSession && (
-        <>
-          {verifiedIdentity && (
-            <p className="rounded-lg border border-green-400/15 bg-green-400/10 px-3 py-2 text-xs leading-5 text-green-200">
-              The owner will see your verified email: {verifiedIdentity}
-            </p>
-          )}
-
-          {dmMode === 'anonymous' && (
-            <p className="rounded-lg border border-karte-border-strong bg-white/[0.04] px-3 py-2 text-xs leading-5 text-white/55">
-              No name or email will be attached to this message.
-            </p>
-          )}
-
-          <div>
-            <label
-              htmlFor={messageId}
-              className="mb-1 block text-xs font-medium text-white/70"
-            >
-              Message
-            </label>
-            <textarea
-              id={messageId}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="What would you like to talk about?"
-              rows={compact ? 4 : 5}
-              className="w-full rounded-lg border border-karte-border-strong bg-white/5 px-3 py-2 text-sm text-karte-text placeholder-white/40 outline-none focus:border-white/30"
-              required
-            />
-          </div>
-
-          <TurnstileWidget
-            siteKey={TURNSTILE_SITE_KEY}
-            action="contact"
-            resetSignal={turnstileResetSignal}
-            onTokenChange={setTurnstileToken}
-          />
-        </>
-      )}
-
-      <button
-        type="submit"
-        disabled={loading || needsVerifiedSession || !turnstileToken}
-        className="w-full rounded-lg border border-black/10 px-4 py-2.5 text-sm font-semibold text-[#17120a] shadow-[0_12px_34px_-28px_rgba(242,200,121,0.9)] transition hover:brightness-110 disabled:opacity-50"
-        style={{ backgroundColor: accentColor }}
-      >
-        {loading ? 'Sending...' : 'Send Message'}
-      </button>
-
-      {status !== 'idle' && feedback && (
-        <p
-          className={`text-xs ${
-            status === 'success' ? 'text-emerald-300' : 'text-red-300'
-          }`}
-        >
-          {feedback}
-        </p>
-      )}
-    </form>
-  );
+export function ContactFormSection(props: ContactFormSectionProps) {
+  return <ContactFormSectionView {...useContactFormSection(props)} />;
 }

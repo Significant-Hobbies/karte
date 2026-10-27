@@ -52,6 +52,8 @@ export function VideoEmbed({
   url: string;
   accentColor: string;
 }) {
+  'use no memo';
+
   const yt = youtubeId(url);
   const vi = vimeoId(url);
   const lo = loomId(url);
