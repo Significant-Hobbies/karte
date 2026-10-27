@@ -43,6 +43,17 @@ export async function GET(request: Request) {
       origin: SITE_ORIGIN,
       summary: STATIC_PUBLIC_ROUTES[0].description,
       pages: {},
+      notes: [
+        AGENT_SURFACE.llmsTxt.slice(
+          AGENT_SURFACE.llmsTxt.indexOf('## When to use this'),
+        ),
+        AGENT_SURFACE.llmsFullTxt
+          ?.split('## Agent profile workflow')[1]
+          ?.split('## Public product pages')[0] ?? '',
+        AGENT_SURFACE.llmsFullTxt?.split(
+          '## Privacy and authority boundary',
+        )[1] ?? '',
+      ],
       catalog: AGENT_SURFACE.catalog,
       negotiation: true,
       trainingAllowed: true,
@@ -57,6 +68,11 @@ export async function GET(request: Request) {
         'browser drafts and visitor messages',
       ],
     },
+    // These exact routes came from currently published profile records, not
+    // administrative endpoints. Preserve existing valid owner slugs.
+    publicReservedPaths: routes
+      .filter((route) => /^\/(?:admin|auth)(?:\/|$)/.test(route.path))
+      .map((route) => route.path),
     listMarkdownRoutes: () => routes,
     loadMarkdown: (path: string) => renderPublicRouteMarkdown(path),
   });

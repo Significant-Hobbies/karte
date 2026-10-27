@@ -209,13 +209,20 @@ function renderTag(
   if (inline.has(tag)) return body;
   if (/^h[1-6]$/.test(tag))
     return `\n\n${'#'.repeat(Number(tag[1]))} ${body.trim().replace(/\s+/g, ' ')}\n\n`;
-  if (tag === 'a')
+  if (tag === 'a') {
+    let href: string;
+    try {
+      href = publicUrl(props.href, origin);
+    } catch {
+      return body;
+    }
     return ` [${
       body
         .trim()
         .replace(/(?:^|\n)#{1,6}\s+/g, '')
         .replace(/\s+/g, ' ') || String(props['aria-label'] || '')
-    }](${publicUrl(props.href, origin)}) `;
+    }](${href}) `;
+  }
   if (tag === 'img')
     return props.alt ? `![${props.alt}](${publicUrl(props.src, origin)})` : '';
   const decorated = decorations[tag];
@@ -237,7 +244,7 @@ function publicUrl(value: unknown, origin: string): string {
   if (typeof value !== 'string')
     throw new Error('Public source link has no URL');
   const url = new URL(value, origin);
-  if (!['https:', 'http:', 'mailto:'].includes(url.protocol))
+  if (!['https:', 'http:', 'mailto:', 'tel:', 'sms:'].includes(url.protocol))
     throw new Error('Unsupported public source URL');
   return url.href;
 }

@@ -58,7 +58,7 @@ export function buildAiTxt(manifest, routes) {
 }
 
 export async function buildFullMarkdown(manifest, routes, render, { maxChars = 500000, maxPages = 50 } = {}) {
-  const header = `# ${manifest.name} - full content\n\n> ${manifest.summary}\n\nGenerated: ${new Date().toISOString().slice(0, 10)}\n\n`;
+  const header = `# ${manifest.name} - full content\n\n> ${manifest.summary}\n\nGenerated: ${new Date().toISOString().slice(0, 10)}\n\n${(manifest.notes || []).join("\n")}\n\n`;
   const footer = `\nFull catalog: ${manifest.origin}/api/md/_catalog\n`;
   let body = header;
   let included = 0;

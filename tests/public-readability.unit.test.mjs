@@ -1,8 +1,9 @@
 import React from 'react';
 import { beforeEach, expect, test, vi } from 'vitest';
 
-const state = vi.hoisted(() => ({ data: null, generated: null }));
+const state = vi.hoisted(() => ({ data: null, generated: null, routes: [] }));
 vi.mock('server-only', () => ({}));
+vi.mock('@/app/sitemap', () => ({ default: async () => state.routes }));
 vi.mock('next/font/google', () => ({
   Instrument_Serif: () => ({ style: { fontFamily: 'serif' } }),
 }));
@@ -20,6 +21,7 @@ import {
   STATIC_PUBLIC_ROUTES,
 } from '../public-route-contract.mjs';
 import { handlePublicRouteMarkdown } from '../public-route-markdown.mjs';
+import { GET as discovery } from '../src/app/api/ai/discovery/route';
 import { renderPublicRouteMarkdown } from '../src/lib/public-route-markdown';
 import { reactSourceMarkdown } from '../src/lib/react-source-markdown';
 import { richSourceMarkdown } from '../src/lib/rich-source-markdown';
@@ -292,4 +294,56 @@ test('all six training crawlers allow public pages while preserving private excl
   ])
     expect(robots).toContain(`User-agent: ${bot}`);
   expect(robots).toContain('Disallow: /dashboard');
+});
+
+test('owner contact links render while unsafe destinations retain visible text', () => {
+  for (const href of [
+    'tel:+1234',
+    'sms:+1234',
+    'javascript:alert(1)',
+    'http://[',
+  ]) {
+    const text = reactSourceMarkdown(
+      React.createElement(
+        'main',
+        null,
+        React.createElement('a', { href }, 'Contact owner'),
+      ),
+      { origin: 'https://karte.cc', components: [] },
+    );
+    expect(text).toContain('Contact owner');
+    if (href.startsWith('tel:') || href.startsWith('sms:'))
+      expect(text).toContain(href);
+    else expect(text).not.toContain(href);
+  }
+});
+test('published reserved-word profiles cannot poison discovery and guidance is retained', async () => {
+  state.routes = [
+    { url: 'https://karte.cc/admin' },
+    { url: 'https://karte.cc/auth/roast' },
+  ];
+  const index = await discovery(
+    new Request('https://karte.cc/api/ai/discovery?path=/llms.txt'),
+  );
+  expect(index.status).toBe(200);
+  const text = await index.text();
+  expect(text).toContain('https://karte.cc/admin.md');
+  expect(text).toContain('https://karte.cc/skill.md');
+  expect(text).toContain('Private facts about a profile owner');
+  state.routes = [];
+  const full = await discovery(
+    new Request('https://karte.cc/api/ai/discovery?path=/llms-full.txt'),
+  );
+  expect(await full.text()).toContain('https://karte.cc/skill.md');
+});
+
+test('temporary Markdown source failure is no-store503 rather than absence', async () => {
+  const response = await handlePublicRouteMarkdown(
+    new Request('https://karte.cc/public-person.md'),
+    async () => {
+      throw new Error('Source unavailable');
+    },
+  );
+  expect(response.status).toBe(503);
+  expect(response.headers.get('cache-control')).toBe('no-store');
 });

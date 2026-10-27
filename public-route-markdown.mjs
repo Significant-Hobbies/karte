@@ -26,7 +26,12 @@ export async function handlePublicRouteMarkdown(request, loadMarkdown) {
   const { explicitMarkdown, sourcePath, parsed } = markdownTarget(
     requestedUrl.pathname,
   );
-  if (!explicitMarkdown && requestedUrl.pathname.startsWith('/api/'))
+  if (
+    !explicitMarkdown &&
+    (requestedUrl.pathname.startsWith('/api/') ||
+      /\.[^/]+$/.test(requestedUrl.pathname) ||
+      /^\/[^/]+\/vcard\/?$/.test(requestedUrl.pathname))
+  )
     return null;
 
   if (explicitMarkdown && !parsed) {
@@ -41,7 +46,17 @@ export async function handlePublicRouteMarkdown(request, loadMarkdown) {
   if (!parsed)
     return markdownError(404, 'Not found', sourcePath, request.method);
 
-  const markdown = await loadMarkdown(sourcePath, request);
+  let markdown;
+  try {
+    markdown = await loadMarkdown(sourcePath, request);
+  } catch {
+    return markdownError(
+      503,
+      'Public document temporarily unavailable',
+      sourcePath,
+      request.method,
+    );
+  }
   if (!markdown) {
     return markdownError(
       404,

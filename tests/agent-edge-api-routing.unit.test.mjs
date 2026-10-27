@@ -271,6 +271,7 @@ describe('edge-owned surfaces still work', () => {
   });
 
   it('still serves the markdown 404 for unknown non-API pages', async () => {
+    openNextStub.handler = () => new Response('Not found', { status: 404 });
     const response = await request('/no-such-page', {
       headers: { accept: 'text/markdown' },
     });
@@ -279,4 +280,66 @@ describe('edge-owned surfaces still work', () => {
     expect(response.status).toBe(404);
     expect(response.headers.get('content-type')).toContain('text/markdown');
   });
+});
+
+it.each([
+  '/sitemap.xml',
+  '/humans.txt',
+  '/jane/agent.json',
+  '/jane/data.json',
+  '/jane/vcard',
+])(
+  'preserves machine endpoint %s for Markdown-preferring clients',
+  async (path) => {
+    openNextStub.handler = () =>
+      new Response('machine payload', {
+        headers: { 'content-type': 'application/json' },
+      });
+    const response = await request(path, {
+      headers: { accept: 'text/markdown, text/html;q=0.9' },
+    });
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe('machine payload');
+    expect(openNextStub.calls).toEqual([path]);
+  },
+);
+it('custom-domain HTML advertises its rewritten profile Markdown URL', async () => {
+  openNextStub.handler = () =>
+    new Response('public profile', {
+      headers: { 'content-type': 'text/html' },
+    });
+  const DB = {
+    prepare: () => ({
+      bind: () => ({
+        first: async () => ({
+          slug: 'jane',
+          status: 'verified',
+          published: true,
+        }),
+      }),
+    }),
+  };
+  for (const path of ['/', '/encyclopedia']) {
+    const response = await worker.fetch(
+      new Request(`https://jane.example${path}`, {
+        headers: { host: 'jane.example' },
+      }),
+      { ...env, DB },
+      ctx,
+    );
+    expect(response.headers.get('link')).toContain(
+      `https://karte.cc/jane${path === '/' ? '' : path}.md`,
+    );
+  }
+});
+it('HEAD document fallback never writes a non-GET cache entry', async () => {
+  const match = vi.fn();
+  const put = vi.fn();
+  vi.stubGlobal('caches', { default: { match, put } });
+  openNextStub.handler = () =>
+    new Response(null, { headers: { 'content-type': 'text/html' } });
+  const response = await request('/articles/fixture', { method: 'HEAD' });
+  expect(response.status).toBe(200);
+  expect(match).not.toHaveBeenCalled();
+  expect(put).not.toHaveBeenCalled();
 });

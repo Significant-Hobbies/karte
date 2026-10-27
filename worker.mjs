@@ -48,7 +48,7 @@ const ASTRO_ASSET_PATHS = new Set([
 function isCacheableDocumentPath(pathname) {
   return ASTRO_ASSET_PATHS.has(pathname) || pathname.startsWith('/articles/');
 }
-async function fetchPublic(request, env, ctx) {
+async function fetchPublic(request, env, ctx, documentContext) {
   try {
     if (
       isSourceDocument(new URL(request.url).pathname) &&
@@ -103,6 +103,7 @@ async function fetchPublic(request, env, ctx) {
     const routed = await routeBeforeOpenNext(request, env);
     if (routed.response) return routed.response;
     request = routed.request ?? request;
+    documentContext.request = request;
 
     const markdown = await handlePublicRouteMarkdown(request, (sourcePath) =>
       loadPublicMarkdown(request, env, ctx, sourcePath),
@@ -167,6 +168,7 @@ async function fetchPublic(request, env, ctx) {
     }
 
     const cache = caches.default;
+    if (request.method === 'HEAD') return openNext.fetch(request, env, ctx);
     const cached = await cache.match(request);
     if (cached) {
       const hit = new Response(cached.body, cached);
@@ -228,8 +230,9 @@ function isSourceDocument(path) {
 }
 export default {
   fetch: withTiming(async function fetch(request, env, ctx) {
-    const response = await fetchPublic(request, env, ctx);
-    return withPublicDocumentHints(request, response);
+    const documentContext = { request };
+    const response = await fetchPublic(request, env, ctx, documentContext);
+    return withPublicDocumentHints(documentContext.request, response);
   }),
 };
 
@@ -246,7 +249,8 @@ async function loadPublicMarkdown(request, env, ctx, sourcePath) {
     env,
     ctx,
   );
-  if (!sourceResponse.ok) return null;
+  if (sourceResponse.status === 404) return null;
+  if (!sourceResponse.ok) throw new Error('Public Markdown source unavailable');
   const contentType = sourceResponse.headers.get('content-type') ?? '';
   if (!contentType.toLowerCase().includes('text/markdown')) return null;
   return sourceResponse.text();
