@@ -168,7 +168,16 @@ async function fetchPublic(request, env, ctx, documentContext) {
     }
 
     const cache = caches.default;
-    if (request.method === 'HEAD') return openNext.fetch(request, env, ctx);
+    if (request.method === 'HEAD') {
+      const response = await openNext.fetch(request, env, ctx);
+      const headers = new Headers(response.headers);
+      if (
+        response.status === 200 &&
+        headers.get('content-type')?.includes('text/html')
+      )
+        headers.set('Cache-Control', CACHE_CONTROL);
+      return new Response(null, { status: response.status, headers });
+    }
     const cached = await cache.match(request);
     if (cached) {
       const hit = new Response(cached.body, cached);

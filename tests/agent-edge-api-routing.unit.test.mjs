@@ -340,6 +340,7 @@ it('HEAD document fallback never writes a non-GET cache entry', async () => {
     new Response(null, { headers: { 'content-type': 'text/html' } });
   const response = await request('/articles/fixture', { method: 'HEAD' });
   expect(response.status).toBe(200);
+  expect(response.headers.get('cache-control')).toContain('s-maxage=86400');
   expect(match).not.toHaveBeenCalled();
   expect(put).not.toHaveBeenCalled();
 });

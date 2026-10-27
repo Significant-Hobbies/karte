@@ -4,6 +4,7 @@ import { renderPublicRouteMarkdown } from '@/lib/public-route-markdown';
 import { AGENT_SURFACE } from '../../../../../agent-edge.mjs';
 import { ARTICLES } from '../../../../../content-pages/articles.mjs';
 import {
+  parsePublicHtmlPath,
   SITE_ORIGIN,
   STATIC_PUBLIC_ROUTES,
 } from '../../../../../public-route-contract.mjs';
@@ -24,18 +25,20 @@ export async function GET(request: Request) {
   const articleRoutes = new Map(
     ARTICLES.map((article) => [`/articles/${article.slug}`, article]),
   );
-  const routes = (await sitemap()).map((entry) => {
-    const path = new URL(entry.url).pathname;
-    const source = staticRoutes.get(path) ?? articleRoutes.get(path);
-    return {
-      path,
-      title: source?.title ?? path.slice(1).replaceAll('/', ' — '),
-      description:
-        source?.description ?? 'Owner-published Karte profile content',
-      kind: source ? 'static' : 'profile',
-      lastModified: entry.lastModified,
-    };
-  });
+  const routes = (await sitemap())
+    .filter((entry) => parsePublicHtmlPath(new URL(entry.url).pathname))
+    .map((entry) => {
+      const path = new URL(entry.url).pathname;
+      const source = staticRoutes.get(path) ?? articleRoutes.get(path);
+      return {
+        path,
+        title: source?.title ?? path.slice(1).replaceAll('/', ' — '),
+        description:
+          source?.description ?? 'Owner-published Karte profile content',
+        kind: source ? 'static' : 'profile',
+        lastModified: entry.lastModified,
+      };
+    });
   // A request-local registry: withdrawn profiles must never linger in discovery.
   const handle = createAgentSurfaceHandler({
     manifest: {
@@ -44,15 +47,16 @@ export async function GET(request: Request) {
       summary: STATIC_PUBLIC_ROUTES[0].description,
       pages: {},
       notes: [
-        AGENT_SURFACE.llmsTxt.slice(
-          AGENT_SURFACE.llmsTxt.indexOf('## When to use this'),
+        guidanceSection(AGENT_SURFACE.llmsTxt, '## When to use this'),
+        guidanceSection(
+          AGENT_SURFACE.llmsFullTxt,
+          '## Agent profile workflow',
+          '## Public product pages',
         ),
-        AGENT_SURFACE.llmsFullTxt
-          ?.split('## Agent profile workflow')[1]
-          ?.split('## Public product pages')[0] ?? '',
-        AGENT_SURFACE.llmsFullTxt?.split(
+        guidanceSection(
+          AGENT_SURFACE.llmsFullTxt,
           '## Privacy and authority boundary',
-        )[1] ?? '',
+        ),
       ],
       catalog: AGENT_SURFACE.catalog,
       negotiation: true,
@@ -80,4 +84,19 @@ export async function GET(request: Request) {
   if (!response) return new Response('Not found', { status: 404 });
   response.headers.set('Cache-Control', 'private, no-store');
   return response;
+}
+
+function guidanceSection(
+  source: string | undefined,
+  heading: string,
+  next?: string,
+): string {
+  const start = source?.indexOf(heading) ?? -1;
+  if (!source || start < 0)
+    throw new Error(`Missing public guidance: ${heading}`);
+  const end = next
+    ? source.indexOf(next, start + heading.length)
+    : source.length;
+  if (end < 0) throw new Error(`Missing public guidance boundary: ${next}`);
+  return source.slice(start, end).trim();
 }

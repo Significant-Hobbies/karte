@@ -320,6 +320,8 @@ test('owner contact links render while unsafe destinations retain visible text',
 test('published reserved-word profiles cannot poison discovery and guidance is retained', async () => {
   state.routes = [
     { url: 'https://karte.cc/admin' },
+    { url: 'https://karte.cc/api' },
+    { url: 'https://karte.cc/dashboard' },
     { url: 'https://karte.cc/auth/roast' },
   ];
   const index = await discovery(
@@ -330,11 +332,26 @@ test('published reserved-word profiles cannot poison discovery and guidance is r
   expect(text).toContain('https://karte.cc/admin.md');
   expect(text).toContain('https://karte.cc/skill.md');
   expect(text).toContain('Private facts about a profile owner');
+  expect(text.indexOf('## Agent profile workflow')).toBeGreaterThan(
+    text.indexOf('## Do not use this for'),
+  );
+  expect(text.indexOf('https://karte.cc/skill.md')).toBeGreaterThan(
+    text.indexOf('## Agent profile workflow'),
+  );
+  expect(text).not.toContain('https://karte.cc/dashboard.md');
+  expect(text).not.toContain('https://karte.cc/api.md');
   state.routes = [];
   const full = await discovery(
     new Request('https://karte.cc/api/ai/discovery?path=/llms-full.txt'),
   );
-  expect(await full.text()).toContain('https://karte.cc/skill.md');
+  const fullText = await full.text();
+  expect(fullText.indexOf('## Agent profile workflow')).toBeGreaterThan(
+    fullText.indexOf('## Do not use this for'),
+  );
+  expect(fullText.indexOf('https://karte.cc/skill.md')).toBeGreaterThan(
+    fullText.indexOf('## Agent profile workflow'),
+  );
+  expect(fullText).toContain('## Privacy and authority boundary');
 });
 
 test('temporary Markdown source failure is no-store503 rather than absence', async () => {
