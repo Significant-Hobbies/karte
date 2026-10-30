@@ -102,7 +102,9 @@ export default function Home() {
       {/* FAQ — outside the scroll-snap deck so the existing card i/vi
           indicators stay untouched. Added for GEO (AI search engines
           lift 35-60 word factual passages). */}
-      <OnyxFaq />
+      <div className="onyx-deck">
+        <OnyxFaq />
+      </div>
     </main>
   );
 }
