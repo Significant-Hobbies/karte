@@ -6,7 +6,15 @@ const events = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
 
 function load(relativePath) {
   const page = readFileSync(new URL(relativePath, import.meta.url), 'utf8');
-  expect(page).toContain('set:html={clarityLoaderScript}');
+  if (relativePath.endsWith('/index.astro')) {
+    expect(page).toContain("import Layout from '../layouts/Layout.astro'");
+    expect(page).toContain('<Layout onyxDeck');
+  }
+  const layout = readFileSync(
+    new URL('../landing-astro/src/layouts/Layout.astro', import.meta.url),
+    'utf8',
+  );
+  expect(layout).toContain('set:html={clarityLoaderScript}');
   const source = readFileSync(
     new URL('../landing-astro/src/lib/clarity-loader.ts', import.meta.url),
     'utf8',

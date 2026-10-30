@@ -17,6 +17,11 @@ vi.mock('@/app/[slug]/_lib/get-page-data', () => ({
 import { ARTICLES } from '../content-pages/articles.mjs';
 import home from '../landing-astro/src/content/home.json';
 import {
+  onyxExamples,
+  onyxSteps,
+  onyxSurfaces,
+} from '../landing-astro/src/content/onyx-deck';
+import {
   robotsTextFor,
   STATIC_PUBLIC_ROUTES,
 } from '../public-route-contract.mjs';
@@ -100,6 +105,10 @@ test('renders the complete static route and article inventory from source', asyn
   for (const section of home.sections)
     expect(markdown).toContain(section.title);
   expect(markdown).toContain(home.closing.form.label);
+  for (const item of [...onyxSteps, ...onyxSurfaces, ...onyxExamples])
+    expect(markdown).toContain(item.body);
+  for (const example of onyxExamples)
+    expect(markdown).toContain(`https://karte.cc${example.href}`);
 });
 test('anonymous creation exposes the authored empty form without browser state', async () => {
   const markdown = await renderPublicRouteMarkdown('/create');

@@ -1,0 +1,40 @@
+@import "../../../src/app/landing.css";
+
+.onyx-deck {
+  --font-playfair: 'Playfair Display', Georgia, serif;
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --font-jetbrains: 'JetBrains Mono', ui-monospace, monospace;
+}
+.onyx-deck :where(h1, h2, h3, p, ol, ul, dl, dt, dd) { margin: 0; padding: 0; font-weight: inherit; }
+.onyx-deck :where(*, *::before, *::after) { box-sizing: border-box; }
+.onyx-deck ol, .onyx-deck ul { list-style: none; }
+/* Current truthful copy can grow beyond one short viewport. Keep every card's
+   foil frame around its content instead of clipping the draft and access notes. */
+.onyx-deck .onyx-screen { height: auto; min-height: 100svh; }
+.onyx-deck .onyx-screen-mark { text-decoration: none; }
+.onyx-deck .onyx-hero-fine { max-width: 660px; line-height: 1.7; }
+.onyx-deck .onyx-hero-fine a { color: #e8dfca; text-underline-offset: 4px; }
+.onyx-deck .onyx-agent-spec dt { font: 400 9px/1.3 var(--font-jetbrains); letter-spacing: .22em; color: rgba(168,200,220,.65); text-transform: uppercase; }
+.onyx-deck .onyx-agent-spec dd { font: 400 13px/1.3 var(--font-playfair); color: rgba(232,236,245,.85); }
+.onyx-deck .onyx-boundary-note { font-size: 14px; }
+.onyx-deck .onyx-access { padding: clamp(48px,8vw,100px); background: #0a0805; color: #e8dfca; font-family: var(--font-inter); scroll-snap-align: start; }
+.onyx-deck .onyx-access > * { max-width: 880px; margin-inline: auto; }
+.onyx-deck .onyx-access p, .onyx-deck .onyx-access dd { color: rgba(232,223,202,.78); line-height: 1.7; }
+.onyx-deck .onyx-access dl { margin-block: 36px; }
+.onyx-deck .onyx-access dl > div { padding: 22px 0; border-top: 1px dotted rgba(196,164,107,.3); }
+.onyx-deck .onyx-access dt { font: 500 24px/1.2 var(--font-playfair); color: #f4ebd4; margin-bottom: 10px; }
+.onyx-deck .onyx-access h3 { font: 500 28px/1.2 var(--font-playfair); margin-bottom: 16px; }
+.onyx-deck :focus-visible { outline: 2px solid #e2c081; outline-offset: 5px; }
+.onyx-skip { position: fixed; top: 8px; left: 8px; transform: translateY(-180%); z-index: 99; background: #e2c081; color: #1a1206; padding: 12px; }
+.onyx-skip:focus { transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html:has(.onyx-deck), html:has(.onyx-deck) body { scroll-behavior: auto; scroll-snap-type: none; }
+  .onyx-deck *, .onyx-deck *::before, .onyx-deck *::after { animation: none !important; transition: none !important; }
+}
+
+/* Keep the native draft input visible beside the original compact pill action. */
+.onyx-deck .onyx-cta-prefix, .onyx-deck .onyx-cta-form .onyx-btn-primary { flex-shrink: 0; white-space: nowrap; }
+
+@media (max-width: 600px) {
+  .onyx-deck .onyx-cta-form .onyx-btn-primary { padding-inline: 18px; gap: 8px; letter-spacing: .08em; }
+}
