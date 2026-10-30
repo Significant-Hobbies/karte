@@ -1,5 +1,5 @@
 {
-  "template": "gallery",
+  "template": "onyx",
   "page": {
     "title": "Karte — A public profile that answers back",
     "description": "Karte gives creators and independent operators one public profile for links, projects, visitor questions, and better-contextualized inbound.",
@@ -134,7 +134,7 @@
       "label": "open a live profile",
       "href": "/sarthak"
     },
-    "note": "Visitors do not need an account. Google sign-in opens the dashboard and owner-only settings. No billing in the current product.",
+    "note": "Free to create. Visitors don’t need an account.",
     "layout": "split",
     "card": {
       "src": "specimen.svg",

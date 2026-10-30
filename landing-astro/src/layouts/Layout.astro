@@ -11,6 +11,8 @@ import { SITE_ORIGIN, staticPublicRoute } from '../../../public-route-contract.m
 import { product } from '@/lib/product';
 
 interface Props {
+  /** The owner-selected calling-card deck supplies its original font hints. */
+  onyxDeck?: boolean;
   /** True when the page content supplies the shared footer host. */
   hasProductFooter?: boolean;
   title: string;
@@ -18,7 +20,7 @@ interface Props {
   canonicalPath?: string;
 }
 
-const { title, description, canonicalPath = '/' } = Astro.props;
+const { title, description, canonicalPath = '/', onyxDeck = false } = Astro.props;
 
 const route = staticPublicRoute(canonicalPath);
 const resolvedTitle = route?.title ?? title;
@@ -38,6 +40,7 @@ const hasProductFooter = Astro.props.hasProductFooter === true;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <slot name="head" />
 
     <title>{resolvedTitle}</title>
     <meta name="description" content={resolvedDescription} />
@@ -45,7 +48,7 @@ const hasProductFooter = Astro.props.hasProductFooter === true;
     <meta name="application-name" content="Karte" />
     <meta name="theme-color" content="#0a0a0a" />
 
-    <link rel="preload" href={geistUrl} as="font" type="font/woff2" crossorigin />
+    {!onyxDeck && <link rel="preload" href={geistUrl} as="font" type="font/woff2" crossorigin />}
 
     <link rel="canonical" href={canonicalUrl} />
     <link rel="alternate" type="text/markdown" href={new URL(markdownPath, SITE_ORIGIN)} />

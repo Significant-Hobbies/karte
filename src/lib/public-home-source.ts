@@ -1,34 +1,47 @@
 import content from '../../landing-astro/src/content/home.json';
+import {
+  onyxExamples,
+  onyxSteps,
+  onyxSurfaces,
+  onyxTitles,
+} from '../../landing-astro/src/content/onyx-deck';
 
 const origin = content.url;
 const link = (value: { label: string; href: string }) =>
   `[${value.label}](${new URL(value.href, origin).href})`;
-const media = (value: { src: string; alt: string }) =>
-  `![${value.alt}](${new URL(value.src, new URL(content.page.assetBase, origin)).href})`;
 export function publicHomeMarkdown(): string {
   const { hero, sections, closing } = content;
   const lines = [
-    `# ${hero.title}`,
+    `# ${onyxTitles.hero}`,
     hero.eyebrow,
     hero.lede,
     link(hero.primary),
     link(hero.secondary),
     hero.note,
-    media(hero.card),
+    `## ${onyxTitles.how}`,
   ];
+  for (const step of onyxSteps) lines.push(`### ${step.title}`, step.body);
+  for (const surface of onyxSurfaces)
+    lines.push(`### ${surface.title}`, surface.body);
+  lines.push(`## ${onyxTitles.boundary}`);
   for (const section of sections) {
     lines.push(`## ${section.title}`);
     if (section.eyebrow) lines.push(section.eyebrow);
     if (section.lede) lines.push(section.lede);
-    if (section.kind === 'spread' && section.screen && section.caption)
-      lines.push(media(section.screen), section.caption.text);
-    else if (section.kind === 'faq' && section.items)
+    if (section.kind === 'faq' && section.items)
       for (const item of section.items) lines.push(`### ${item.q}`, item.a);
-    else if (section.kind !== 'statement')
-      throw new Error(`Unmapped Gallery section: ${section.kind}`);
+    else if (section.kind !== 'statement' && section.kind !== 'spread')
+      throw new Error(`Unmapped Onyx section: ${section.kind}`);
   }
+  lines.push(`## ${onyxTitles.examples}`);
+  for (const example of onyxExamples)
+    lines.push(
+      `### ${example.title}`,
+      example.body,
+      link({ label: example.label, href: example.href }),
+    );
   lines.push(
-    `## ${closing.title}`,
+    `## ${onyxTitles.cta}`,
     closing.note,
     closing.form.label,
     closing.form.placeholder,

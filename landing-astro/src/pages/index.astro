@@ -1,52 +1,105 @@
 ---
-import { clarityLoaderScript } from '../lib/clarity-loader';
-import Base from '@saas-maker/templates/Base.astro';
-import { GalleryPage } from '@saas-maker/templates/gallery-page';
-import { baseProps } from '@saas-maker/templates/page';
-import { galleryContent } from '@saas-maker/templates/schema';
-import json from '../content/home.json';
-import GalleryHeader from '../components/GalleryHeader';
-import '../styles/gallery-brand.css';
-
-const content = galleryContent.parse(json);
-// Keep the native form submission on this origin's /create.
-if (content.closing.form) content.closing.form.action = new URL(content.closing.form.action).pathname;
+import Layout from '../layouts/Layout.astro';
+import OnyxCard from '../components/OnyxCard.astro';
+import home from '../content/home.json';
+import { onyxExamples, onyxSteps, onyxSurfaces, onyxTitles } from '../content/onyx-deck';
+import playfairNormal from '../assets/onyx/playfair-normal.woff2?url';
+import playfairItalic from '../assets/onyx/playfair-italic.woff2?url';
+import inter from '../assets/onyx/inter.woff2?url';
+import jetbrains from '../assets/onyx/jetbrains-mono.woff2?url';
+import '../styles/onyx-deck.css';
+const [handoff, boundary, access] = home.sections;
 ---
 
-<Base {...baseProps(content)}>
+<Layout onyxDeck title={home.page.title} description={home.page.description}>
   <Fragment slot="head">
-    <meta name="ai-summary" content={content.page.description} />
-    <meta name="application-name" content="Karte" />
-    <meta name="theme-color" content="#0a0a0a" />
-    <meta name="keywords" content="inbound assistant, link in bio, personal website, digital card, Carrd alternative, Own.page alternative, Linktree alternative" />
-    <link rel="alternate" type="text/markdown" href="https://karte.cc/index.md" />
-    <link rel="alternate" type="text/plain" href="https://karte.cc/llms.txt" />
-    <script is:inline set:html={clarityLoaderScript}></script>
-    {/* Template links have no attribute field. Tag the same destinations before
-        the unchanged App Health bridge handles clicks and flushes navigation. */}
+    <link rel="preload" href={playfairNormal} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={playfairItalic} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={inter} as="font" type="font/woff2" crossorigin />
+    <style is:inline set:html={`
+      @font-face { font-family:'Playfair Display'; font-style:normal; font-weight:400 900; font-display:swap; src:url('${playfairNormal}') format('woff2'); }
+      @font-face { font-family:'Playfair Display'; font-style:italic; font-weight:400 900; font-display:swap; src:url('${playfairItalic}') format('woff2'); }
+      @font-face { font-family:'Inter'; font-style:normal; font-weight:100 900; font-display:swap; src:url('${inter}') format('woff2'); }
+      @font-face { font-family:'JetBrains Mono'; font-style:normal; font-weight:100 800; font-display:swap; src:url('${jetbrains}') format('woff2'); }
+    `} />
     <script is:inline>
       document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('a[href="/create"], a[href="/sarthak"], [data-identity-form] [type="submit"]').forEach((link) => {
-          link.setAttribute('data-app-health-event', link.getAttribute('href') === '/sarthak'
-            ? 'live_profile_opened'
-            : 'page_creation_opened');
+          link.setAttribute('data-app-health-event', link.getAttribute('href') === '/sarthak' ? 'live_profile_opened' : 'page_creation_opened');
         });
       });
     </script>
-    <script is:inline src="/app-health-log.js" defer></script>
-    <script
-      is:inline
-      defer
-      src="https://health.sassmaker.com/tracker.js"
-      data-key="ahk_pub_479f6271328580806dd8b901f129ffd06726daf26cf537832bdbd943290744ff"
-      data-project="app-731a1d3c-2eff-4ee8-aa6f-eaef1daaa7bf"
-      data-identity="persistent"
-      data-endpoint="https://ingest.sassmaker.com/v1/browser"
-      data-vitals
-      data-vitals-routes="ai-link-in-bio,articles,changelog,faq"
-    ></script>
   </Fragment>
-  <GalleryPage content={content}>
-    <GalleryHeader slot="header" links={content.nav} />
-  </GalleryPage>
-</Base>
+  <main id="main" class="onyx-deck">
+    <a class="onyx-skip" href="#onyx-how">Skip to how it works</a>
+    <OnyxCard idx="i" serial="№ 00471" kicker="PUBLIC PROFILE · CARD V2026" footL="karte.cc/yourhandle" footR="Free today · no billing" heading="onyx-title">
+      <div class="onyx-hero">
+        <div class="onyx-eyebrow"><span class="onyx-eyebrow-dot" aria-hidden="true"></span>{home.hero.eyebrow}</div>
+        <h1 id="onyx-title" class="onyx-hero-h1">{onyxTitles.hero.split('*').map((part, i) => i % 2 ? <Fragment><br /><em>{part}</em></Fragment> : part)}</h1>
+        <p class="onyx-hero-etymology"><span class="gold">karte · /ˈkartə/</span> — German for card. <em>This one answers back.</em></p>
+        <p class="onyx-hero-sub">{home.hero.lede}</p>
+        <div class="onyx-hero-actions">
+          <a class="onyx-btn-primary" href={home.hero.primary.href}>{home.hero.primary.label}<span aria-hidden="true">→</span></a>
+          <a class="onyx-btn-ghost" href={home.hero.secondary.href}>{home.hero.secondary.label}<span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="onyx-hero-fine">{home.hero.note}<br />Already have a card? <a href="/login">Log in →</a></div>
+      </div>
+    </OnyxCard>
+    <OnyxCard idx="ii" serial="№ 00472" kicker="HOW IT WORKS · CARD II" footL="Your draft · your public context" footR="Scroll for next →" heading="onyx-how">
+      <div class="onyx-how">
+        <div class="onyx-eyebrow center">· HOW IT WORKS ·</div>
+        <h2 id="onyx-how" class="onyx-h2 center">{onyxTitles.how.split('*').map((part, i) => i % 2 ? <em>{part}</em> : part)}</h2>
+        <ol class="onyx-how-grid">{onyxSteps.map((step, i) => <li class="onyx-how-step">
+          <span class="onyx-how-num" aria-hidden="true">{['I', 'II', 'III'][i]}</span><span class="onyx-how-rule" aria-hidden="true"></span>
+          <h3 class="onyx-how-title">{step.title}</h3><p class="onyx-how-body">{step.body}</p>
+        </li>)}</ol>
+      </div>
+    </OnyxCard>
+    <OnyxCard idx="iii" serial="№ 00473" kicker="THE INBOUND DESK · CARD III" footL="Chat · contact · leads · public proof" footR="Same public context" heading="onyx-surfaces">
+      <div class="onyx-surfaces">
+        <div class="onyx-eyebrow center">{handoff.eyebrow}</div>
+        <h2 id="onyx-surfaces" class="onyx-h2 center">{handoff.title.split('*').map((part, i) => i % 2 ? <em>{part}</em> : part)}</h2>
+        <p class="onyx-samples-sub">{handoff.lede}</p>
+        <ol class="onyx-surfaces-list">{onyxSurfaces.map((surface, i) => <li>
+          <span class="onyx-sf-i" aria-hidden="true">{['i.', 'ii.', 'iii.', 'iv.'][i]}</span><h3 class="onyx-sf-t">{surface.title}</h3>
+          <span class="onyx-sf-dots" aria-hidden="true"></span><p class="onyx-sf-b">{surface.body}</p>
+        </li>)}</ol>
+      </div>
+    </OnyxCard>
+    <OnyxCard idx="iv" serial="№ 00474" kicker="THE ASSISTANT · CARD IV" footL="Owner-supplied context · bounded answers" footR="Private stays private" heading="onyx-boundary">
+      <div class="onyx-agents">
+        <div class="onyx-agents-left">
+          <div class="onyx-eyebrow">· ISSUED → YOUR INBOUND ·</div>
+          <h2 id="onyx-boundary" class="onyx-h2">{onyxTitles.boundary.split('*').map((part, i) => i % 2 ? <em>{part}</em> : part)}</h2>
+          <p class="onyx-agents-p">{access.items?.[3].a}</p><p class="onyx-agents-p onyx-boundary-note">{boundary.lede}</p>
+          <a class="onyx-btn-ghost" href="/skill.md">Read the agent skill <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="onyx-agents-right"><div class="onyx-agent-mini" aria-label="Illustrative inbound assistant card">
+          <div class="onyx-agent-mini-foil" aria-hidden="true"></div>
+          <div class="onyx-agent-mini-top"><span>ILLUSTRATIVE ASSISTANT</span><span>№ a-0042</span></div>
+          <div class="onyx-agent-mini-mid"><div class="onyx-agent-mini-avatar" aria-hidden="true">○</div><div class="onyx-agent-mini-name">Karte</div><div class="onyx-agent-mini-rule" aria-hidden="true"></div><div class="onyx-agent-mini-role"><em>Public context · first pass</em></div></div>
+          <dl class="onyx-agent-spec"><div><dt>source</dt><dd>owner-published links, projects, FAQs</dd></div><div><dt>intent</dt><dd>the visitor’s question and context</dd></div><div><dt>limit</dt><dd>no invented private knowledge</dd></div></dl>
+          <div class="onyx-agent-mini-bot"><span>karte.cc / yourname</span><span>PUBLIC BY CHOICE</span></div>
+        </div></div>
+      </div>
+    </OnyxCard>
+    <OnyxCard idx="v" serial="№ 00475" kicker="LIVE EXAMPLE · CARD V" footL="A published profile · factual guides" footR="Open one, explore →" heading="onyx-examples">
+      <div class="onyx-samples">
+        <div class="onyx-eyebrow center">· SEE IT FOR YOURSELF ·</div>
+        <h2 id="onyx-examples" class="onyx-h2 center">{onyxTitles.examples.split('*').map((part, i) => i % 2 ? <em>{part}</em> : part)}</h2>
+        <p class="onyx-samples-sub">A working public profile, plus the product’s current access, AI, and agent boundaries.</p>
+        <ul class="onyx-samples-list">{onyxExamples.map((example) => <li><a class="onyx-samples-link" href={example.href}><span class="onyx-samples-name">{example.title}</span><span class="onyx-samples-flavor">{example.body}</span><span class="onyx-samples-arrow">{example.label} →</span></a></li>)}</ul>
+      </div>
+    </OnyxCard>
+    <OnyxCard idx="vi" serial="№ 00476" kicker="START YOUR DRAFT · LAST CARD" footL="One public profile · free today" footR="© MMXXVI · Karte" heading="onyx-create">
+      <div class="onyx-cta">
+        <div class="onyx-eyebrow center">· YOUR NEXT INTRODUCTION ·</div>
+        <h2 id="onyx-create" class="onyx-cta-h">{onyxTitles.cta.split('*').map((part, i) => i % 2 ? <Fragment><br /><em>{part}</em></Fragment> : part)}</h2><p class="onyx-cta-sub">{home.closing.note}</p>
+        <label class="onyx-eyebrow" for="onyx-handle">{home.closing.form.label}</label>
+        <form class="onyx-cta-form" data-identity-form action="/create" method="get"><span class="onyx-cta-prefix" aria-hidden="true">karte.cc /</span><input id="onyx-handle" class="onyx-cta-input" name={home.closing.form.name} placeholder={home.closing.form.placeholder} pattern={home.closing.form.pattern} required maxlength="40" autocomplete="username" autocapitalize="none" spellcheck="false" /><button class="onyx-btn-primary" type="submit">{home.closing.form.submit}<span aria-hidden="true">→</span></button></form>
+        <p class="onyx-cta-fine">Your draft first. Sign in when you are ready to claim it.</p>
+      </div>
+    </OnyxCard>
+    <section class="onyx-access" aria-labelledby="onyx-access-title"><h2 id="onyx-access-title" class="onyx-h2">{access.title.split('*').map((part, i) => i % 2 ? <em>{part}</em> : part)}</h2><p>{access.lede}</p><dl>{access.items?.map((item) => <div><dt>{item.q}</dt><dd>{item.a}</dd></div>)}</dl><h3>{boundary.title.replaceAll('*', '')}</h3><p>{boundary.lede}</p></section>
+  </main>
+</Layout>

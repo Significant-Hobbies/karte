@@ -1,6 +1,6 @@
 ---
 name: Karte
-description: A shared neutral-Geist and gold identity for public profiles and contextual inbound.
+description: Owner-selected Onyx landing deck; neutral-Geist and gold supporting app surfaces.
 colors:
   background: "#0a0a0a"
   foreground: "#ededed"
@@ -58,12 +58,54 @@ components:
 
 # Design System: Karte
 
-## Overview
 
-Karte's landing and Next app share neutral near-black surfaces, Geist type,
-and restrained gold accents. The Astro Gallery landing derives its palette
-from the app through `page.fromApp`; supporting reading pages use the same
-roles. Sign-in, welcome, creation, dashboard, and unthemed public profiles use
+## Landing authority: The Onyx deck
+
+The owner explicitly reconfirmed **The Onyx landing-page deck** on 30 October
+2026. This is preservation of the selected design, not permission for another
+redesign. The anonymous `/` Astro overlay must use its six calling-card screens.
+The October Gallery replacement and the former no-foil landing rules are
+superseded for this route. Never migrate it back to a generic library template.
+
+Preserve the ink background, Playfair Display serif, gold rules, inset foil
+frames, corner diamonds, roman card numbers, gradient gold actions, cursor sheen
+and motion. Inter carries the supporting copy and JetBrains Mono the small
+assistant specification. Phone layouts stack within the same frames; truthful
+copy must remain visible instead of being clipped to a short viewport. Respect
+reduced motion, keyboard focus and native page scrolling.
+
+Recovery references are retained in Git:
+
+- `156a74a4`: original May 28 Onyx desktop/mobile design handoff.
+- `16b5d06a`: completed six-card composition, including the example card.
+- `50d8ecef`: faithful static Astro port of those product-native components.
+- `src/components/landing/onyx-*` and `src/app/landing.css`: retained Next source.
+- `docs/archive/plans/landing-copy-direction.md`: owner-approved card direction.
+
+The Astro recovery uses those frame styles, scoped under `.onyx-deck` so
+supporting-page defaults cannot flatten them. Its Playfair, Inter and JetBrains
+font bytes come from the original `156a74a4` handoff; the fonts and their OFL
+notices live under `landing-astro/src/assets/onyx/`.
+
+Restore the presentation, **not old claims**. Keep draft-first `/create`, Google
+owner sign-in, visitor access, the current no-billing statement, bounded public
+AI context, and the unvalidated company/team boundary. Link only the verified
+owner profile and factual guides; do not restore celebrity endorsements or
+promise permanent free access. The landing and authored Markdown must share the
+same current product truth. Authentication, private profiles and storage are
+outside a presentation restoration.
+
+## Supporting app and reading surfaces
+
+The tokens in this document's frontmatter and the sections below describe the
+existing app and supporting reading pages. They are not instructions to replace
+the owner-selected Onyx landing deck. Keep their current route behavior and
+custom profile palettes while preserving the common Karte name and gold role.
+
+### App overview
+
+The Next app and supporting reading pages retain neutral near-black surfaces,
+Geist type, and restrained gold accents. Sign-in, welcome, creation, dashboard, and unthemed public profiles use
 the shared brand scope. Explicit user profile palettes remain customisable.
 
 The system is restrained by design. Gold dots and active states orient the
@@ -75,13 +117,13 @@ Hairlines, bounded reading measures, and generous spacing carry hierarchy.
 - Flat #0A0A0A background with readable off-white and zinc text.
 - Geist headings at weight 600 and -0.025em tracking.
 - Instrument Serif italic accents in #F4EBD4, one word per headline.
-- A faint 72px grid where atmosphere helps; no ornamental frames or sheen.
+- A faint 72px grid on supporting reading pages; the landing keeps its Onyx frames and sheen.
 - Accessible focus, semantic reading order, and responsive stacking.
 
-## Colors
+### Colors
 
 The resolved palette above is shared with `src/app/globals.css` and the Astro
-landing's `page.fromApp` settings. Default profile chrome adopts gold only
+supporting-page styles. Default profile chrome adopts gold only
 when no palette has been explicitly configured.
 
 ### Primary
@@ -104,7 +146,7 @@ when no palette has been explicitly configured.
 Gold is a scarce orientation accent. Primary actions use off-white fills;
 body copy and passive borders retain neutral roles.
 
-## Typography
+### Typography
 
 **Display and Body Font:** Geist, bundled on Astro and loaded by Next's font
 pipeline in the app. Use system sans-serif fallbacks.
@@ -127,7 +169,7 @@ headline word and the established app wordmark.
 Geist carries hierarchy, action, and explanation. Italic serif emphasis is
 limited so it remains recognisable. Monospace belongs to code and machine paths.
 
-## Layout
+### Layout
 
 Public reading pages use a full-width neutral ground with fluid side padding and a
 centered content column. The established FAQ column tops out at 880px; prose
@@ -141,22 +183,22 @@ Controls keep useful touch targets and content must never force horizontal page
 overflow; wide comparisons may use an explicitly labelled local overflow
 region with keyboard access.
 
-## Elevation & Depth
+### Elevation & Depth
 
 The reading world is flat by default. Neutral surface shifts and hairline
 separators establish grouping. The landing grid is faint and the app may use
-one low-opacity gold blur behind sign-in. Avoid radial page-ground gradients,
-gradient text, inset foil, corner marks, and ambient action shadows.
+one low-opacity gold blur behind sign-in. On supporting reading pages, avoid decorative foil and corner marks; those
+are intentional signatures of the Onyx landing deck.
 
 Articles and references gain hierarchy from type, space, and separators.
 
-## Shapes
+### Shapes
 
 Inputs and compact chips use 12px corners. Large app panels use 24px corners.
 Primary and secondary actions are pills. Gold orientation marks are small
 round dots. Content pages keep their existing reading structure and reflow.
 
-## Components
+### Components
 
 ### Buttons
 
@@ -188,7 +230,7 @@ Use semantic ordered or unordered structures with hairline separators. On wide
 screens, a question or label may sit beside its answer; on small screens the
 pair stacks while preserving DOM and reading order.
 
-## Do's and Don'ts
+### Do's and Don'ts
 
 ### Do:
 
