@@ -31,3 +31,10 @@
   html:has(.onyx-deck), html:has(.onyx-deck) body { scroll-behavior: auto; scroll-snap-type: none; }
   .onyx-deck *, .onyx-deck *::before, .onyx-deck *::after { animation: none !important; transition: none !important; }
 }
+
+/* Keep the native draft input visible beside the original compact pill action. */
+.onyx-deck .onyx-cta-prefix, .onyx-deck .onyx-cta-form .onyx-btn-primary { flex-shrink: 0; white-space: nowrap; }
+
+@media (max-width: 600px) {
+  .onyx-deck .onyx-cta-form .onyx-btn-primary { padding-inline: 18px; gap: 8px; letter-spacing: .08em; }
+}

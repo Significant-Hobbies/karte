@@ -201,7 +201,7 @@
       "label": "start with your karte.cc/ name",
       "name": "slug",
       "placeholder": "yourname",
-      "submit": "draft your page",
+      "submit": "Draft",
       "action": "https://karte.cc/create",
       "required": true,
       "pattern": "[a-z0-9\\-]{1,40}"
