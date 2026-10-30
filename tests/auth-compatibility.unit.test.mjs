@@ -95,6 +95,12 @@ async function providerFixture() {
       scopes: ['openid', 'email', 'profile'],
     });
   const userInfo = vi.spyOn(google, 'getUserInfo').mockResolvedValue({
+    data: {
+      sub: 'existing-google-subject',
+      email: 'owner@example.invalid',
+      email_verified: true,
+      name: 'Existing owner',
+    },
     user: {
       id: 'existing-google-subject',
       name: 'Existing owner',
@@ -269,6 +275,52 @@ describe('installed Better Auth with Karte factory, D1 adapter and Next route', 
     expect(replay.headers.get('location')).toContain('error=');
     expect(provider.validate).toHaveBeenCalledTimes(1);
     expect(count('session')).toBe(2);
+  });
+
+  it('creates a new Google owner through the existing schema and signup hook', async () => {
+    const provider = await providerFixture();
+    provider.userInfo.mockResolvedValue({
+      data: {
+        sub: 'new-google-subject',
+        email: 'new-owner@example.invalid',
+        email_verified: true,
+        name: 'New owner',
+      },
+      user: {
+        id: 'new-google-subject',
+        name: 'New owner',
+        email: 'new-owner@example.invalid',
+        emailVerified: true,
+      },
+    });
+    const { location, cookie } = await startGoogle();
+    const response = await request(
+      `callback/google?state=${location.searchParams.get('state')}&code=synthetic-code`,
+      { cookie },
+    );
+    expect(response.status).toBe(302);
+    expect(response.headers.get('location')).toBe(`${origin}/dashboard`);
+    const current = await request('get-session', {
+      cookie: cookieHeader(response),
+    });
+    expect(await current.json()).toMatchObject({
+      user: { email: 'new-owner@example.invalid' },
+    });
+    expect(count('user')).toBe(2);
+    expect(count('account')).toBe(2);
+    expect(count('session')).toBe(2);
+    const { ping } = await import('../src/lib/ping');
+    expect(ping).toHaveBeenCalledWith(
+      'signup',
+      expect.objectContaining({
+        title: 'new-owner@example.invalid',
+      }),
+    );
+    expect(
+      sqlite
+        .prepare('SELECT aiEndpointUrl FROM user WHERE id=?')
+        .get('existing-owner').aiEndpointUrl,
+    ).toBe('https://model.example.invalid/v1');
   });
 
   it('rejects forged state and missing browser state cookies before provider exchange', async () => {
