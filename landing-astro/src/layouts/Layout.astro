@@ -18,9 +18,10 @@ interface Props {
   title: string;
   description: string;
   canonicalPath?: string;
+  ogType?: 'website' | 'article';
 }
 
-const { title, description, canonicalPath = '/', onyxDeck = false } = Astro.props;
+const { title, description, canonicalPath = '/', onyxDeck = false, ogType = 'website' } = Astro.props;
 
 const route = staticPublicRoute(canonicalPath);
 const resolvedTitle = route?.title ?? title;
@@ -54,7 +55,7 @@ const hasProductFooter = Astro.props.hasProductFooter === true;
     <link rel="alternate" type="text/markdown" href={new URL(markdownPath, SITE_ORIGIN)} />
     <link rel="alternate" type="text/plain" href={new URL('/llms.txt', SITE_ORIGIN)} />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content="Karte" />
     <meta property="og:title" content={resolvedTitle} />

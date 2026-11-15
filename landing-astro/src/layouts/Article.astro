@@ -1,6 +1,7 @@
 ---
 import { ARTICLE_AUTHOR, articleDisplayMeta } from '../../../content-pages/public-editorial.mjs';
 import Layout from '@/layouts/Layout.astro';
+import { SITE_ORIGIN } from '../../../public-route-contract.mjs';
 import ProductFooter from '@/components/ProductFooter.astro';
 import SiteHeader from '@/components/SiteHeader.astro';
 
@@ -14,6 +15,32 @@ const {
 } = frontmatter;
 
 const meta = articleDisplayMeta({ date, author, readingMinutes });
+const canonicalPath = Astro.url.pathname.replace(/\.html$/, '');
+const canonicalUrl = new URL(canonicalPath, SITE_ORIGIN).href;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Article',
+      '@id': `${canonicalUrl}#article`,
+      url: canonicalUrl,
+      mainEntityOfPage: canonicalUrl,
+      headline: title,
+      description,
+      datePublished: date,
+      author: { '@type': 'Person', name: author },
+      publisher: { '@type': 'Organization', name: 'Karte', url: SITE_ORIGIN },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Karte', item: SITE_ORIGIN },
+        { '@type': 'ListItem', position: 2, name: 'Articles', item: `${SITE_ORIGIN}/articles` },
+        { '@type': 'ListItem', position: 3, name: title, item: canonicalUrl },
+      ],
+    },
+  ],
+};
 
 ---
 
@@ -21,8 +48,10 @@ const meta = articleDisplayMeta({ date, author, readingMinutes });
   hasProductFooter
   title={`${title} — Karte`}
   description={description}
-  canonicalPath={Astro.url.pathname.replace(/\.html$/, '')}
+  canonicalPath={canonicalPath}
+  ogType="article"
 >
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
   <main class="karte-page">
     <SiteHeader current="articles" />
     <article class="article-shell">
