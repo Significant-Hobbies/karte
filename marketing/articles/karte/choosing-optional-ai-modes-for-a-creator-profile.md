@@ -13,7 +13,7 @@ A creator profile serves as a central hub for your audience, consolidating links
 
 By integrating managed AI capabilities into your public profile, you can transform a simple directory into a dynamic inbound assistant. These modes help visitors find specific information, understand your perspective, and ultimately make more informed decisions when reaching out. Whether you want to provide straightforward answers, deep-dive context, or a bit of humor, choosing the right AI mode can significantly enhance the visitor experience.
 
-In this guide, we will explore exactly how optional AI modes work on Karte, detail the mechanics and benefits of the four distinct modes available—Chat, Encyclopedia, Roast, and Newspaper—and provide actionable advice to help you decide which one best suits your specific creator profile, audience needs, and brand identity. If you are new to the concept of AI-enhanced profiles, you might also find our introductory guide helpful (see `/ai-link-in-bio`).
+In this guide, we will explore exactly how optional AI modes work on Karte, detail the mechanics and benefits of the four distinct modes available—Chat, Encyclopedia, Roast, and Newspaper—and provide actionable advice to help you decide which one best suits your specific creator profile, audience needs, and brand identity. If you are new to AI-enhanced profiles, start with [the AI link-in-bio guide](/ai-link-in-bio).
 
 ## Outline
 
@@ -52,7 +52,7 @@ You retain complete ownership of this data. The AI acts as your public inbound a
 
 ## 3. Deep Dive into the Four AI Modes
 
-Karte offers four distinct generated modes, allowing you to tailor the interactive experience to your brand and audience. Each mode processes your profile memory differently. Track updates to these modes in our `/changelog`.
+Karte offers four distinct generated modes, allowing you to tailor the interactive experience to your brand and audience. Each mode processes your profile memory differently. Track updates in the [Karte changelog](/changelog).
 
 ### Chat: The Conversational Assistant
 
